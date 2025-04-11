@@ -40,7 +40,7 @@ function view() {
 
       // Lua
       for (let i = 0; i<scripts.length; i++) {
-        scripts[i] = await bussFetch(res.ip, link);
+        scripts[i] = await bussFetch(res.ip, scripts[i]);
       }
 
       const factory = new wasmoon.LuaFactory();
