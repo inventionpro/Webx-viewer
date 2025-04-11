@@ -26,8 +26,8 @@ function view() {
       iframe.contentDocument.write('<p>Loading...</p>');
       let page = await bussFetch(res.ip, 'index.html');
       let tree = htmlparser(page);
-      let final = htmlbuilder(tree);
-      console.log(page, tree, final);
+      let [final, lua] = htmlbuilder(tree);
+      console.log(final, lua);
       iframe.contentDocument.location.reload();
       iframe.contentDocument.write(page);
     })

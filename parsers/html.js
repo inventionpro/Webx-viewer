@@ -1,3 +1,4 @@
+// Parser from YAB by inventionpro
 export const nonTerminatingElements = ['hr','img','input','textarea','link','meta','script'];
 
 function subparse(content) {
