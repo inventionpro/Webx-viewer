@@ -39,7 +39,9 @@ function view() {
       iframe.contentDocument.write(html);
 
       // Lua
-      scripts.map(link => await bussFetch(res.ip, link));
+      for (let i = 0; i<scripts.length; i++) {
+        scripts[i] = await bussFetch(res.ip, link);
+      }
 
       const factory = new wasmoon.LuaFactory();
       const lua = await factory.createEngine();
