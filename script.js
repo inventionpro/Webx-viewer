@@ -17,6 +17,13 @@ function bussFetch(ip, path) {
   })
 };
 
+function HTMLElementFunctionsFor(elem) {
+  return {
+    get_contents: (text) => elem.textContent,
+    set_contents: (text) => elem.textContent = text
+  };
+}
+
 function view() {
   let iframe = document.querySelector('iframe');
   fetch(new URL(`/domain/${document.getElementById('url').value.replace('.','/')}`, document.getElementById('dns').value))
@@ -26,10 +33,27 @@ function view() {
       iframe.contentDocument.write('<p>Loading...</p>');
       let page = await bussFetch(res.ip, 'index.html');
       let tree = htmlparser(page);
-      let [final, lua] = htmlbuilder(tree);
-      console.log(final, lua);
+      let build = htmlbuilder(tree);
+      let [html, scripts] = build;
       iframe.contentDocument.location.reload();
-      iframe.contentDocument.write(final);
+      iframe.contentDocument.write(html);
+
+      // Lua
+      scripts.map(async link => await bussFetch(res.ip, link));
+
+      const factory = new Wasmoon.LuaFactory();
+      const lua = await factory.createEngine();
+
+      // Lua functions
+      await lua.global.set('get', (class, all=false) => {
+        if (all) {
+          return Array.from(iframe.contentDocument.querySelectorAll('.'+class.trim())).map(el=>HTMLElementFunctionsFor(el));
+        } else {
+          return HTMLElementFunctionsFor(iframe.contentDocument.querySelector('.'+class.trim()));
+        }
+      });
+
+      scripts.forEach(async script => await lua.doString(script));
     })
 }
 window.view = view;
