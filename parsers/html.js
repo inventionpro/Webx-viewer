@@ -1,12 +1,7 @@
 // Parser from YAB by inventionpro
 export const nonTerminatingElements = ['hr','img','input','textarea','link','meta','script'];
 
-export function parse(content) {
-  let tree = [];
-  // Remove comments and INVALID html doctype
-  content = content
-    .replaceAll(/<!--([^¬]|.)*?-->/g, '')
-    .replaceAll(/<!DOCTYPE html>/gi, '');
+function subparse(content) {
   // Go through string and parse
   for (let i = 0; i<content.length; i++) {
     let stack = [];
@@ -86,5 +81,14 @@ export function parse(content) {
       tree.push(temp);
     }
   }
+}
+
+export function parse(content) {
+  // Remove comments and INVALID html doctype
+  content = content
+    .replaceAll(/<!--([^¬]|.)*?-->/g, '')
+    .replaceAll(/<!DOCTYPE html>/gi, '');
+  // Parse
+  let tree = subparse(content);
   return tree;
 }
