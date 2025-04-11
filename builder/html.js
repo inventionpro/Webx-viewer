@@ -1,17 +1,23 @@
-function convert(l, c) {
+function convert(l) {
   return l.map(e=>{
     if (e.name === 'script') {
-      c.push(e.attributes?.src??'');
-      return ['', c];
+      return ['', [e.attributes?.src??'']];
     }
-    let [inner, cc] = (typeof e.content)==='string'?[e.content, []]:convert(e.content,[]);
-    c.push(cc);
-    return [`<${e.name}>${inner}</${e.name}>`, c.flat()];
+    if ((typeof e.content)==='string') {
+      return [`<${e.name}>${e.content}</${e.name}>`, []]
+    }
+    let inner = '';
+    let c = [];
+    convert(e.content).forEach(t => {
+      inner += t[0];
+      c.push(t[1]);
+    });
+    return [`<${e.name}>${inner}</${e.name}>`, c.flat(Infinity)];
   })
 }
 
 export function build(tree) {
-  return convert(tree, []);
+  return convert(tree);
 }
 
 /*{

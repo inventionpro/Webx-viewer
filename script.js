@@ -29,7 +29,7 @@ function view() {
       let [final, lua] = htmlbuilder(tree);
       console.log(final, lua);
       iframe.contentDocument.location.reload();
-      iframe.contentDocument.write(page);
+      iframe.contentDocument.write(final);
     })
 }
 window.view = view;
