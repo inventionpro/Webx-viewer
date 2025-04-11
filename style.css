@@ -1,3 +1,31 @@
+body {
+  display: flex;
+  flex-direction: column;
+  width: calc(100vw - 16px);
+  height: calc(100vh - 16px);
+  color: #ddd;
+  background: #222;
+}
+
+input, button {
+  color: #ddd;
+  padding: 3px;
+  margin: 2px;
+  border: 2px #888 solid;
+  border-radius: 0.5rem;
+  background-color: transparent;
+}
+button {
+  cursor: pointer;
+  border-radius: 0.25rem;
+}
+
+iframe {
+  flex: 1;
+  border: 2px #888 solid;
+  background: #fff;
+}
+
 .nav {
   display: flex;
   align-items: center;
