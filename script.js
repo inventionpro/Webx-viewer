@@ -1,8 +1,8 @@
-import parse as htmlparser from './parsers/html.js';
-//import parse as cssparser from './parsers/css.js';
+import { parse as htmlparser } from './parsers/html.js';
+//import { parse as cssparser } from './parsers/css.js';
 
-import build as htmlbuilder from './builder/html.js';
-//import build as cssbuilder from './builder/css.js';
+import { build as htmlbuilder } from './builder/html.js';
+//import { build as cssbuilder } from './builder/css.js';
 
 function bussFetch(ip, path) {
   if (ip.includes('github.com')) ip = ip.replace('github.com','raw.githubusercontent.com')+'/main/'+path;
