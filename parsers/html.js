@@ -1,4 +1,3 @@
-// Parser from YAB by inventionpro
 export const nonTerminatingElements = ['hr','img','input','textarea','link','meta','script'];
 
 function subparse(content) {
@@ -82,6 +81,7 @@ function subparse(content) {
       tree.push(temp);
     }
   }
+  return tree;
 }
 
 export function parse(content) {
