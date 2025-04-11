@@ -2,6 +2,7 @@
 export const nonTerminatingElements = ['hr','img','input','textarea','link','meta','script'];
 
 function subparse(content) {
+  let tree = [];
   // Go through string and parse
   for (let i = 0; i<content.length; i++) {
     let stack = [];
@@ -89,6 +90,5 @@ export function parse(content) {
     .replaceAll(/<!--([^¬]|.)*?-->/g, '')
     .replaceAll(/<!DOCTYPE html>/gi, '');
   // Parse
-  let tree = subparse(content);
-  return tree;
+  return subparse(content);
 }
