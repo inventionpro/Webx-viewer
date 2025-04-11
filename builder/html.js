@@ -14,7 +14,7 @@ export function build(tree) {
   return convert(tree, []);
 }
 
-{
+/*{
   "name": "html",
   "attributes": {},
   "content": [
@@ -111,4 +111,4 @@ export function build(tree) {
       ]
     }
   ]
-}
+}*/
