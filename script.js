@@ -34,7 +34,7 @@ function view() {
       let page = await bussFetch(res.ip, 'index.html');
       let tree = htmlparser(page);
       let build = htmlbuilder(tree);
-      let [html, scripts] = build;
+      let [html, scripts] = build[0];
       iframe.contentDocument.location.reload();
       iframe.contentDocument.write(html);
 
