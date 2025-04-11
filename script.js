@@ -45,11 +45,11 @@ function view() {
       const lua = await factory.createEngine();
 
       // Lua functions
-      await lua.global.set('get', (class, all=false) => {
+      await lua.global.set('get', (clas, all=false) => {
         if (all) {
-          return Array.from(iframe.contentDocument.querySelectorAll('.'+class.trim())).map(el=>HTMLElementFunctionsFor(el));
+          return Array.from(iframe.contentDocument.querySelectorAll('.'+clas.trim())).map(el=>HTMLElementFunctionsFor(el));
         } else {
-          return HTMLElementFunctionsFor(iframe.contentDocument.querySelector('.'+class.trim()));
+          return HTMLElementFunctionsFor(iframe.contentDocument.querySelector('.'+clas.trim()));
         }
       });
 
