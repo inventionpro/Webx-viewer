@@ -4,7 +4,7 @@ function convert(l, c) {
       c.push(e.attributes?.src??'');
       return ['', c];
     }
-    let [inner, cc] = (typeof e.content)==='string'?e.content:convert(e.content,c);
+    let [inner, cc] = (typeof e.content)==='string'?[e.content, []]:convert(e.content,[]);
     c.push(cc);
     return [`<${e.name}>${inner}</${e.name}>`, c.flat()];
   })
