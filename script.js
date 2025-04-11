@@ -41,7 +41,7 @@ function view() {
       // Lua
       scripts.map(async link => await bussFetch(res.ip, link));
 
-      const factory = new Wasmoon.LuaFactory();
+      const factory = new wasmoon.LuaFactory();
       const lua = await factory.createEngine();
 
       // Lua functions
