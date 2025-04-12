@@ -111,13 +111,14 @@ async function load(ip, html, scripts) {
       location: document.getElementById('url').value,
       // TODO: What is query supposed to be
       //query: q,
-      browser: "bussinga"
+      browser: "bussinga",
+      true_browser: "wxv"
     });
   }
 
   scripts.forEach(async script => {
-    script = script.replaceAll(/fetch\(\s*?\{([^¬]|¬)*?\}\s*?\)/g, function(match){return match+':await()'});
-    await lua.doString(script)
+    //script = script.replaceAll(/fetch\(\s*?\{([^¬]|¬)*?\}\s*?\)/g, function(match){return match+':await()'});
+    await lua.doString(script);
   });
 }
 
@@ -139,7 +140,7 @@ function view(direct) {
           let page = await bussFetch(res.ip, 'index.html');
           let tree = htmlparser(page);
           let build = htmlbuilder(tree);
-          load(res.ip, ...build[0])
+          load(res.ip, ...build[0]);
         };
         iframe.contentDocument.location.reload();
       })
