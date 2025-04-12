@@ -9,7 +9,7 @@ function convert(l) {
       return ['', [e.attributes?.src??'']];
     }
     if ((typeof e.content)==='string') {
-      return [`<${e.name}>${e.content}</${e.name}>`, []]
+      return [`<${e.name} ${attr(e.attributes)}>${e.content}</${e.name}>`, []]
     }
     let inner = '';
     let c = [];
@@ -17,7 +17,7 @@ function convert(l) {
       inner += t[0];
       c.push(t[1]);
     });
-    return [`<${e.name}>${inner}</${e.name}>`, c.flat(Infinity)];
+    return [`<${e.name} ${attr(e.attributes)}>${inner}</${e.name}>`, c.flat(Infinity)];
   })
 }
 
