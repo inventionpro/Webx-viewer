@@ -40,7 +40,7 @@ function view() {
   fetch(new URL(`/domain/${document.getElementById('url').value.replace('.','/')}`, document.getElementById('dns').value))
     .then(async res => {
       res = await res.json();
-      iframe.onload = () => {
+      iframe.onload = async() => {
         let page = await bussFetch(res.ip, 'index.html');
         let tree = htmlparser(page);
         let build = htmlbuilder(tree);

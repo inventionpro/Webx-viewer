@@ -1,3 +1,8 @@
+function attr(o) {
+  let allowed = ['href','src','name','content','class'];
+  return Object.keys(o).map(t=>allowed.includes(t)?`${t}="${o[t]}"`:'').join(' ')
+}
+
 function convert(l) {
   return l.map(e=>{
     if (e.name === 'script') {
