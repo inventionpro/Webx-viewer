@@ -60,7 +60,7 @@ function HTMLElementFunctionsFor(elem) {
     base.set_contents = (text) => elem[['input','textarea'].includes(tag)?'value':'innerHTML'] = text;
     base.set_content = base.set_contents;
     base.get_css_name = () => elem.className || elem.tagName;
-    base.set_value = (text) => elem.value = text,
+    base.set_value = (text) => elem.value = text;
   }
   return base;
 }
