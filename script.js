@@ -42,32 +42,36 @@ function view() {
       res = await res.json();
       iframe.contentDocument.location.reload();
       iframe.contentDocument.write('<p>Loading...</p>');
+
       let page = await bussFetch(res.ip, 'index.html');
       let tree = htmlparser(page);
       let build = htmlbuilder(tree);
       let [html, scripts] = build[0];
-      iframe.contentDocument.querySelector('html').innerHTML = html;
 
-      requestAnimationFrame(async() => {
-        // Lua
-        for (let i = 0; i<scripts.length; i++) {
-          scripts[i] = await bussFetch(res.ip, scripts[i]);
-        }
+      iframe.onload = () => {
+        iframe.contentDocument.querySelector('html').innerHTML = html;
 
-        const factory = new wasmoon.LuaFactory();
-        const lua = await factory.createEngine();
-
-        // Lua functions
-        await lua.global.set('get', (clas, all=false) => {
-          if (all) {
-            return Array.from(iframe.contentDocument.querySelectorAll('.'+clas.trim())).map(el=>HTMLElementFunctionsFor(el));
-          } else {
-            return HTMLElementFunctionsFor(iframe.contentDocument.querySelector('.'+clas.trim()));
+        requestAnimationFrame(async() => {
+          // Lua
+          for (let i = 0; i<scripts.length; i++) {
+            scripts[i] = await bussFetch(res.ip, scripts[i]);
           }
-        });
 
-        scripts.forEach(async script => await lua.doString(script));
-      });
+          const factory = new wasmoon.LuaFactory();
+          const lua = await factory.createEngine();
+
+          // Lua functions
+          await lua.global.set('get', (clas, all=false) => {
+            if (all) {
+              return Array.from(iframe.contentDocument.querySelectorAll('.'+clas.trim())).map(el=>HTMLElementFunctionsFor(el));
+            } else {
+              return HTMLElementFunctionsFor(iframe.contentDocument.querySelector('.'+clas.trim()));
+            }
+          });
+
+          scripts.forEach(async script => await lua.doString(script));
+        });
+      };
     })
 }
 window.view = view;
