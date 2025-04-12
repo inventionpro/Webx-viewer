@@ -65,7 +65,7 @@ function HTMLElementFunctionsFor(elem) {
   return base;
 }
 
-function load(res, html, scripts) {
+async function load(res, html, scripts) {
   let doc = iframe.contentDocument;
 
   doc.querySelector('html').innerHTML = html;
