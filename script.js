@@ -65,14 +65,15 @@ function HTMLElementFunctionsFor(elem) {
   return base;
 }
 
-async function load(res, html, scripts) {
+async function load(ip, html, scripts) {
+  let iframe = document.querySelector('iframe');
   let doc = iframe.contentDocument;
 
   doc.querySelector('html').innerHTML = html;
 
   // Lua
   for (let i = 0; i<scripts.length; i++) {
-    scripts[i] = await bussFetch(res.ip, scripts[i]);
+    scripts[i] = await bussFetch(ip, scripts[i]);
   }
 
   const factory = new wasmoon.LuaFactory();
@@ -120,18 +121,28 @@ async function load(res, html, scripts) {
   });
 }
 
-function view() {
+function view(direct) {
   let iframe = document.querySelector('iframe');
-  fetch(new URL(`/domain/${document.getElementById('url').value.replace('.','/')}`, document.getElementById('dns').value))
-    .then(async res => {
-      res = await res.json();
-      iframe.onload = async() => {
-        let page = await bussFetch(res.ip, 'index.html');
-        let tree = htmlparser(page);
-        let build = htmlbuilder(tree);
-        load(res, ...build[0])
-      };
-      iframe.contentDocument.location.reload();
-    })
+  if (direct) {
+    iframe.onload = async() => {
+      let page = await bussFetch(document.getElementById('url').value, 'index.html');
+      let tree = htmlparser(page);
+      let build = htmlbuilder(tree);
+      load(document.getElementById('url').value, ...build[0])
+    };
+    iframe.contentDocument.location.reload();
+  } else {
+    fetch(new URL(`/domain/${document.getElementById('url').value.replace('.','/')}`, document.getElementById('dns').value))
+      .then(async res => {
+        res = await res.json();
+        iframe.onload = async() => {
+          let page = await bussFetch(res.ip, 'index.html');
+          let tree = htmlparser(page);
+          let build = htmlbuilder(tree);
+          load(res.ip, ...build[0])
+        };
+        iframe.contentDocument.location.reload();
+      })
+  }
 }
 window.view = view;
