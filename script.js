@@ -30,7 +30,8 @@ function HTMLElementFunctionsFor(elem) {
     }
   };
   if (['input','textarea'].includes(tag)) {
-    base.set_contents = (text) => elem.value = text
+    base.get_contents = () => elem.value;
+    base.set_contents = (text) => elem.value = text;
   }
   return base;
 }
