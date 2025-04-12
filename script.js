@@ -18,10 +18,21 @@ function bussFetch(ip, path) {
 };
 
 function HTMLElementFunctionsFor(elem) {
-  return {
-    get_contents: (text) => elem.textContent,
-    set_contents: (text) => elem.textContent = text
+  let tag = elem.tagName.toLowerCase();
+  let base = {
+    get_contents: () => elem.textContent,
+    set_contents: (text) => elem.textContent = text,
+
+    on_click: (luaCallback) => {
+      elem.addEventListener("click", () => {
+        luaCallback().catch(console.error);
+      });
+    }
   };
+  if (['input','textarea'].includes(tag)) {
+    base.set_contents = (text) => elem.value = text
+  }
+  return base;
 }
 
 function view() {
