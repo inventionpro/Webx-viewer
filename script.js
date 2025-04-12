@@ -56,13 +56,26 @@ function view() {
           const factory = new wasmoon.LuaFactory();
           const lua = await factory.createEngine();
 
-          // Lua functions
+          // Lua global functions
+          await lua.global.set('print', (text) => {
+            console.log(`[LUA]: ${text}`);
+            return null;
+          });
           await lua.global.set('get', (clas, all=false) => {
             if (all) {
               return Array.from(iframe.contentDocument.querySelectorAll('.'+clas.trim())).map(el=>HTMLElementFunctionsFor(el));
             } else {
               return HTMLElementFunctionsFor(iframe.contentDocument.querySelector('.'+clas.trim()));
             }
+          });
+          await lua.global.set('fetch', (o) => {
+            // TODO: Support headers and body
+            //headers = { ["Content-Type"] = "application/json" },
+            //body = '{ "test": ' .. test .. '}'
+            const xhr = new XMLHttpRequest();
+            xhr.open(o.method??'GET', o.url, false);
+            xhr.send(null);
+            return xhr.response;
           });
 
           scripts.forEach(async script => await lua.doString(script));
