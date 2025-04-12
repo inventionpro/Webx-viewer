@@ -40,15 +40,11 @@ function view() {
   fetch(new URL(`/domain/${document.getElementById('url').value.replace('.','/')}`, document.getElementById('dns').value))
     .then(async res => {
       res = await res.json();
-      iframe.contentDocument.location.reload();
-      iframe.contentDocument.write('<p>Loading...</p>');
-
-      let page = await bussFetch(res.ip, 'index.html');
-      let tree = htmlparser(page);
-      let build = htmlbuilder(tree);
-      let [html, scripts] = build[0];
-
       iframe.onload = () => {
+        let page = await bussFetch(res.ip, 'index.html');
+        let tree = htmlparser(page);
+        let build = htmlbuilder(tree);
+        let [html, scripts] = build[0];
         iframe.contentDocument.querySelector('html').innerHTML = html;
 
         requestAnimationFrame(async() => {
@@ -72,6 +68,7 @@ function view() {
           scripts.forEach(async script => await lua.doString(script));
         });
       };
+      iframe.contentDocument.location.reload();
     })
 }
 window.view = view;
