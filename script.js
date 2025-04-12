@@ -46,7 +46,6 @@ function view() {
       let tree = htmlparser(page);
       let build = htmlbuilder(tree);
       let [html, scripts] = build[0];
-      iframe.contentDocument.location.reload();
       iframe.contentDocument.querySelector('html').innerHTML = html;
 
       requestAnimationFrame(async() => {
