@@ -6,18 +6,23 @@ function attr(o) {
 function convert(l) {
   return l.map(e=>{
     if (e.name === 'script') {
-      return ['', [e.attributes?.src??'']];
+      return ['', [e.attributes?.src??''], []];
+    }
+    if (e.name === 'link') {
+      return ['', [], [e.attributes?.href??'']];
     }
     if ((typeof e.content)==='string') {
-      return [`<${e.name} ${attr(e.attributes)}>${e.content}</${e.name}>`, []]
+      return [`<${e.name} ${attr(e.attributes)}>${e.content}</${e.name}>`, [], []]
     }
     let inner = '';
-    let c = [];
+    let scri = [];
+    let styl = [];
     convert(e.content).forEach(t => {
       inner += t[0];
-      c.push(t[1]);
+      scri.push(t[1]);
+      styl.push(t[2]);
     });
-    return [`<${e.name} ${attr(e.attributes)}>${inner}</${e.name}>`, c.flat(Infinity)];
+    return [`<${e.name} ${attr(e.attributes)}>${inner}</${e.name}>`, scri.flat(Infinity), styl.flat(Infinity)];
   })
 }
 

@@ -40,20 +40,18 @@ function HTMLElementFunctionsFor(elem) {
       elem.addEventListener('keyup', () => {
         callback(elem.value || elem.checked).catch(console.error);
       });
-      elem.addEventListener('change', ()=>{
+      elem.addEventListener('change', () => {
         callback(elem.value || elem.checked).catch(console.error);
       });
     },
-    /*
-    on_submit: (f) => {
-        c.addEventListener(`submit`, async()=>{
-            doSneaky(f, c.value || c.checked)
-        })
-        c.addEventListener(`keyup`, async(e)=>{
-            if(e.key == "Enter") doSneaky(f, c.value || c.checked)
-        })
+    on_submit: (callback) => {
+      elem.addEventListener('submit', () => {
+        callback(elem.value || elem.checked);
+      });
+      elem.addEventListener('keyup', (evt) => {
+        if (evt.key == "Enter") callback(elem.value || elem.checked);
+      });
     }
-    */
   };
   if (bussinga) {
     base.get_content = base.get_contents;
@@ -65,11 +63,21 @@ function HTMLElementFunctionsFor(elem) {
   return base;
 }
 
-async function load(ip, html, scripts) {
+async function load(ip, html, scripts, styles) {
   let iframe = document.querySelector('iframe');
   let doc = iframe.contentDocument;
 
   doc.querySelector('html').innerHTML = html;
+
+  // CSS
+  for (let i = 0; i<styles.length; i++) {
+    if (!styles[i].endsWith('.css')) styles[i]='';
+    styles[i] = await bussFetch(ip, styles[i]);
+  }
+  styles = styles.filter(styl=>styl.length);
+  let dstyl = doc.createElement('style');
+  dstyl.innerHTML = styles.join(';');
+  doc.head.appendChild(dstyl);
 
   // Lua
   for (let i = 0; i<scripts.length; i++) {
