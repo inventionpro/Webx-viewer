@@ -79,8 +79,9 @@ async function load(ip, html, scripts, styles) {
     .forEach(styl=>{
       let dstyl = doc.createElement('style');
       if (!document.getElementById('bussinga').checked||!styl.includes('/* bussinga! */')) {
-        // let style = cssparser(styl);
-        // styl = cssbuilder(style);
+        let style = cssparser(styl);
+        console.log(style);
+        //styl = cssbuilder(style);
       }
       dstyl.innerHTML = styl;
       doc.head.appendChild(dstyl);
