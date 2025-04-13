@@ -1,5 +1,5 @@
 import { parse as htmlparser } from './parsers/html.js';
-//import { parse as cssparser } from './parsers/css.js';
+import { parse as cssparser } from './parsers/css.js';
 
 import { build as htmlbuilder } from './builder/html.js';
 //import { build as cssbuilder } from './builder/css.js';
@@ -74,10 +74,17 @@ async function load(ip, html, scripts, styles) {
     if (!styles[i].endsWith('.css')) styles[i]='';
     styles[i] = await bussFetch(ip, styles[i]);
   }
-  styles = styles.filter(styl=>styl.length);
-  let dstyl = doc.createElement('style');
-  dstyl.innerHTML = styles.join(';');
-  doc.head.appendChild(dstyl);
+  styles
+    .filter(styl=>styl.length>1)
+    .forEach(styl=>{
+      let dstyl = doc.createElement('style');
+      if (!document.getElementById('bussinga').checked||!styl.includes('/* bussinga! */')) {
+        // let style = cssparser(styl);
+        // styl = cssbuilder(style);
+      }
+      dstyl.innerHTML = styl;
+      doc.head.appendChild(dstyl);
+    });
 
   // Lua
   for (let i = 0; i<scripts.length; i++) {
