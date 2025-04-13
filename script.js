@@ -81,7 +81,8 @@ async function load(ip, html, scripts, styles) {
       if (!document.getElementById('bussinga').checked||!styl.includes('/* bussinga! */')) {
         let style = cssparser(styl);
         console.log(style);
-        //styl = cssbuilder(style);
+        styl = cssbuilder(style);
+        console.log(styl);
       }
       dstyl.innerHTML = styl;
       doc.head.appendChild(dstyl);
