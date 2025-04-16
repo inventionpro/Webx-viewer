@@ -87,6 +87,7 @@ export async function createV2Lua(doc, stdout) {
   });
   await lua.global.set('window', await frozenTable({
     name: 'WXV',
+    agent: 'wxv',
     version: '0.1.0',
     api: {
       print: true,
