@@ -56,10 +56,10 @@ async function load(ip, html, scripts, styles) {
   scripts.forEach(async script => {
     let lua;
     if (script.version==='2') {
-      lua = createV2Lua(doc, stdout);
+      lua = await createV2Lua(doc, stdout);
     } else if (script.version==='legacy') {
       //script = script.replaceAll(/fetch\(\s*?\{([^¬]|¬)*?\}\s*?\)/g, function(match){return match+':await()'});
-      lua = createLegacyLua(doc, document.getElementById('bussinga').checked, stdout);
+      lua = await createLegacyLua(doc, document.getElementById('bussinga').checked, stdout);
     } else {
       stdout('Unknwon version: '+script.version+' for: '+script.src, true);
     }
