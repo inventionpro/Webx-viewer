@@ -63,7 +63,7 @@ function HTMLElementFunctionsFor(elem, version) {
   }
 }
 
-export async function createLegacyLua(doc, stdout) {
+export async function createV2Lua(doc, stdout) {
   const factory = new wasmoon.LuaFactory();
   const lua = await factory.createEngine();
 

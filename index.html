@@ -13,10 +13,12 @@
       <span></span>
       <button onclick="toggleConsole()">Console</button>
       <dialog id="stdout">
+        <button onclick="this.parentElement.close()" class="modal-close">x</button>
         <p>Console:</p>
       </dialog>
       <button onclick="toggleSettings()">Settings</button>
       <dialog id="settings">
+        <button onclick="this.parentElement.close()" class="modal-close">x</button>
         <label>Bussinga: <input id="bussinga" type="checkbox"></label>
         <label>DNS: <input placeholder="dns server" value="https://dns-one.webxplus.org/" id="dns"></label>
       </dialog>

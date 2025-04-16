@@ -43,7 +43,7 @@ function HTMLElementFunctionsFor(elem, bussinga) {
   return base;
 }
 
-export async function createLuaEngine(doc, bussinga, stdout) {
+export async function createLegacyLua(doc, bussinga, stdout) {
   const factory = new wasmoon.LuaFactory();
   const lua = await factory.createEngine();
 
