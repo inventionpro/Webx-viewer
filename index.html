@@ -11,9 +11,33 @@
       <button onclick="view(false)">View</button>
       <button onclick="view(true)">Direct</button>
       <span></span>
-      <input placeholder="dns server" value="https://dns-one.webxplus.org/" id="dns">
-      <span></span>
-      <label>Bussinga: <input id="bussinga" type="checkbox"></label>
+      <button onclick="toggleConsole()">Console</button>
+      <dialog id="stdout">
+        <p>Console:</p>
+      </dialog>
+      <button onclick="toggleSettings()">Settings</button>
+      <dialog id="settings">
+        <label>Bussinga: <input id="bussinga" type="checkbox"></label>
+        <label>DNS: <input placeholder="dns server" value="https://dns-one.webxplus.org/" id="dns"></label>
+      </dialog>
+      <script>
+        function toggleConsole() {
+          let s = document.getElementById('stdout');
+          if (s.open) {
+            s.close();
+          } else {
+            s.showModal();
+          }
+        }
+        function toggleSettings() {
+          let s = document.getElementById('settings');
+          if (s.open) {
+            s.close();
+          } else {
+            s.showModal();
+          }
+        }
+      </script>
     </div>
     <iframe></iframe>
     <script src="./script.js" type="module"></script>

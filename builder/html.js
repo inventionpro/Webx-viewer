@@ -6,7 +6,7 @@ function attr(o) {
 function convert(l) {
   return l.map(e=>{
     if (e.name === 'script') {
-      return ['', [e.attributes?.src??''], []];
+      return ['', [{src: e.attributes?.src??'', version: e.attributes?.version??'legacy'}], []];
     }
     if (e.name === 'link') {
       return ['', [], [e.attributes?.href??'']];
