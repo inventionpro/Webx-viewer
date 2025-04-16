@@ -40,12 +40,13 @@ async function load(ip, html, scripts, styles) {
     .forEach(styl=>{
       let dstyl = doc.createElement('style');
       if (!document.getElementById('bussinga').checked||!styl.includes('/* bussinga! */')) {
+        if (styl.includes('/* bussinga! */')) {
+          stdout('[WARN] Site uses bussinga css, but you are not using bussinga mode.');
+        }
         let style = cssparser(styl);
         console.log(style);
         styl = cssbuilder(style);
         console.log(styl);
-      } else if (styl.includes('/* bussinga! */')) {
-        stdout('[WARN] Site uses bussinga css, but you are not using bussinga mode.');
       }
       dstyl.innerHTML = styl;
       doc.head.appendChild(dstyl);
