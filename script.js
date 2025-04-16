@@ -44,6 +44,8 @@ async function load(ip, html, scripts, styles) {
         console.log(style);
         styl = cssbuilder(style);
         console.log(styl);
+      } else if (styl.includes('/* bussinga! */')) {
+        stdout('[WARN] Site uses bussinga css, but you are not using bussinga mode.');
       }
       dstyl.innerHTML = styl;
       doc.head.appendChild(dstyl);
@@ -59,16 +61,17 @@ async function load(ip, html, scripts, styles) {
       lua = await createV2Lua(doc, stdout);
     } else if (script.version==='legacy') {
       //script = script.replaceAll(/fetch\(\s*?\{([^¬]|¬)*?\}\s*?\)/g, function(match){return match+':await()'});
-      try {
-        lua = await createLegacyLua(doc, document.getElementById('bussinga').checked, stdout);
-      } catch(err) {
-        console.log(err);
-        stdout(err.message, true);
-      }
+      lua = await createLegacyLua(doc, document.getElementById('bussinga').checked, stdout);
     } else {
       stdout('Unknwon version: '+script.version+' for: '+script.src, true);
     }
-    await lua.doString(script.code);
+    window.luaEngine = lua;
+    try {
+      await lua.doString(script.code);
+    } catch(err) {
+      console.log(err);
+      stdout(err.message, true);
+    }
   });
 }
 
