@@ -83,4 +83,6 @@ export async function createLegacyLua(doc, bussinga, stdout) {
       true_browser: "wxv"
     });
   }
+
+  return lua;
 }

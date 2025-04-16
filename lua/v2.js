@@ -71,17 +71,17 @@ export async function createV2Lua(doc, stdout) {
   await lua.global.set('print', (text) => {
     stdout(`[LUA]: ${text}`);
   });
-  await lua.global.set('get', (text) => {
+  await lua.global.set('get', (selector, all=false) => {
     return null;
   });
   await lua.global.set('getId', (id) => {
     return HTMLElementFunctionsFor(doc.getElementById(id));
   });
-  await lua.global.set('getClass', (clas) => {
+  await lua.global.set('getClass', (clas, all=false) => {
     let tags = document.getElementsByClassName(clas);
     return all ? Array.from(tags).map(t=>HTMLElementFunctionsFor(t)) : HTMLElementFunctionsFor(tags[0]);
   });
-  await lua.global.set('getTag', (tag, all) => {
+  await lua.global.set('getTag', (tag, all=false) => {
     let tags = document.getElementsByTagName(tag);
     return all ? Array.from(tags).map(t=>HTMLElementFunctionsFor(t)) : HTMLElementFunctionsFor(tags[0]);
   });
@@ -89,9 +89,9 @@ export async function createV2Lua(doc, stdout) {
     name: 'WXV',
     version: '0.1.0',
     api: {
+      print: true,
       get: false,
       get_type: true,
-      print: true,
       fetch: false
     }
   }));
@@ -101,4 +101,6 @@ fetch(options)
 browser
 location
 */
+
+  return lua;
 }
