@@ -25,12 +25,17 @@ dialog {
   border: none;
 }
 
-#stdout {
-  width: 35vw;
-  height: 45vh;
+#console {
+  width: 45vw;
+  height: 50vh;
 }
 #stdout p {
   margin: 0px;
+  word-break: break-word;
+  white-space: break-spaces;
+}
+#stdout .error {
+  color: #d88;
 }
 
 input, button {

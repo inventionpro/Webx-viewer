@@ -1,5 +1,5 @@
 function attr(o) {
-  let allowed = ['href','src','name','content','class'];
+  let allowed = ['href','src','name','content','class','version'];
   return Object.keys(o).map(t=>allowed.includes(t)?`${t}="${o[t]}"`:'').join(' ')
 }
 

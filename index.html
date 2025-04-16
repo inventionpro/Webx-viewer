@@ -12,9 +12,11 @@
       <button onclick="view(true)">Direct</button>
       <span></span>
       <button onclick="toggleConsole()">Console</button>
-      <dialog id="stdout">
+      <dialog id="console">
         <button onclick="this.parentElement.close()" class="modal-close">x</button>
-        <p>Console:</p>
+        <div id="stdout">
+          <p>Console:</p>
+        </div>
       </dialog>
       <button onclick="toggleSettings()">Settings</button>
       <dialog id="settings">
@@ -25,7 +27,7 @@
       </dialog>
       <script>
         function toggleConsole() {
-          let s = document.getElementById('stdout');
+          let s = document.getElementById('console');
           if (s.open) {
             s.close();
           } else {
