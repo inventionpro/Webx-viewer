@@ -49,10 +49,10 @@ function handleRule(rule, value) {
   switch (rules[rulex]) {
     case 'size':
       if (!(/[0-9]+(px|pt)?/m).test(value)) return `invalid-property: ${value} for ${rule}`;
+      if (!(/px|pt/).test(value)) value+='px';
       break;
     case 'color':
       if (!(/#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})/m).test(value)) return `invalid-property: ${value} for ${rule}`;
-      if (!(/px|pt/).test(value)) value+='px';
       break;
     case 'opacity':
       if (Number.isNaN(Number(value))) return `invalid-property: ${value} for ${rule}`;
