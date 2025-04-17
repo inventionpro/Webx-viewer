@@ -7,8 +7,8 @@ import { parse as cssparser } from './parsers/css.js';
 import { build as htmlbuilder } from './builder/html.js';
 import { build as cssbuilder } from './builder/css.js';
 
-function stdout(text, err=false) {
-  document.getElementById('stdout').innerHTML += `<p class="${err?'error':''}">${text.replaceAll('<','&lt;')}</p>`;
+function stdout(text, type='') {
+  document.getElementById('stdout').innerHTML += `<p class="${type}">${text.replaceAll('<','&lt;')}</p>`;
 }
 
 function bussFetch(ip, path) {
@@ -31,6 +31,101 @@ async function load(ip, html, scripts, styles) {
   doc.querySelector('html').innerHTML = html;
 
   // CSS
+  // Default css
+  let default_style = doc.createElement('style');
+  if (document.getElementById('bussinga').checked) {
+    default_style.innerHTML = `/* injected by bussinga */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Varela+Round&display=swap');
+* {
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.query { height: fit-content !important }
+body {
+  width: 100vw;
+  height: 100vh;
+  font-family: Noto Sans;
+  padding: 12px;
+  margin: 0 !important;
+  background-color: #252524;
+  color: white;
+}
+img { width: fit-content; }
+hr {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid white;
+}
+h1, h2, h3, h4, h5, h6, p, a { margin: 3px; }
+a {
+  color: #50889b;
+  text-decoration: none;
+}
+p, a, select { font-size: x-small; }
+button, input, select, option {
+  background-color: #393838;
+  font-family: Noto Sans;
+  transition: 0.2s;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 18px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+select, option{
+  color: black;
+  margin: 0;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  outline: none;
+}
+input { box-shadow: 0 0 3px black inset; }
+button:hover {
+  background-color: #656565;
+  transition: 0.2s;
+}`;
+  } else {
+    default_style.innerHTML = `
+body {
+  gap: 10px;
+  background-color: transparent;
+  /*direction: column;
+  align-items: fill;*/
+}
+
+h1 { font-size: 24pt; }
+h2 { font-size: 22pt; }
+h3 { font-size: 20pt; }
+h4 { font-size: 18pt; }
+h5 { font-size: 16pt; }
+h6 { font-size: 14pt; }
+
+a {
+  border: none;
+  color: #67B7D1;
+  text-decoration: underline;
+}
+
+input {
+  padding: 5px;
+  border-color: #616161;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 12px;
+}
+textarea {
+  width: 400px;
+  height: 100px;
+  padding: 5px;
+  border-color: #616161;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 12px;
+}`;
+  }
+  doc.head.appendChild(default_style);
+  // Page css
   for (let i = 0; i<styles.length; i++) {
     if (!styles[i].endsWith('.css')) styles[i]='';
     styles[i] = await bussFetch(ip, styles[i]);
@@ -41,7 +136,7 @@ async function load(ip, html, scripts, styles) {
       let dstyl = doc.createElement('style');
       if (!document.getElementById('bussinga').checked||!styl.includes('/* bussinga! */')) {
         if (styl.includes('/* bussinga! */')) {
-          stdout('[WARN] Site uses bussinga css, but you are not using bussinga mode.');
+          stdout('[Warn] Site uses bussinga css, but you are not using bussinga mode.', 'warn');
         }
         let style = cssparser(styl);
         console.log(style);
@@ -64,14 +159,14 @@ async function load(ip, html, scripts, styles) {
       //script = script.replaceAll(/fetch\(\s*?\{([^¬]|¬)*?\}\s*?\)/g, function(match){return match+':await()'});
       lua = await createLegacyLua(doc, document.getElementById('bussinga').checked, stdout);
     } else {
-      stdout('Unknwon version: '+script.version+' for: '+script.src, true);
+      stdout('Unknwon version: '+script.version+' for: '+script.src, 'error');
     }
     window.luaEngine = lua;
     try {
       await lua.doString(script.code);
     } catch(err) {
       console.log(err);
-      stdout(err.message, true);
+      stdout(err.message, 'error');
     }
   });
 }

@@ -49,7 +49,7 @@ export async function createLegacyLua(doc, bussinga, stdout) {
 
   // Lua global functions
   await lua.global.set('print', (text) => {
-    stdout(`[LUA]: ${text}`);
+    stdout(`[Log]: ${text}`);
   });
   await lua.global.set('get', (clas, all=false) => {
     clas = clas.trim();

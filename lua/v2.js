@@ -69,7 +69,13 @@ export async function createV2Lua(doc, stdout) {
 
   // Lua global functions
   await lua.global.set('print', (text) => {
-    stdout(`[LUA]: ${text}`);
+    stdout(`[Log]: ${text}`);
+  });
+  await lua.global.set('printw', (text) => {
+    stdout(`[Warn]: ${text}`, 'warn');
+  });
+  await lua.global.set('printe', (text) => {
+    stdout(`[Error]: ${text}`, 'error');
   });
   await lua.global.set('get', (selector, all=false) => {
     return null;
