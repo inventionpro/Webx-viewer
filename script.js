@@ -86,12 +86,18 @@ button:hover {
   transition: 0.2s;
 }`;
   } else {
-    default_style.innerHTML = `
+    default_style.innerHTML = `/* Napture default css */
 body {
+  display: flex;
   gap: 10px;
-  background-color: transparent;
-  /*direction: column;
-  align-items: fill;*/
+  flex-direction: column;
+  align-items: self-start;
+  font-family: system-ui, Lexend, Arial, sans-serif;
+  background-color: #2C2C2C;
+}
+h1, h2, h3, h4, h5, h6 {
+ font-weight: normal;
+ margin: 2px;
 }
 h1 { font-size: 24pt; }
 h2 { font-size: 22pt; }
@@ -104,21 +110,30 @@ a {
   color: #67B7D1;
   text-decoration: underline;
 }
-input {
-  padding: 5px;
-  border-color: #616161;
-  border-width: 1px;
-  border-style: solid;
+button {
+  color: #F6F6F6;
+  font-weight: bold;
+  font-family: inherit;
+  padding: 9px;
+  border: none;
+  border-radius: 5px;
+  background-color: #414141;
+  transition: 250ms;
+}
+input, textarea {
+  padding: 6px;
+  border: 1px #616161 solid;
   border-radius: 12px;
 }
 textarea {
   width: 400px;
   height: 100px;
-  padding: 5px;
-  border-color: #616161;
-  border-width: 1px;
-  border-style: solid;
-  border-radius: 12px;
+}
+hr {
+  width: 100%;
+  height: 1px;
+  border: none;
+  background-color: #4A4A4A;
 }`;
   }
   doc.head.appendChild(default_style);
