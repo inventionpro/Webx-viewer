@@ -26,10 +26,12 @@ dialog {
 }
 
 #console {
-  display: flex;
   flex-direction: column;
   width: 45vw;
   height: 50vh;
+}
+#console[open] {
+  display: flex;
 }
 #stdout {
   flex: 1;
@@ -62,7 +64,7 @@ dialog {
   margin: 0px;
 }
 
-input, button {
+input, button, select {
   color: #ddd;
   padding: 3px;
   margin: 2px;

@@ -154,7 +154,7 @@ textarea {
     if (script.version==='2') {
       lua = await createV2Lua(doc, stdout);
     } else if (script.version==='legacy') {
-      script = script.replaceAll(/fetch\(\s*?\{([^¬]|¬)*?\}\s*?\)/g, function(match){return match+':await()'});
+      script.code = script.code.replaceAll(/fetch\(\s*?\{([^¬]|¬)*?\}\s*?\)/g, function(match){return match+':await()'});
       lua = await createLegacyLua(doc, document.getElementById('bussinga').checked, stdout);
     } else {
       stdout(`Unknwon version: ${script.version} for: ${script.src}`, 'error');
@@ -202,5 +202,5 @@ document.getElementById('sned').onclick = function(){
   window.luaEngine[Number(document.getElementById('ctx'))].doString(document.getElementById('code'))
 };
 document.getElementById('code').oninput = function(event){
-  event.target.setAttribute('rows', Math.min(Math.max(event.target.value.split('\n').length, 1), 6));
+  event.target.setAttribute('rows', Math.max(event.target.value.split('\n').length, 1));
 };
