@@ -159,9 +159,9 @@ textarea {
     } else {
       stdout(`Unknwon version: ${script.version} for: ${script.src}`, 'error');
     }
-    window.luaEngine.push(lua);
+    window.luaEngine.push([lua, script.version]);
     let i = 0;
-    document.getElementById('ctx').innerHTML = window.luaEngine.map(r=>{return`<option value="${i}">${i}</option>`;i++});
+    document.getElementById('ctx').innerHTML = window.luaEngine.map(r=>{return`<option value="${i}">${i} (${r[1]})</option>`;i++});
     try {
       await lua.doString(script.code);
     } catch(err) {
@@ -199,7 +199,7 @@ window.view = view;
 
 // Console run
 document.getElementById('sned').onclick = function(){
-  window.luaEngine[Number(document.getElementById('ctx').value)].doString(document.getElementById('code').value);
+  window.luaEngine[Number(document.getElementById('ctx').value)][0].doString(document.getElementById('code').value);
 };
 document.getElementById('code').oninput = function(event){
   event.target.setAttribute('rows', Math.max(event.target.value.split('\n').length, 1));

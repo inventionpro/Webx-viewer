@@ -30,7 +30,7 @@ const rules = {
   margin_bottom: 'size',
   margin_left: 'size',
 
-  border_style: 'not-implemented',
+  border_style: 'border-style',
   border_color: 'color',
   border_width: 'size',
   border_radius: 'size',
@@ -58,14 +58,16 @@ function handleRule(rule, value) {
       if (Number.isNaN(Number(value))) return `invalid-property: ${value} for ${rule}`;
       value = constrainNumber(0, Number(value), 1);
       break;
+    case 'border-style':
+      if (!['none','hidden','dotted','dashed','solid','double','groove','ridge','inset','outset'].includes(value.toLowerCase())) return `invalid-property: ${value} for ${rule}`;
+      value = value.toLowerCase();
+      break;
   }
   return `${rule}: ${value}`;
 }
 
 export function build(rules) {
-  return Object.keys(rules).map(k=>{
-    return `${k} {
+  return Object.keys(rules).map(k=>`${k} {
   ${Object.keys(rules[k]).map(r=>handleRule(r, rules[k][r])).join(';\n  ')+';'}
-}`;
-  });
+}`).join('\n');
 }
