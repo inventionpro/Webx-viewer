@@ -1,7 +1,8 @@
 const rules = {
-  direction: 'not-implemented',
+  direction: 'direction',
   gap: 'size',
   align_items: 'not-implemented',
+  wrap: 'not-implemented',
 
   width: 'size',
   height: 'size',
@@ -12,13 +13,11 @@ const rules = {
   line_height: 'size',
 
   underline: 'not-implemented',
-  underline_color: 'color',
+  underline_color: 'color-deco',
   overline: 'not-implemented',
-  overline_color: 'color',
+  overline_color: 'color-deco',
   strikethrough: 'not-implemented',
-  strikethrough_color: 'color',
-
-  wrap: 'not-implemented',
+  strikethrough_color: 'color-deco',
 
   color: 'color',
   background_color: 'color',
@@ -54,6 +53,11 @@ function handleRule(rule, value) {
     case 'color':
       if (!(/#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})/m).test(value)) return `invalid-property: ${value} for ${rule}`;
       break;
+    case 'color-deco':
+      if (!(/#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})/m).test(value)) return `invalid-property: ${value} for ${rule}`;
+      return`text-decoration-line: ${rulex.split('_')[0].replace('strikethrough','line-through')};
+  text-decoration-color: ${value};`;
+      break;
     case 'opacity':
       if (Number.isNaN(Number(value))) return `invalid-property: ${value} for ${rule}`;
       value = constrainNumber(0, Number(value), 1);
@@ -61,6 +65,10 @@ function handleRule(rule, value) {
     case 'border-style':
       if (!['none','hidden','dotted','dashed','solid','double','groove','ridge','inset','outset'].includes(value.toLowerCase())) return `invalid-property: ${value} for ${rule}`;
       value = value.toLowerCase();
+      break;
+    case 'direction':
+      if (!['row','column'].includes(value.toLowerCase())) return `invalid-property: ${value} for ${rule}`;
+      rule = 'flex-direction';
       break;
   }
   return `${rule}: ${value}`;

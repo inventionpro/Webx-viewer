@@ -88,16 +88,19 @@ button:hover {
   } else {
     default_style.innerHTML = `/* Napture default css */
 body {
+  font-family: system-ui, Lexend, Arial, sans-serif;
+  color: #F7F7F7;
+  background-color: #2C2C2C;
+}
+body, div {
   display: flex;
   gap: 10px;
   flex-direction: column;
   align-items: self-start;
-  font-family: system-ui, Lexend, Arial, sans-serif;
-  background-color: #2C2C2C;
 }
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, p {
  font-weight: normal;
- margin: 2px;
+ margin: 0px;
 }
 h1 { font-size: 24pt; }
 h2 { font-size: 22pt; }
