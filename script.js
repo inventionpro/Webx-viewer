@@ -160,6 +160,8 @@ textarea {
       stdout(`Unknwon version: ${script.version} for: ${script.src}`, 'error');
     }
     window.luaEngine.push(lua);
+    let i = 0;
+    document.getElementById('ctx').innerHTML = window.luaEngine.map(r=>{return`<option value="${i}">${i}</option>`;i++});
     try {
       await lua.doString(script.code);
     } catch(err) {
@@ -167,8 +169,6 @@ textarea {
       stdout(err.message, 'error');
     }
   });
-  let i = 0;
-  document.getElementById('ctx').innerHTML = window.luaEngine.map(r=>{return`<option value="${i}">${i}</option>`;i++});
 }
 
 function view(direct) {

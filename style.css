@@ -28,13 +28,14 @@ dialog {
 #console {
   flex-direction: column;
   width: 45vw;
-  height: 50vh;
+  max-height: 70vh;
 }
 #console[open] {
   display: flex;
 }
 #stdout {
-  flex: 1;
+  height: 50vh;
+  overflow-y: auto;
 }
 #stdout p {
   margin: 0px;
