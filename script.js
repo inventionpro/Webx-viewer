@@ -73,7 +73,7 @@ button, input, select, option {
   padding-top: 12px;
   padding-bottom: 12px;
 }
-select, option{
+select, option {
   color: black;
   margin: 0;
   padding-top: 8px;
@@ -93,20 +93,17 @@ body {
   /*direction: column;
   align-items: fill;*/
 }
-
 h1 { font-size: 24pt; }
 h2 { font-size: 22pt; }
 h3 { font-size: 20pt; }
 h4 { font-size: 18pt; }
 h5 { font-size: 16pt; }
 h6 { font-size: 14pt; }
-
 a {
   border: none;
   color: #67B7D1;
   text-decoration: underline;
 }
-
 input {
   padding: 5px;
   border-color: #616161;
@@ -127,11 +124,11 @@ textarea {
   doc.head.appendChild(default_style);
   // Page css
   for (let i = 0; i<styles.length; i++) {
-    if (!styles[i].endsWith('.css')) styles[i]='';
+    if (!styles[i].endsWith('.css')) styles[i]=null;
     styles[i] = await bussFetch(ip, styles[i]);
   }
   styles
-    .filter(styl=>styl.length>1)
+    .filter(styl=>styl??false)
     .forEach(styl=>{
       let dstyl = doc.createElement('style');
       if (!document.getElementById('bussinga').checked||!styl.includes('/* bussinga! */')) {
@@ -151,17 +148,18 @@ textarea {
   for (let i = 0; i<scripts.length; i++) {
     scripts[i].code = await bussFetch(ip, scripts[i].src);
   }
+  window.luaEngine = [];
   scripts.forEach(async script => {
     let lua;
     if (script.version==='2') {
       lua = await createV2Lua(doc, stdout);
     } else if (script.version==='legacy') {
-      //script = script.replaceAll(/fetch\(\s*?\{([^¬]|¬)*?\}\s*?\)/g, function(match){return match+':await()'});
+      script = script.replaceAll(/fetch\(\s*?\{([^¬]|¬)*?\}\s*?\)/g, function(match){return match+':await()'});
       lua = await createLegacyLua(doc, document.getElementById('bussinga').checked, stdout);
     } else {
-      stdout('Unknwon version: '+script.version+' for: '+script.src, 'error');
+      stdout(`Unknwon version: ${script.version} for: ${script.src}`, 'error');
     }
-    window.luaEngine = lua;
+    window.luaEngine.push(lua);
     try {
       await lua.doString(script.code);
     } catch(err) {
@@ -169,6 +167,8 @@ textarea {
       stdout(err.message, 'error');
     }
   });
+  let i = 0;
+  document.getElementById('ctx').innerHTML = window.luaEngine.map(r=>{return`<option value="${i}">${i}</option>`;i++});
 }
 
 function view(direct) {
@@ -196,3 +196,11 @@ function view(direct) {
   }
 }
 window.view = view;
+
+// Console run
+document.getElementById('sned').onclick = function(){
+  window.luaEngine[Number(document.getElementById('ctx'))].doString(document.getElementById('code'))
+};
+document.getElementById('code').oninput = function(event){
+  event.target.setAttribute('rows', Math.min(Math.max(event.target.value.split('\n').length, 1), 6));
+};

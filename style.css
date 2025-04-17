@@ -26,8 +26,13 @@ dialog {
 }
 
 #console {
+  display: flex;
+  flex-direction: column;
   width: 45vw;
   height: 50vh;
+}
+#stdout {
+  flex: 1;
 }
 #stdout p {
   margin: 0px;
@@ -39,6 +44,22 @@ dialog {
 }
 #stdout .error {
   color: #d88;
+}
+.in {
+  display: flex;
+  gap: 5px;
+}
+.in textarea {
+  flex: 1;
+  color: #fff;
+  font-size: 125%;
+  border: 2px #888 solid;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  resize: none;
+}
+.in button {
+  margin: 0px;
 }
 
 input, button {
