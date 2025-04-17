@@ -14,9 +14,8 @@
       <button onclick="toggleConsole()">Console</button>
       <dialog id="console">
         <button onclick="this.parentElement.close()" class="modal-close">x</button>
-        <div id="stdout">
-          <p>Console:</p>
-        </div>
+        <p style="margin:2px 0px">Console:</p>
+        <div id="stdout"></div>
         <div class="in">
           <select id="ctx"></select>
           <textarea id="code" rows="1"></textarea>

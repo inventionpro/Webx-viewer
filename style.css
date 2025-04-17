@@ -34,6 +34,8 @@ dialog {
   display: flex;
 }
 #stdout {
+  display: flex;
+  flex-direction: column-reverse;
   height: 50vh;
   overflow-y: auto;
 }

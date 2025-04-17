@@ -8,7 +8,7 @@ import { build as htmlbuilder } from './builder/html.js';
 import { build as cssbuilder } from './builder/css.js';
 
 function stdout(text, type='') {
-  document.getElementById('stdout').innerHTML += `<p class="${type}">${text.replaceAll('<','&lt;')}</p>`;
+  document.getElementById('stdout').insertAdjacentHTML('afterbegin', `<p class="${type}">${text.replaceAll('<','&lt;')}</p>`);
 }
 
 function bussFetch(ip, path) {
@@ -199,7 +199,7 @@ window.view = view;
 
 // Console run
 document.getElementById('sned').onclick = function(){
-  window.luaEngine[Number(document.getElementById('ctx'))].doString(document.getElementById('code'))
+  window.luaEngine[Number(document.getElementById('ctx').value)].doString(document.getElementById('code').value);
 };
 document.getElementById('code').oninput = function(event){
   event.target.setAttribute('rows', Math.max(event.target.value.split('\n').length, 1));
