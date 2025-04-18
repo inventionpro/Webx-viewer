@@ -7,6 +7,7 @@ function normalizeIp(ip, path) {
   if (ip.includes('github.com')) {
     ip = ip.replace('github.com','raw.githubusercontent.com')+'/main/'+path;
   } else {
+    if (path==='index.html') path = '/';
     ip = (new URL(path, ip)).href;
   }
   return ip;
@@ -32,7 +33,7 @@ function convert(l, ip) {
     let inner = '';
     let scri = [];
     let styl = [];
-    convert(e.content).forEach(t => {
+    convert(e.content, ip).forEach(t => {
       inner += t[0];
       scri.push(t[1]);
       styl.push(t[2]);
@@ -41,6 +42,6 @@ function convert(l, ip) {
   })
 }
 
-export function build(tree) {
-  return convert(tree);
+export function build(tree, ip) {
+  return convert(tree, ip);
 }

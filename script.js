@@ -17,6 +17,7 @@ function bussFetch(ip, path) {
   if (ip.includes('github.com')) {
     ip = ip.replace('github.com','raw.githubusercontent.com')+'/main/'+path;
   } else {
+    if (path==='index.html') path = '/';
     ip = (new URL(path, ip)).href;
   }
   return new Promise((resolve, reject) => {
