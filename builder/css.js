@@ -47,27 +47,26 @@ function handleRule(rule, value) {
   value = value.trim();
   switch (rules[rulex]) {
     case 'size':
-      if (!(/[0-9]+(px|pt)?/m).test(value)) return `invalid-property: ${value} for ${rule}`;
+      if (!(/[0-9]+(px|pt)?/m).test(value)) return `invalid-value: ${value} for ${rule}`;
       if (!(/px|pt/).test(value)) value+='px';
       break;
     case 'color':
-      if (!(/#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})/m).test(value)) return `invalid-property: ${value} for ${rule}`;
+      if (!(/#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})/m).test(value)) return `invalid-value: ${value} for ${rule}`;
       break;
     case 'color-deco':
-      if (!(/#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})/m).test(value)) return `invalid-property: ${value} for ${rule}`;
+      if (!(/#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})/m).test(value)) return `invalid-value: ${value} for ${rule}`;
       return`text-decoration-line: ${rulex.split('_')[0].replace('strikethrough','line-through')};
   text-decoration-color: ${value};`;
-      break;
     case 'opacity':
-      if (Number.isNaN(Number(value))) return `invalid-property: ${value} for ${rule}`;
+      if (Number.isNaN(Number(value))) return `invalid-value: ${value} for ${rule}`;
       value = constrainNumber(0, Number(value), 1);
       break;
     case 'border-style':
-      if (!['none','hidden','dotted','dashed','solid','double','groove','ridge','inset','outset'].includes(value.toLowerCase())) return `invalid-property: ${value} for ${rule}`;
+      if (!['none','hidden','dotted','dashed','solid','double','groove','ridge','inset','outset'].includes(value.toLowerCase())) return `invalid-value: ${value} for ${rule}`;
       value = value.toLowerCase();
       break;
     case 'direction':
-      if (!['row','column'].includes(value.toLowerCase())) return `invalid-property: ${value} for ${rule}`;
+      if (!['row','column'].includes(value.toLowerCase())) return `invalid-value: ${value} for ${rule}`;
       rule = 'flex-direction';
       break;
   }

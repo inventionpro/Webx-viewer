@@ -9,6 +9,8 @@ export function parse(content) {
       // Selectors
       let selector = rule.split('{')[0].trim();
       selector = selector.split(',').map(s=>{
+        s = s.replaceAll(/\.|\#/g, '').trim();
+        if (s==='*') return '*';
         return `${s}, .${s}`;
       });
       // Properties
