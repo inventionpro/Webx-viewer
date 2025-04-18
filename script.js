@@ -7,7 +7,9 @@ import { parse as cssparser } from './parsers/css.js';
 import { build as htmlbuilder } from './builder/html.js';
 import { build as cssbuilder } from './builder/css.js';
 
+let has_stdout = !!document.getElementById('stdout');
 function stdout(text, type='') {
+  if (!has_stdout) return;
   document.getElementById('stdout').insertAdjacentHTML('afterbegin', `<p class="${type}">${text.replaceAll('<','&lt;')}</p>`);
 }
 
@@ -27,6 +29,7 @@ function bussFetch(ip, path) {
 async function load(ip, html, scripts, styles) {
   let iframe = document.querySelector('iframe');
   let doc = iframe.contentDocument;
+  let has_console = !!document.getElementById('sned');
 
   doc.querySelector('html').innerHTML = html;
 
@@ -177,9 +180,11 @@ hr {
     } else {
       stdout(`Unknwon version: ${script.version} for: ${script.src}`, 'error');
     }
-    window.luaEngine.push([lua, script.version]);
-    let i = 0;
-    document.getElementById('ctx').innerHTML = window.luaEngine.map(r=>{return`<option value="${i}">${i} (${r[1]})</option>`;i++});
+    if (has_console) {
+      window.luaEngine.push([lua, script.version]);
+      let i = -1;
+      document.getElementById('ctx').innerHTML = window.luaEngine.map(r=>{i++;return`<option value="${i}">${i} (${r[1]})</option>`}).join('');
+    }
     try {
       await lua.doString(script.code);
     } catch(err) {
@@ -216,9 +221,11 @@ function view(direct) {
 window.view = view;
 
 // Console run
-document.getElementById('sned').onclick = function(){
-  window.luaEngine[Number(document.getElementById('ctx').value)][0].doString(document.getElementById('code').value);
-};
-document.getElementById('code').oninput = function(event){
-  event.target.setAttribute('rows', Math.max(event.target.value.split('\n').length, 1));
-};
+if (document.getElementById('sned')) {
+  document.getElementById('sned').onclick = function(){
+    window.luaEngine[Number(document.getElementById('ctx').value)][0].doString(document.getElementById('code').value);
+  };
+  document.getElementById('code').oninput = function(event){
+    event.target.setAttribute('rows', Math.max(event.target.value.split('\n').length, 1));
+  };
+}
