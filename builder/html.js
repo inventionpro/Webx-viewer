@@ -22,7 +22,7 @@ function convert(l, ip) {
       return ['', [], [e.attributes?.href??'']];
     }
     if (e.name === 'img') {
-      e.attributes?.src = normalizeIp(ip, e.attributes?.src);
+      e.attributes.src = normalizeIp(ip, e.attributes?.src);
       return [`<img ${attr(e.attributes)}>`, [], []]
     }
     if ((typeof e.content)==='string') {
