@@ -3,17 +3,32 @@ function attr(o) {
   return Object.keys(o).map(t=>allowed.includes(t)?`${t}="${o[t]}"`:'').join(' ')
 }
 
-function convert(l) {
+function normalizeIp(ip, path) {
+  if (ip.includes('github.com')) {
+    ip = ip.replace('github.com','raw.githubusercontent.com')+'/main/'+path;
+  } else {
+    ip = (new URL(path, ip)).href;
+  }
+  return ip;
+};
+
+function convert(l, ip) {
   return l.map(e=>{
+    // Special cases
     if (e.name === 'script') {
       return ['', [{src: e.attributes?.src??'', version: e.attributes?.version??'legacy'}], []];
     }
     if (e.name === 'link') {
       return ['', [], [e.attributes?.href??'']];
     }
+    if (e.name === 'img') {
+      e.attributes?.src = normalizeIp(ip, e.attributes?.src);
+      return [`<img ${attr(e.attributes)}>`, [], []]
+    }
     if ((typeof e.content)==='string') {
       return [`<${e.name} ${attr(e.attributes)}>${e.content}</${e.name}>`, [], []]
     }
+    // Get inner elements
     let inner = '';
     let scri = [];
     let styl = [];

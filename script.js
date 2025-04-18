@@ -14,7 +14,11 @@ function stdout(text, type='') {
 }
 
 function bussFetch(ip, path) {
-  if (ip.includes('github.com')) ip = ip.replace('github.com','raw.githubusercontent.com')+'/main/'+path;
+  if (ip.includes('github.com')) {
+    ip = ip.replace('github.com','raw.githubusercontent.com')+'/main/'+path;
+  } else {
+    ip = (new URL(path, ip)).href;
+  }
   return new Promise((resolve, reject) => {
     try {
       fetch(ip)
@@ -198,10 +202,12 @@ function view(direct) {
   let iframe = document.querySelector('iframe');
   if (direct) {
     iframe.onload = async() => {
-      let page = await bussFetch(document.getElementById('url').value, 'index.html');
+      let ip = document.getElementById('url').value;
+      if (!ip.includes('://')) ip = 'https://'+ip;
+      let page = await bussFetch(ip, 'index.html');
       let tree = htmlparser(page);
-      let build = htmlbuilder(tree);
-      load(document.getElementById('url').value, ...build[0])
+      let build = htmlbuilder(tree, ip);
+      load(ip, ...build[0])
     };
     iframe.contentDocument.location.reload();
   } else {
@@ -211,7 +217,7 @@ function view(direct) {
         iframe.onload = async() => {
           let page = await bussFetch(res.ip, 'index.html');
           let tree = htmlparser(page);
-          let build = htmlbuilder(tree);
+          let build = htmlbuilder(tree, res.ip);
           load(res.ip, ...build[0]);
         };
         iframe.contentDocument.location.reload();
