@@ -14,9 +14,9 @@
       <script>
         let query = {};
         location.search.replace('?','').split('&').forEach(p=>query[p.split('=')[0]]=p.split('=')[1]);
-        document.getElementById('url') = query.url??'';
-        document.getElementById('bussinga') = Boolean(query.bussinga)??false;
-        document.getElementById('dns') = query.dns??'https://dns-one.webxplus.org/';
+        document.getElementById('url').value = query.url??'';
+        document.getElementById('bussinga').checked = Boolean(query.bussinga)??false;
+        document.getElementById('dns').value = query.dns??'https://dns-one.webxplus.org/';
       </script>
     </div>
     <iframe></iframe>
