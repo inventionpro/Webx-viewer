@@ -25,6 +25,7 @@ function bussFetch(ip, path) {
       fetch(ip)
         .then(res=>res.text())
         .then(res=>resolve(res))
+        .catch(err=>reject(err));
     } catch(err) {
       reject(err);
     }

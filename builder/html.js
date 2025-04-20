@@ -23,7 +23,7 @@ function convert(l, ip) {
       return ['', [], [e.attributes?.href??'']];
     }
     if (e.name === 'img') {
-      e.attributes.src = normalizeIp(ip, e.attributes?.src);
+      if (!e.attributes?.src?.includes('://'))e.attributes.src = normalizeIp(ip, e.attributes?.src);
       return [`<img ${attr(e.attributes)}>`, [], []]
     }
     if ((typeof e.content)==='string') {
