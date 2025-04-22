@@ -62,6 +62,14 @@ export async function createLegacyLua(doc, bussinga, stdout) {
   await lua.global.set('_setTimeout', (callback) => {
     setTimeout(callback, 0);
   });
+  await lua.global.set('_returner', (callback) => {
+    let val;
+    function call(value) {
+      val = value;
+    }
+    callback(call);
+    return val;
+  });
   await lua.global.set('_fetch', async(o) => {
     // TODO: add headers
     let req = await fetch(o.url, {
@@ -88,11 +96,13 @@ export async function createLegacyLua(doc, bussinga, stdout) {
   }
 
   await lua.doString(`function fetch(opts)
-  _setTimeout(function()
-    coroutine.wrap(function()
-      local response = _fetch(opts):await()
-      return response
-    end)()
+  return _returner(function(call)
+    _setTimeout(function()
+      coroutine.wrap(function()
+        local response = _fetch(opts):await()
+        call(response)
+      end)()
+    end)
   end)
 end`);
 
