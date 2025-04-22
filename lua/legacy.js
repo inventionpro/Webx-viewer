@@ -87,10 +87,10 @@ export async function createLegacyLua(doc, bussinga, stdout) {
     });
   }
 
-  await lua.doString(`function fetch(...)
+  await lua.doString(`function fetch(opts)
   _setTimeout(function()
     coroutine.wrap(function()
-      local response = _fetch(...):await()
+      local response = _fetch(opts):await()
       return response
     end)()
   end)
