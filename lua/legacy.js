@@ -59,6 +59,9 @@ export async function createLegacyLua(doc, bussinga, stdout) {
       return HTMLElementFunctionsFor(doc.querySelector(clas)??doc.querySelector('.'+clas), bussinga);
     }
   });
+  await lua.global.set('_setTimeout', (callback) => {
+    setTimeout(callback, 0);
+  });
   await lua.global.set('_fetch', async(o) => {
     // TODO: add headers
     let req = await fetch(o.url, {
@@ -85,13 +88,12 @@ export async function createLegacyLua(doc, bussinga, stdout) {
   }
 
   await lua.doString(`function fetch(...)
-  local fec = _fetch(...)
-
-  if fec.await then
-    fec = fec:await()
-  end
-
-  return fec
+  _setTimeout(function()
+    coroutine.wrap(function()
+      local response = _fetch(...):await()
+      return response
+    end)()
+  end)
 end`);
 
   return lua;
