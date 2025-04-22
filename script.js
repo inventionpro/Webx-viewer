@@ -231,7 +231,12 @@ window.view = view;
 // Console run
 if (document.getElementById('sned')) {
   document.getElementById('sned').onclick = function(){
-    window.luaEngine[Number(document.getElementById('ctx').value)][0].doString(document.getElementById('code').value);
+    try {
+      window.luaEngine[Number(document.getElementById('ctx').value)][0].doString(document.getElementById('code').value);
+    } catch(err) {
+      console.log(err);
+      stdout(err.message, 'error');
+    }
   };
   document.getElementById('code').oninput = function(event){
     event.target.setAttribute('rows', Math.max(event.target.value.split('\n').length, 1));
