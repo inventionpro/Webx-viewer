@@ -59,7 +59,7 @@ export async function createLegacyLua(doc, bussinga, stdout) {
       return HTMLElementFunctionsFor(doc.querySelector(clas)??doc.querySelector('.'+clas), bussinga);
     }
   });
-  await lua.global.set('fetch', async(o) => {
+  await lua.global.set('_fetch', async(o) => {
     // TODO: add headers
     let req = await fetch(o.url, {
       method: o.method??'GET',
@@ -83,6 +83,16 @@ export async function createLegacyLua(doc, bussinga, stdout) {
       true_browser: "wxv"
     });
   }
+
+  await lua.doString(`function fetch(...)
+  local fec = _fetch(...)
+
+  if fec.await then
+    fec = fec:await()
+  end
+
+  return fec
+end`);
 
   return lua;
 }

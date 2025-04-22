@@ -181,7 +181,7 @@ hr {
     if (script.version==='2') {
       lua = await createV2Lua(doc, stdout);
     } else if (script.version==='legacy') {
-      script.code = script.code.replaceAll(/fetch\(\s*?\{([^¬]|¬)*?\}\s*?\)/g, function(match){return match+':await()'});
+      //script.code = script.code.replaceAll(/fetch\(\s*?\{([^¬]|¬)*?\}\s*?\)/g, function(match){return match+':await()'});
       lua = await createLegacyLua(doc, document.getElementById('bussinga').checked, stdout);
     } else {
       stdout(`Unknwon version: ${script.version} for: ${script.src}`, 'error');
