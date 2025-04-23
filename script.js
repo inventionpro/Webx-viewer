@@ -176,6 +176,8 @@ hr {
     scripts[i].code = await bussFetch(ip, scripts[i].src);
   }
   window.luaEngine = [];
+  window.fetchCache = {};
+  window.fetchwait = 0;
   scripts.forEach(async script => {
     let lua;
     if (script.version==='2') {

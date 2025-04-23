@@ -1,4 +1,20 @@
-function HTMLElementFunctionsFor(elem, bussinga) {
+function workaround(func, args, stdout) {
+  try {
+    func(args);
+  } catch(err) {
+    if (err.toString().includes('C-call boundary')) {
+      stdout('[Lua]: Doing a workaround for on_* to fetch', 'warn');
+      let int = setInterval(() => {
+        if (window.fetchwait<=0) {
+          workaround(func, args, stdout);
+          clearInterval(int);
+        }
+      }, 1);
+    }
+  }
+}
+
+function HTMLElementFunctionsFor(elem, bussinga, stdout) {
   let tag = elem.tagName.toLowerCase();
   let base = {
     get_contents: () => elem.value || elem.checked || elem.textContent,
@@ -12,24 +28,24 @@ function HTMLElementFunctionsFor(elem, bussinga) {
     set_opacity: (opa) => elem.style.opacity = opa,
 
     on_click: (callback) => {
-      elem.addEventListener('click', async() => {
-        await callback().catch(console.error);
+      elem.addEventListener('click', () => {
+        workaround(callback);
       });
     },
     on_input: (callback) => {
-      elem.addEventListener('keyup', async() => {
-        await callback(elem.value || elem.checked).catch(console.error);
+      elem.addEventListener('keyup', () => {
+        workaround(callback, (elem.value || elem.checked));
       });
-      elem.addEventListener('change', async() => {
-        await callback(elem.value || elem.checked).catch(console.error);
+      elem.addEventListener('change', () => {
+        workaround(callback, (elem.value || elem.checked));
       });
     },
     on_submit: (callback) => {
-      elem.addEventListener('submit', async() => {
-        await callback(elem.value || elem.checked);
+      elem.addEventListener('submit', () => {
+        workaround(callback, (elem.value || elem.checked));
       });
-      elem.addEventListener('keyup', async(evt) => {
-        if (evt.key == "Enter") await callback(elem.value || elem.checked);
+      elem.addEventListener('keyup', (evt) => {
+        if (evt.key == "Enter") workaround(callback, (elem.value || elem.checked));
       });
     }
   };
@@ -54,24 +70,33 @@ export async function createLegacyLua(doc, bussinga, stdout) {
   await lua.global.set('get', (clas, all=false) => {
     clas = clas.trim();
     if (all) {
-      return Array.from(doc.querySelector(clas)?doc.querySelectorAll(clas):doc.querySelectorAll('.'+clas)).map(el=>HTMLElementFunctionsFor(el, bussinga));
+      return Array.from(doc.querySelector(clas)?doc.querySelectorAll(clas):doc.querySelectorAll('.'+clas))
+        .map(el=>HTMLElementFunctionsFor(el, bussinga, stdout));
     } else {
-      return HTMLElementFunctionsFor(doc.querySelector(clas)??doc.querySelector('.'+clas), bussinga);
+      return HTMLElementFunctionsFor(doc.querySelector(clas)??doc.querySelector('.'+clas), bussinga, stdout);
     }
   });
-  await lua.global.set('_fetch', async(o) => {
-    // TODO: add headers
-    let req = await fetch(o.url, {
-      method: o.method??'GET',
-      body: o.body
-    });
-    let body = await req.text();
-    try {
-      body = JSON.parse(body)
-    } catch(err) {
-      // Ignore :3
-    }
-    return body;
+  await lua.global.set('__fetch', (o) => {
+    let key = JSON.stringify(o);
+    if (fetchCache[key]) return fetchCache[key];
+
+    return new Promise(async(resolve, reject)=>{
+      // TODO: add headers
+      window.fetchwait += 1;
+      let req = await fetch(o.url, {
+        method: o.method??'GET',
+        body: o.body
+      });
+      let body = await req.text();
+      try {
+        body = JSON.parse(body)
+      } catch(err) {
+        // Ignore :3
+      }
+      fetchCache[key] = body;
+      window.fetchwait -= 1;
+      resolve(body);
+    })
   });
   // Bussinga globals
   if (bussinga) {
@@ -85,7 +110,10 @@ export async function createLegacyLua(doc, bussinga, stdout) {
   }
 
   await lua.doString(`function fetch(opts)
-  local response = _fetch(opts):await()
+  local response = __fetch(opts)
+  if response.await then
+    response = response:await()
+  end
   return response
 end`);
 
