@@ -29,23 +29,23 @@ function HTMLElementFunctionsFor(elem, bussinga, stdout) {
 
     on_click: (callback) => {
       elem.addEventListener('click', () => {
-        workaround(callback);
+        workaround(callback, undefined, stdout);
       });
     },
     on_input: (callback) => {
       elem.addEventListener('keyup', () => {
-        workaround(callback, (elem.value || elem.checked));
+        workaround(callback, (elem.value || elem.checked), stdout);
       });
       elem.addEventListener('change', () => {
-        workaround(callback, (elem.value || elem.checked));
+        workaround(callback, (elem.value || elem.checked), stdout);
       });
     },
     on_submit: (callback) => {
       elem.addEventListener('submit', () => {
-        workaround(callback, (elem.value || elem.checked));
+        workaround(callback, (elem.value || elem.checked), stdout);
       });
       elem.addEventListener('keyup', (evt) => {
-        if (evt.key == "Enter") workaround(callback, (elem.value || elem.checked));
+        if (evt.key == "Enter") workaround(callback, (elem.value || elem.checked), stdout);
       });
     }
   };
@@ -81,18 +81,23 @@ export async function createLegacyLua(doc, bussinga, stdout) {
     if (fetchCache[key]) return fetchCache[key];
 
     return new Promise(async(resolve, reject)=>{
-      // TODO: add headers
       window.fetchwait += 1;
-      let req = await fetch(o.url, {
-        method: o.method??'GET',
-        body: o.body
-      });
+      // TODO: add headers
+      let opts = {
+        method: o.method?.toUpperCase()??'GET'
+      };
+      if (!['GET','HEAD'].includes(opts.method)) opts.body = o.body;
+
+      // Fetch
+      let req = await fetch(o.url, opts);
       let body = await req.text();
       try {
         body = JSON.parse(body)
       } catch(err) {
         // Ignore :3
       }
+
+      // Save and respond
       fetchCache[key] = body;
       window.fetchwait -= 1;
       resolve(body);
