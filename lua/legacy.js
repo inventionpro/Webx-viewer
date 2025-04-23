@@ -12,24 +12,24 @@ function HTMLElementFunctionsFor(elem, bussinga) {
     set_opacity: (opa) => elem.style.opacity = opa,
 
     on_click: (callback) => {
-      elem.addEventListener('click', () => {
-        callback().catch(console.error);
+      elem.addEventListener('click', async() => {
+        await callback().catch(console.error);
       });
     },
     on_input: (callback) => {
-      elem.addEventListener('keyup', () => {
-        callback(elem.value || elem.checked).catch(console.error);
+      elem.addEventListener('keyup', async() => {
+        await callback(elem.value || elem.checked).catch(console.error);
       });
-      elem.addEventListener('change', () => {
-        callback(elem.value || elem.checked).catch(console.error);
+      elem.addEventListener('change', async() => {
+        await callback(elem.value || elem.checked).catch(console.error);
       });
     },
     on_submit: (callback) => {
-      elem.addEventListener('submit', () => {
-        callback(elem.value || elem.checked);
+      elem.addEventListener('submit', async() => {
+        await callback(elem.value || elem.checked);
       });
-      elem.addEventListener('keyup', (evt) => {
-        if (evt.key == "Enter") callback(elem.value || elem.checked);
+      elem.addEventListener('keyup', async(evt) => {
+        if (evt.key == "Enter") await callback(elem.value || elem.checked);
       });
     }
   };
@@ -59,17 +59,6 @@ export async function createLegacyLua(doc, bussinga, stdout) {
       return HTMLElementFunctionsFor(doc.querySelector(clas)??doc.querySelector('.'+clas), bussinga);
     }
   });
-  await lua.global.set('_setTimeout', (callback) => {
-    setTimeout(callback, 0);
-  });
-  await lua.global.set('_returner', (callback) => {
-    let val;
-    function call(value) {
-      val = value;
-    }
-    callback(call);
-    return val;
-  });
   await lua.global.set('_fetch', async(o) => {
     // TODO: add headers
     let req = await fetch(o.url, {
@@ -96,14 +85,8 @@ export async function createLegacyLua(doc, bussinga, stdout) {
   }
 
   await lua.doString(`function fetch(opts)
-  return _returner(function(call)
-    _setTimeout(function()
-      coroutine.wrap(function()
-        local response = _fetch(opts):await()
-        call(response)
-      end)()
-    end)
-  end)
+  local response = _fetch(opts):await()
+  return response
 end`);
 
   return lua;
