@@ -65,12 +65,8 @@ hr {
   border: none;
   border-bottom: 1px solid white;
 }
-h1, h2, h3, h4, h5, h6, p, a { margin: 3px; }
-a {
-  color: #50889b;
-  text-decoration: none;
-}
-p, a, select { font-size: x-small; }
+h1, h2, h3, h4, h5, h6, p, a, ul, ol { margin: 3px; }
+a { color: #50889b; }
 button, input, select, option {
   background-color: #393838;
   font-family: Noto Sans;
@@ -100,6 +96,7 @@ body {
   font-family: system-ui, Lexend, Arial, sans-serif;
   color: #F7F7F7;
   background-color: #2C2C2C;
+  word-break: break-word;
 }
 body, div {
   display: flex;
@@ -117,11 +114,7 @@ h3 { font-size: 20pt; }
 h4 { font-size: 18pt; }
 h5 { font-size: 16pt; }
 h6 { font-size: 14pt; }
-a {
-  border: none;
-  color: #67B7D1;
-  text-decoration: underline;
-}
+a { color: #67B7D1; }
 button {
   color: #F6F6F6;
   font-weight: bold;
@@ -163,9 +156,7 @@ hr {
           stdout('[Warn] Site uses bussinga css, but you are not using bussinga mode.', 'warn');
         }
         let style = cssparser(styl);
-        console.log(style);
         styl = cssbuilder(style);
-        console.log(styl);
       }
       dstyl.innerHTML = styl;
       doc.head.appendChild(dstyl);
