@@ -33,7 +33,7 @@ function bussFetch(ip, path) {
   })
 };
 
-async function load(ip, html, scripts, styles) {
+async function load(ip, query, html, scripts, styles) {
   let iframe = document.querySelector('iframe');
   let doc = iframe.contentDocument;
   let has_console = !!document.getElementById('sned');
@@ -172,6 +172,7 @@ hr {
   scripts.forEach(async script => {
     let lua;
     let options = {
+      query,
       bussinga: document.getElementById('bussinga').checked,
       proxy: document.getElementById('proxy').checked
     };
@@ -202,21 +203,28 @@ function view(direct) {
     iframe.onload = async() => {
       let ip = document.getElementById('url').value;
       if (!ip.includes('://')) ip = 'https://'+ip;
+      ip = ip.split('?');
+      let query = ip[1];
+      ip = ip[0];
       let page = await bussFetch(ip, 'index.html');
       let tree = htmlparser(page);
       let build = htmlbuilder(tree, ip);
-      load(ip, ...build[0])
+      load(ip, query, ...build[0])
     };
     iframe.contentDocument.location.reload();
   } else {
-    fetch(new URL(`/domain/${document.getElementById('url').value.replace('.','/')}`, document.getElementById('dns').value))
+    let ip = document.getElementById('url').value;
+    ip = ip.split('?');
+    let query = ip[1];
+    ip = ip[0];
+    fetch(new URL(`/domain/${ip.replace('.','/')}`, document.getElementById('dns').value))
       .then(async res => {
         res = await res.json();
         iframe.onload = async() => {
           let page = await bussFetch(res.ip, 'index.html');
           let tree = htmlparser(page);
           let build = htmlbuilder(tree, res.ip);
-          load(res.ip, ...build[0]);
+          load(res.ip, query, ...build[0]);
         };
         iframe.contentDocument.location.reload();
       })

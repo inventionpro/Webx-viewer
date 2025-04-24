@@ -63,6 +63,13 @@ export async function createLegacyLua(doc, options, stdout) {
   const factory = new wasmoon.LuaFactory();
   const lua = await factory.createEngine();
 
+  let query = {};
+  options.query.split('&').map(param=>{
+    if (param.length<1) return;
+    param = param.split('=');
+    query[param.shift()] = param.join('=');
+  });
+
   // Lua global functions
   await lua.global.set('print', (text) => {
     stdout(`[Log]: ${text}`);
@@ -109,8 +116,7 @@ export async function createLegacyLua(doc, options, stdout) {
   if (options.bussinga) {
     await lua.global.set('window', {
       location: document.getElementById('url').value,
-      // TODO: What is query supposed to be
-      //query: q,
+      query: query,
       browser: "bussinga",
       true_browser: "wxv"
     });
