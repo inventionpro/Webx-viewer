@@ -43,8 +43,8 @@ async function load(ip, query, html, scripts, styles) {
   // Default css
   let default_style = doc.createElement('style');
   if (document.getElementById('bussinga').checked) {
-    default_style.innerHTML = `/* injected by bussinga */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Varela+Round&display=swap');
+    default_style.innerHTML = `/* Bussinga default css */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:ital,wght@0,100..900;1,100..600&display=swap');
 * {
   box-sizing: border-box;
   flex-shrink: 0;
@@ -54,7 +54,7 @@ body {
   word-break: break-word;
   width: calc(100vw - 24px);
   min-height: calc(100vh - 24px);
-  font-family: Noto Sans;
+  font-family: Lexend, Arial, sans-serif;
   padding: 12px;
   margin: 0px;
   background-color: #252524;
@@ -93,8 +93,9 @@ button:hover {
 }`;
   } else {
     default_style.innerHTML = `/* Napture default css */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:ital,wght@0,100..900;1,100..600&display=swap');
 body {
-  font-family: system-ui, Lexend, Arial, sans-serif;
+  font-family: Lexend, Arial, sans-serif;
   color: #F7F7F7;
   background-color: #2C2C2C;
   word-break: break-word;

@@ -9,7 +9,7 @@ const rules = {
 
   font_size: 'size',
   font_family: 'not-implemented',
-  font_weight: 'not-implemented',
+  font_weight: 'font-weight',
   line_height: 'size',
 
   underline: 'not-implemented',
@@ -36,6 +36,15 @@ const rules = {
 
   opacity: 'opacity'
 }
+
+const weightnum = {
+  ultralight: '100',
+  light: '200',
+  normal: '300',
+  bold: '400',
+  ultrabold: '500',
+  heavy: '600'
+};
 
 function constrainNumber(min, val, max) {
   return Math.max(Math.min(val, max), min);
@@ -71,7 +80,11 @@ function handleRule(rule, value) {
       break;
     case 'wrap':
       if (!['wrap','nowrap'].includes(value.toLowerCase())) return `invalid-value: ${value} for ${rule}`;
-      rule = 'flex-direction';
+      rule = 'flex-wrap';
+      break;
+    case 'font-weight':
+      if (!['ultralight','light','normal','bold','ultrabold','heavy'].includes(value.toLowerCase())) return `invalid-value: ${value} for ${rule}`;
+      value = weightnum[value.toLowerCase()];
       break;
   }
   return `${rule}: ${value}`;
