@@ -5,7 +5,8 @@ function attr(o) {
 
 function normalizeIp(ip, path) {
   if (ip.includes('github.com')) {
-    ip = ip.replace('github.com','raw.githubusercontent.com')+'/main/'+path;
+    ip = ip.replace('github.com','raw.githubusercontent.com')+(ip.includes('/main/')?'':'/main/')+'/'+path;
+    ip = ip.replaceAll(/\/{2,}/g,'/').replace(':/','://');
   } else {
     if (path==='index.html') path = '/';
     ip = (new URL(path, ip)).href;
