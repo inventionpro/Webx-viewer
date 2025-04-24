@@ -67,6 +67,16 @@ export async function createV2Lua(doc, options, stdout) {
   const factory = new wasmoon.LuaFactory();
   const lua = await factory.createEngine();
 
+  let query = {};
+  options.query.split('&').map(param=>{
+    if (param.length<1) return;
+    param = decodeURIComponent(param);
+    param = param.split('=');
+    let key = param.shift().trim();
+    if (key.length<1) return;
+    query[key] = param.join('=').trim();
+  });
+
   // Lua global functions
   await lua.global.set('print', (text) => {
     stdout(`[Log]: ${text}`);
@@ -91,7 +101,7 @@ export async function createV2Lua(doc, options, stdout) {
     let tags = document.getElementsByTagName(tag);
     return all ? Array.from(tags).map(t=>HTMLElementFunctionsFor(t)) : HTMLElementFunctionsFor(tags[0]);
   });
-  await lua.global.set('window', await frozenTable({
+  await lua.global.set('browser', await frozenTable({
     name: 'WXV',
     agent: 'wxv',
     version: '0.1.0',
@@ -102,11 +112,19 @@ export async function createV2Lua(doc, options, stdout) {
       fetch: false
     }
   }));
+  // TODO: make dynamic
+  await lua.global.set('location', await frozenTable({
+    href: 'buss://domain.app',
+    domain: 'domain.app',
+    protocol: 'buss',
+    path: '/',
+    query,
+    rawQuery: '?'+options.query,
+    go: (url)=>{}
+  }));
   /*
   get(selector, all)
 fetch(options)
-browser
-location
 */
 
   return lua;
