@@ -171,11 +171,14 @@ hr {
   window.fetchwait = 0;
   scripts.forEach(async script => {
     let lua;
+    let options = {
+      bussinga: document.getElementById('bussinga').checked,
+      proxy: document.getElementById('proxy').checked
+    };
     if (script.version==='2') {
-      lua = await createV2Lua(doc, stdout);
+      lua = await createV2Lua(doc, options, stdout);
     } else if (script.version==='legacy') {
-      //script.code = script.code.replaceAll(/fetch\(\s*?\{([^¬]|¬)*?\}\s*?\)/g, function(match){return match+':await()'});
-      lua = await createLegacyLua(doc, document.getElementById('bussinga').checked, stdout);
+      lua = await createLegacyLua(doc, options, stdout);
     } else {
       stdout(`Unknwon version: ${script.version} for: ${script.src}`, 'error');
     }

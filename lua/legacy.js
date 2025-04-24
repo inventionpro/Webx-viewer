@@ -59,7 +59,7 @@ function HTMLElementFunctionsFor(elem, bussinga, stdout) {
   return base;
 }
 
-export async function createLegacyLua(doc, bussinga, stdout) {
+export async function createLegacyLua(doc, options, stdout) {
   const factory = new wasmoon.LuaFactory();
   const lua = await factory.createEngine();
 
@@ -71,9 +71,9 @@ export async function createLegacyLua(doc, bussinga, stdout) {
     clas = clas.trim();
     if (all) {
       return Array.from(doc.querySelector(clas)?doc.querySelectorAll(clas):doc.querySelectorAll('.'+clas))
-        .map(el=>HTMLElementFunctionsFor(el, bussinga, stdout));
+        .map(el=>HTMLElementFunctionsFor(el, options.bussinga, stdout));
     } else {
-      return HTMLElementFunctionsFor(doc.querySelector(clas)??doc.querySelector('.'+clas), bussinga, stdout);
+      return HTMLElementFunctionsFor(doc.querySelector(clas)??doc.querySelector('.'+clas), options.bussinga, stdout);
     }
   });
   await lua.global.set('__fetch', (o) => {
@@ -83,13 +83,15 @@ export async function createLegacyLua(doc, bussinga, stdout) {
     return new Promise(async(resolve, reject)=>{
       window.fetchwait += 1;
       // TODO: add headers
+      let url = o.url;
       let opts = {
         method: o.method?.toUpperCase()??'GET'
       };
       if (!['GET','HEAD'].includes(opts.method)) opts.body = o.body;
+      if (options.proxy) url = `https://api.fsh.plus/file?url=${encodeURIComponent(url)}`;
 
       // Fetch
-      let req = await fetch(o.url, opts);
+      let req = await fetch(url, opts);
       let body = await req.text();
       try {
         body = JSON.parse(body)
@@ -104,7 +106,7 @@ export async function createLegacyLua(doc, bussinga, stdout) {
     })
   });
   // Bussinga globals
-  if (bussinga) {
+  if (options.bussinga) {
     await lua.global.set('window', {
       location: document.getElementById('url').value,
       // TODO: What is query supposed to be
