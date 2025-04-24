@@ -204,7 +204,7 @@ function view(direct) {
       let ip = document.getElementById('url').value;
       if (!ip.includes('://')) ip = 'https://'+ip;
       ip = ip.split('?');
-      let query = ip[1];
+      let query = ip[1]??'';
       ip = ip[0];
       let page = await bussFetch(ip, 'index.html');
       let tree = htmlparser(page);
@@ -215,7 +215,7 @@ function view(direct) {
   } else {
     let ip = document.getElementById('url').value;
     ip = ip.split('?');
-    let query = ip[1];
+    let query = ip[1]??'';
     ip = ip[0];
     fetch(new URL(`/domain/${ip.replace('.','/')}`, document.getElementById('dns').value))
       .then(async res => {
