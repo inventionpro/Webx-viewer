@@ -85,7 +85,11 @@ export async function createLegacyLua(doc, options, stdout) {
   });
   await lua.global.set('__fetch', (o) => {
     let key = JSON.stringify(o);
-    if (fetchCache[key]) return fetchCache[key];
+    if (fetchCache[key]) {
+      let val = fetchCache[key];
+      delete fetchCache[key];
+      return val;
+    }
 
     return new Promise(async(resolve, reject)=>{
       window.fetchwait += 1;
