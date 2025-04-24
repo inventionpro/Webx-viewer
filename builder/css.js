@@ -2,7 +2,7 @@ const rules = {
   direction: 'direction',
   gap: 'size',
   align_items: 'not-implemented',
-  wrap: 'not-implemented',
+  wrap: 'wrap',
 
   width: 'size',
   height: 'size',
@@ -67,6 +67,10 @@ function handleRule(rule, value) {
       break;
     case 'direction':
       if (!['row','column'].includes(value.toLowerCase())) return `invalid-value: ${value} for ${rule}`;
+      rule = 'flex-direction';
+      break;
+    case 'wrap':
+      if (!['wrap','nowrap'].includes(value.toLowerCase())) return `invalid-value: ${value} for ${rule}`;
       rule = 'flex-direction';
       break;
   }

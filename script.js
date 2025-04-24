@@ -51,11 +51,12 @@ async function load(ip, query, html, scripts, styles) {
 }
 .query { height: fit-content !important }
 body {
-  width: 100vw;
-  height: 100vh;
+  word-break: break-word;
+  width: calc(100vw - 24px);
+  min-height: calc(100vh - 24px);
   font-family: Noto Sans;
   padding: 12px;
-  margin: 0 !important;
+  margin: 0px;
   background-color: #252524;
   color: white;
 }

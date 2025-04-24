@@ -17,11 +17,13 @@ function workaround(func, args, stdout) {
 function HTMLElementFunctionsFor(elem, bussinga, stdout) {
   let tag = elem.tagName.toLowerCase();
   let base = {
+    get_content: () => elem.value || elem.checked || elem.textContent,
     get_contents: () => elem.value || elem.checked || elem.textContent,
     get_href: () => elem.href,
     get_source: () => elem.src,
     get_opacity: () => elem.style.opacity,
 
+    set_content: (text) => elem[['input','textarea'].includes(tag)?'value':'innerText'] = text,
     set_contents: (text) => elem[['input','textarea'].includes(tag)?'value':'innerText'] = text,
     set_href: (text) => elem.href = text,
     set_source: (src) => elem.src = src,
