@@ -95,10 +95,10 @@ export async function createLegacyLua(doc, options, stdout) {
 
     return new Promise(async(resolve, reject)=>{
       window.fetchwait += 1;
-      // TODO: add headers
       let url = o.url;
       let opts = {
-        method: o.method?.toUpperCase()??'GET'
+        method: o.method?.toUpperCase()??'GET',
+        headers: o.headers??{}
       };
       if (!['GET','HEAD'].includes(opts.method)) opts.body = o.body;
       if (options.proxy) url = `https://api.fsh.plus/file?url=${encodeURIComponent(url)}`;
