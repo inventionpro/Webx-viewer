@@ -112,6 +112,7 @@ export async function createV2Lua(doc, options, stdout) {
       fetch: false
     }
   }));
+  await lua.global.set('global', window.luaGlobal);
   // TODO: make dynamic
   await lua.global.set('location', await frozenTable({
     href: 'buss://domain.app',

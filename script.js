@@ -171,6 +171,7 @@ hr {
   window.luaEngine = [];
   window.fetchCache = {};
   window.fetchwait = 0;
+  window.luaGlobal = {};
   scripts.forEach(async script => {
     let lua;
     let options = {
