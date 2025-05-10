@@ -32,6 +32,19 @@ function bussFetch(ip, path) {
     }
   })
 };
+function getTarget(domain) {
+  return new Promise((resolve, reject)=>{
+    try {
+      domain = domain.toLowerCase().trim().replace(/^.*?:\/\//m,'').split('/')[0].split('?')[0].trim();
+      if (!(/^[a-z0-9\-]*.[a-z0-9\-]*$/m).test(domain)) reject();
+      fetch(new URL(`/domain/${domain.replace('.','/')}`, document.getElementById('dns').value))
+        .then(res=>res.json())
+        .then(res=>resolve(res.ip));
+    } catch(err) {
+      reject(err);
+    }
+  })
+}
 
 async function load(ip, query, html, scripts, styles) {
   let iframe = document.querySelector('iframe');
@@ -200,38 +213,21 @@ hr {
   });
 }
 
-function view(direct) {
+async function view(direct) {
   let iframe = document.querySelector('iframe');
-  if (direct) {
-    iframe.onload = async() => {
-      let ip = document.getElementById('url').value;
-      if (!ip.includes('://')) ip = 'https://'+ip;
-      ip = ip.split('?');
-      let query = ip[1]??'';
-      ip = ip[0];
-      let page = await bussFetch(ip, 'index.html');
-      let tree = htmlparser(page);
-      let build = htmlbuilder(tree, ip);
-      load(ip, query, ...build[0])
-    };
-    iframe.contentDocument.location.reload();
-  } else {
-    let ip = document.getElementById('url').value;
-    ip = ip.split('?');
-    let query = ip[1]??'';
-    ip = ip[0];
-    fetch(new URL(`/domain/${ip.replace('.','/')}`, document.getElementById('dns').value))
-      .then(async res => {
-        res = await res.json();
-        iframe.onload = async() => {
-          let page = await bussFetch(res.ip, 'index.html');
-          let tree = htmlparser(page);
-          let build = htmlbuilder(tree, res.ip);
-          load(res.ip, query, ...build[0]);
-        };
-        iframe.contentDocument.location.reload();
-      })
-  }
+  let ip = document.getElementById('url').value;
+  let query = ip.split('?')[1]??'';
+  let target = ip;
+  if (!direct) target = await getTarget(ip);
+  if (!target.includes('://')) target = 'https://'+target;
+
+  iframe.onload = async() => {
+    let page = await bussFetch(target, 'index.html');
+    let tree = htmlparser(page);
+    let build = htmlbuilder(tree, target);
+    load(target, query, ...build[0]);
+  };
+  iframe.contentDocument.location.reload();
 }
 window.view = view;
 
