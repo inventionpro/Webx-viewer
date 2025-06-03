@@ -10,12 +10,14 @@
     <div style="display:none" aria-hidden="true" inert>
       <input id="url">
       <input id="bussinga" type="checkbox">
+      <input id="proxy" type="checkbox">
       <input id="dns">
       <script>
         let query = {};
         location.search.replace('?','').split('&').forEach(p=>query[p.split('=')[0]]=p.split('=')[1]);
         document.getElementById('url').value = query.url??'';
         document.getElementById('bussinga').checked = query?.bussinga?.toLowerCase()==='true';
+        document.getElementById('proxy').checked = query?.proxy?.toLowerCase()==='true';
         document.getElementById('dns').value = query.dns??'https://dns-one.webxplus.org/';
       </script>
     </div>
