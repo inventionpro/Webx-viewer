@@ -1,19 +1,3 @@
-function workaround(func, args, stdout) {
-  try {
-    func(args);
-  } catch(err) {
-    if (err.toString().includes('C-call boundary')) {
-      stdout('[Lua]: Doing a workaround for on_* to fetch', 'warn');
-      let int = setInterval(() => {
-        if (window.fetchwait<=0) {
-          workaround(func, args, stdout);
-          clearInterval(int);
-        }
-      }, 1);
-    }
-  }
-}
-
 function HTMLElementFunctionsFor(elem, bussinga, stdout) {
   let tag = elem.tagName.toLowerCase();
   let base = {
@@ -85,16 +69,7 @@ export async function createLegacyLua(doc, options, stdout) {
       return HTMLElementFunctionsFor(doc.querySelector(clas)??doc.querySelector('.'+clas), options.bussinga, stdout);
     }
   });
-  await lua.global.set('__fetch', (o) => {
-    let key = JSON.stringify(o);
-    if (fetchCache[key]) {
-      let val = fetchCache[key];
-      delete fetchCache[key];
-      return val;
-    }
-
-    return new Promise(async(resolve, reject)=>{
-      window.fetchwait += 1;
+  await lua.global.set('fetch', async(o) => {
       let url = o.url;
       let opts = {
         method: o.method?.toUpperCase()??'GET',
@@ -113,10 +88,7 @@ export async function createLegacyLua(doc, options, stdout) {
       }
 
       // Save and respond
-      fetchCache[key] = body;
-      window.fetchwait -= 1;
-      resolve(body);
-    })
+      return body;
   });
   // Bussinga globals
   if (options.bussinga) {
@@ -127,13 +99,41 @@ export async function createLegacyLua(doc, options, stdout) {
       true_browser: "wxv"
     });
   }
+  lua.global.set("Promise", {
+    create: (executor) => new Promise(executor),
+    resolve: (val) => Promise.resolve(val),
+    reject: (err) => Promise.reject(err),
+    all: (list) => Promise.all(list)
+  });
 
-  await lua.doString(`function fetch(opts)
-  local response = __fetch(opts)
-  if response.await then
-    response = response:await()
-  end
-  return response
+  await lua.doString(`function async(callback)
+    return function(...)
+        local co = coroutine.create(callback)
+        local safe, result = coroutine.resume(co, ...)
+
+        return Promise.create(function(resolve, reject)
+            local checkresult
+            local step = function()
+                if coroutine.status(co) == "dead" then
+                    local send = safe and resolve or reject
+                    return send(result)
+                end
+
+                safe, result = coroutine.resume(co)
+                checkresult()
+            end
+
+            checkresult = function()
+                if safe and result == Promise.resolve(result) then
+                    result:finally(step)
+                else
+                    step()
+                end
+            end
+
+            checkresult()
+        end)
+    end
 end`);
 
   return lua;
