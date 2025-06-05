@@ -15,23 +15,23 @@ function HTMLElementFunctionsFor(elem, bussinga, stdout) {
 
     on_click: (callback) => {
       elem.addEventListener('click', () => {
-        workaround(callback, undefined, stdout);
+        callback();
       });
     },
     on_input: (callback) => {
       elem.addEventListener('keyup', () => {
-        workaround(callback, (elem.value || elem.checked), stdout);
+        callback(elem.value || elem.checked);
       });
       elem.addEventListener('change', () => {
-        workaround(callback, (elem.value || elem.checked), stdout);
+        callback(elem.value || elem.checked);
       });
     },
     on_submit: (callback) => {
       elem.addEventListener('submit', () => {
-        workaround(callback, (elem.value || elem.checked), stdout);
+        callback(elem.value || elem.checked);
       });
       elem.addEventListener('keyup', (evt) => {
-        if (evt.key == "Enter") workaround(callback, (elem.value || elem.checked), stdout);
+        if (evt.key == "Enter") callback(elem.value || elem.checked);
       });
     }
   };
