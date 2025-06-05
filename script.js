@@ -194,8 +194,8 @@ hr {
       lua = await createV2Lua(doc, options, stdout);
     } else if (script.version==='legacy') {
       script.code = script.code
-        .replace(/(\.on_click\s*\()\s*function\s*\(/g, '$1async(function(')
-        .replace(/(\.on_click\(async\(function\([^]*?\bend\b)\)/g, '$1))');
+        .replace(/(\.(on_click|on_input|on_submit)\s*\()\s*function\s*\(/g, '$1async(function(')
+        .replace(/(\.(on_click|on_input|on_submit)\(async\(function\([^]*?\bend\b)\)/g, '$1))');
       lua = await createLegacyLua(doc, options, stdout);
     } else {
       stdout(`Unknwon version: ${script.version} for: ${script.src}`, 'error');
