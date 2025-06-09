@@ -13,54 +13,10 @@ async function frozenTable(lua, table) {
   return proxy;
 }
 
-function HTMLElementFunctionsFor(elem, version, stdout) {
+function HTMLElementFunctionsFor(elem, stdout) {
   let tag = elem.tagName.toLowerCase();
-  if (version === 'v2') {
-    return {}
-  } else {
-    let bussinga = version.includes('-bussinga');
-    let base = {
-      get_contents: () => elem.value || elem.checked || elem.textContent,
-      get_href: () => elem.href,
-      get_source: () => elem.src,
-      get_opacity: () => elem.style.opacity,
-
-      set_contents: (text) => elem[['input','textarea'].includes(tag)?'value':'innerText'] = text,
-      set_href: (text) => elem.href = text,
-      set_source: (src) => elem.src = src,
-      set_opacity: (opa) => elem.style.opacity = opa,
-
-      on_click: (callback) => {
-        elem.addEventListener('click', () => {
-          callback().catch(console.error);
-        });
-      },
-      on_input: (callback) => {
-        elem.addEventListener('keyup', () => {
-          callback(elem.value || elem.checked).catch(err=>stdout(err,'error'));
-        });
-        elem.addEventListener('change', () => {
-          callback(elem.value || elem.checked).catch(err=>stdout(err,'error'));
-        });
-      },
-      on_submit: (callback) => {
-        elem.addEventListener('submit', () => {
-          callback(elem.value || elem.checked).catch(err=>stdout(err,'error'));
-        });
-        elem.addEventListener('keyup', (evt) => {
-          if (evt.key == "Enter") callback(elem.value || elem.checked).catch(err=>stdout(err,'error'));
-        });
-      }
-    };
-    if (bussinga) {
-      base.get_content = base.get_contents;
-      base.set_contents = (text) => elem[['input','textarea'].includes(tag)?'value':'innerHTML'] = text;
-      base.set_content = base.set_contents;
-      base.get_css_name = () => elem.className || elem.tagName;
-      base.set_value = (text) => elem.value = text;
-    }
-    return base;
-  }
+  let base = {};
+  return base;
 }
 
 export async function createV2Lua(doc, options, stdout) {
@@ -91,15 +47,15 @@ export async function createV2Lua(doc, options, stdout) {
     return null;
   });
   await lua.global.set('getId', (id) => {
-    return HTMLElementFunctionsFor(doc.getElementById(id));
+    return HTMLElementFunctionsFor(doc.getElementById(id), stdout);
   });
   await lua.global.set('getClass', (clas, all=false) => {
     let tags = document.getElementsByClassName(clas);
-    return all ? Array.from(tags).map(t=>HTMLElementFunctionsFor(t)) : HTMLElementFunctionsFor(tags[0]);
+    return all ? Array.from(tags).map(t=>HTMLElementFunctionsFor(t, stdout)) : HTMLElementFunctionsFor(tags[0], stdout);
   });
   await lua.global.set('getTag', (tag, all=false) => {
     let tags = document.getElementsByTagName(tag);
-    return all ? Array.from(tags).map(t=>HTMLElementFunctionsFor(t)) : HTMLElementFunctionsFor(tags[0]);
+    return all ? Array.from(tags).map(t=>HTMLElementFunctionsFor(t, stdout)) : HTMLElementFunctionsFor(tags[0], stdout);
   });
   await lua.global.set('browser', await frozenTable({
     name: 'WXV',

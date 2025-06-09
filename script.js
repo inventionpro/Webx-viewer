@@ -7,19 +7,20 @@ import { parse as cssparser } from './parsers/css.js';
 import { build as htmlbuilder } from './builder/html.js';
 import { build as cssbuilder } from './builder/css.js';
 
-let has_stdout = !!document.getElementById('stdout');
+const stdoute = document.getElementById('stdout') ?? { insertAdjacentHTML:()=>{} };
 function stdout(text, type='') {
-  if (!has_stdout) return;
-  document.getElementById('stdout').insertAdjacentHTML('afterbegin', `<p class="${type}">${text.replaceAll('<','&lt;')}</p>`);
+  stdoute.insertAdjacentHTML('afterbegin', `<p class="${type}">${text.replaceAll('<','&lt;')}</p>`);
 }
 
 let seenwarn = false;
 function bussFetch(ip, path) {
+  // TODO: Remove support for github.com
   if (ip.includes('github.com')) {
     if (seenwarn) {
       seenwarn = true;
       alert('This website is using the outdated github dns target.');
     }
+    if (path=='') path = 'index.html';
     ip = ip.replace('github.com','raw.githubusercontent.com')+(ip.includes('/main/')?'':'/main/')+'/'+path;
     ip = ip.replace('/tree/','/').replaceAll(/\/{2,}/g,'/').replace(':/','://');
   } else {
