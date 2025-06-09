@@ -13,13 +13,17 @@ function stdout(text, type='') {
   document.getElementById('stdout').insertAdjacentHTML('afterbegin', `<p class="${type}">${text.replaceAll('<','&lt;')}</p>`);
 }
 
+let seenwarn = false;
 function bussFetch(ip, path) {
   if (ip.includes('github.com')) {
+    if (seenwarn) {
+      seenwarn = true;
+      alert('This website is using the outdated github dns target.');
+    }
     ip = ip.replace('github.com','raw.githubusercontent.com')+(ip.includes('/main/')?'':'/main/')+'/'+path;
     ip = ip.replace('/tree/','/').replaceAll(/\/{2,}/g,'/').replace(':/','://');
   } else {
-    if (path==='index.html') path = '/';
-    ip = (new URL(path, ip)).href;
+    ip += path;
   }
   return new Promise((resolve, reject) => {
     try {
@@ -224,7 +228,7 @@ async function view(direct) {
   if (!target.includes('://')) target = 'https://'+target;
 
   iframe.onload = async() => {
-    let page = await bussFetch(target, 'index.html');
+    let page = await bussFetch(target, '');
     let tree = htmlparser(page);
     let build = htmlbuilder(tree, target);
     load(target, query, ...build[0]);

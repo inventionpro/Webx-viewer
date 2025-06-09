@@ -13,7 +13,7 @@ async function frozenTable(lua, table) {
   return proxy;
 }
 
-function HTMLElementFunctionsFor(elem, version) {
+function HTMLElementFunctionsFor(elem, version, stdout) {
   let tag = elem.tagName.toLowerCase();
   if (version === 'v2') {
     return {}
@@ -37,18 +37,18 @@ function HTMLElementFunctionsFor(elem, version) {
       },
       on_input: (callback) => {
         elem.addEventListener('keyup', () => {
-          callback(elem.value || elem.checked).catch(console.error);
+          callback(elem.value || elem.checked).catch(err=>stdout(err,'error'));
         });
         elem.addEventListener('change', () => {
-          callback(elem.value || elem.checked).catch(console.error);
+          callback(elem.value || elem.checked).catch(err=>stdout(err,'error'));
         });
       },
       on_submit: (callback) => {
         elem.addEventListener('submit', () => {
-          callback(elem.value || elem.checked);
+          callback(elem.value || elem.checked).catch(err=>stdout(err,'error'));
         });
         elem.addEventListener('keyup', (evt) => {
-          if (evt.key == "Enter") callback(elem.value || elem.checked);
+          if (evt.key == "Enter") callback(elem.value || elem.checked).catch(err=>stdout(err,'error'));
         });
       }
     };
