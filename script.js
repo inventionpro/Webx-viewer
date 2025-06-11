@@ -59,20 +59,14 @@ async function load(ip, query, html, scripts, styles) {
   doc.querySelector('html').innerHTML = html;
 
   // Links
-  requestAnimationFrame(() => {
-    doc.querySelectorAll('a').forEach(link => {
-      link.onclick = (evt)=>{
-        console.log('cat')
-        evt.preventDefault();
-        if (link.href?.trim()?.startsWith('buss://')) {
-          document.getElementById('url').value = link.href.trim().replace('buss://','').trim();
-          view();
-        } else {
-          alert('Opening https sites not available');
-        }
-      }
-    });
-  });
+  doc.onclick = function(evt) {
+    const anchor = event.target.closest('a[href^="buss://"]');
+    if (anchor) {
+      event.preventDefault();
+      document.getElementById('url').value = anchor.href.replace('buss://','');
+      view();
+    }
+  }
 
   // Default css
   let default_style = doc.createElement('style');
