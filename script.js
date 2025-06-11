@@ -56,21 +56,22 @@ async function load(ip, query, html, scripts, styles) {
   let doc = iframe.contentDocument;
   let has_console = !!document.getElementById('sned');
 
-  doc.querySelector('html').innerHTML = html;
-
   // Links
-  doc.onload = ()=>{console.log('loaded-t', Date.now())}
-  setTimeout(()=>{
-    console.log('time-t', Date.now())
+  requestAnimationFrame(() => {
     doc.querySelectorAll('a').forEach(link => {
       link.onclick = (evt)=>{
-        if (!link.href?.trim()?.startsWith('buss://')) return;
         evt.preventDefault();
-        document.getElementById('url').value = link.href.trim().replace('buss://','').trim();
-        view();
+        if (link.href?.trim()?.startsWith('buss://')) {
+          document.getElementById('url').value = link.href.trim().replace('buss://','').trim();
+          view();
+        } else {
+          alert('Opening https sites not available');
+        }
       }
     });
-  }, 10);
+  });
+
+  doc.querySelector('html').innerHTML = html;
 
   // Default css
   let default_style = doc.createElement('style');
