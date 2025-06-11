@@ -56,10 +56,13 @@ async function load(ip, query, html, scripts, styles) {
   let doc = iframe.contentDocument;
   let has_console = !!document.getElementById('sned');
 
+  doc.querySelector('html').innerHTML = html;
+
   // Links
   requestAnimationFrame(() => {
     doc.querySelectorAll('a').forEach(link => {
       link.onclick = (evt)=>{
+        console.log('cat')
         evt.preventDefault();
         if (link.href?.trim()?.startsWith('buss://')) {
           document.getElementById('url').value = link.href.trim().replace('buss://','').trim();
@@ -70,8 +73,6 @@ async function load(ip, query, html, scripts, styles) {
       }
     });
   });
-
-  doc.querySelector('html').innerHTML = html;
 
   // Default css
   let default_style = doc.createElement('style');
