@@ -36,7 +36,6 @@ function HTMLElementFunctionsFor(elem, bussinga, stdout) {
     }
   };
   if (bussinga) {
-    base.get_content = base.get_contents;
     base.set_contents = (text) => elem[['input','textarea'].includes(tag)?'value':'innerHTML'] = text;
     base.set_content = base.set_contents;
     base.get_css_name = () => elem.className || elem.tagName;

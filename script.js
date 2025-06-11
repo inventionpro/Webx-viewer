@@ -58,6 +58,16 @@ async function load(ip, query, html, scripts, styles) {
 
   doc.querySelector('html').innerHTML = html;
 
+  // Links
+  doc.querySelectorAll('a').forEach(link => {
+    link.onclick = (evt)=>{
+      if (!link.href?.trim()?.startsWith('buss://')) return;
+      evt.preventDefault();
+      document.getElementById('url').value = link.href.trim().replace('buss://','').trim();
+      view();
+    }
+  });
+
   // Default css
   let default_style = doc.createElement('style');
   if (document.getElementById('bussinga').checked) {
@@ -224,12 +234,13 @@ hr {
   });
 }
 
-async function view(direct) {
+async function view() {
   let iframe = document.querySelector('iframe');
-  let ip = document.getElementById('url').value;
+  let ip = document.getElementById('url').value.trim();
   let query = ip.split('?')[1]??'';
   let target = ip;
-  if (!direct) target = await getTarget(ip);
+
+  if (!(/^https?:\/\//m).test(ip)) target = await getTarget(ip);
   if (!target.includes('://')) target = 'https://'+target;
 
   iframe.onload = async() => {
