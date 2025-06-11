@@ -59,14 +59,18 @@ async function load(ip, query, html, scripts, styles) {
   doc.querySelector('html').innerHTML = html;
 
   // Links
-  doc.querySelectorAll('a').forEach(link => {
-    link.onclick = (evt)=>{
-      if (!link.href?.trim()?.startsWith('buss://')) return;
-      evt.preventDefault();
-      document.getElementById('url').value = link.href.trim().replace('buss://','').trim();
-      view();
-    }
-  });
+  doc.onload = ()=>{console.log('loaded-t', Date.now())}
+  setTimeout(()=>{
+    console.log('time-t', Date.now())
+    doc.querySelectorAll('a').forEach(link => {
+      link.onclick = (evt)=>{
+        if (!link.href?.trim()?.startsWith('buss://')) return;
+        evt.preventDefault();
+        document.getElementById('url').value = link.href.trim().replace('buss://','').trim();
+        view();
+      }
+    });
+  }, 10);
 
   // Default css
   let default_style = doc.createElement('style');
