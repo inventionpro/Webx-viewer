@@ -164,12 +164,16 @@ hr {
   doc.head.appendChild(default_style);
   // Page css
   for (let i = 0; i<styles.length; i++) {
-    if (!styles[i].endsWith('.css')) styles[i]=null;
+    if (!styles[i].endsWith('.css')) {
+      styles[i]=null;
+      continue;
+    }
     styles[i] = await bussFetch(ip, styles[i]);
   }
   styles
     .filter(styl=>styl??false)
     .forEach(styl=>{
+      if (!styl) return;
       let dstyl = doc.createElement('style');
       if (!document.getElementById('bussinga').checked||!styl.includes('/* bussinga! */')) {
         if (styl.includes('/* bussinga! */')) {
