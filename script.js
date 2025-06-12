@@ -60,9 +60,9 @@ async function load(ip, query, html, scripts, styles) {
 
   // Links
   doc.onclick = function(evt) {
-    const anchor = event.target.closest('a[href^="buss://"]');
+    const anchor = evt.target.closest('a[href^="buss://"]');
     if (anchor) {
-      event.preventDefault();
+      evt.preventDefault();
       document.getElementById('url').value = anchor.href.replace('buss://','');
       view();
     }
