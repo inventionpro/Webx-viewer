@@ -7,6 +7,9 @@ body {
   color: #ddd;
   background: #222;
 }
+a {
+  color: #79d;
+}
 
 dialog {
   color: #ddd;
@@ -14,6 +17,7 @@ dialog {
   border: 2px #888 solid;
   border-radius: 1rem;
   background: #222;
+  overflow: visible;
 }
 .modal-close {
   position: absolute;
@@ -92,4 +96,25 @@ iframe {
 }
 .nav span {
   flex: 1;
+}
+
+.notice {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  left: 0px;
+  bottom: 90%;
+  width: 100%;
+  padding: 10px 0px;
+  text-align: center;
+  border: 2px #dd8 solid;
+  border-radius: 1rem;
+  background: #221;
+  box-sizing: border-box;
+  transition: 1s;
+}
+.notice-p:hover .notice {
+  opacity: 1;
+  pointer-events: auto;
+  transition: 250ms;
 }
