@@ -58,6 +58,9 @@ async function load(ip, query, html, scripts, styles) {
 
   doc.querySelector('html').innerHTML = html;
 
+  // Extra html
+  doc.querySelector('head').insertAdjacentHTML('beforeend', `<meta name="color-scheme" content="dark light"></meta>`);
+
   // Links
   doc.onclick = function(evt) {
     const anchor = evt.target.closest('a[href^="buss://"]');
