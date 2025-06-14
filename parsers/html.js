@@ -1,5 +1,5 @@
 // Parser from YAB by inventionpro
-export const nonTerminatingElements = ['hr','img','input','textarea','link','meta','script'];
+export const nonTerminatingElements = ['audio','hr','img','input','link','meta','script','textarea'];
 
 function subparse(content) {
   let tree = [];

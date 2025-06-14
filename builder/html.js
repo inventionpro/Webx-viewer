@@ -5,11 +5,11 @@ function attr(o) {
 
 function normalizeIp(ip, path) {
   if (ip.includes('github.com')) {
+    if (path=='') path = 'index.html';
     ip = ip.replace('github.com','raw.githubusercontent.com')+(ip.includes('/main/')?'':'/main/')+'/'+path;
     ip = ip.replace('/tree/','/').replaceAll(/\/{2,}/g,'/').replace(':/','://');
   } else {
-    if (path==='index.html') path = '/';
-    ip = (new URL(path, ip)).href;
+    ip += path;
   }
   return ip;
 };
@@ -23,9 +23,9 @@ function convert(l, ip) {
     if (e.name === 'link') {
       return ['', [], [e.attributes?.href??'']];
     }
-    if (e.name === 'img') {
+    if (['audio','img'].includes(e.name)) {
       if (!e.attributes?.src?.includes('://')) e.attributes.src = normalizeIp(ip, e.attributes?.src);
-      return [`<img ${attr(e.attributes)}>`, [], []]
+      return [`<${e.name} ${attr(e.attributes)} controls>${e.name==='img'?'':e.name}`, [], []]
     }
     if ((typeof e.content)==='string') {
       return [`<${e.name} ${attr(e.attributes)}>${e.content}</${e.name}>`, [], []]
