@@ -1,15 +1,24 @@
-async function frozenTable(lua, table) {
-  const readOnlyTable = await lua.createTable(table);
-
-  const metatable = await lua.createTable();
-  await metatable.set("__index", readOnlyTable);
-  await metatable.set("__newindex", (_table, key) => {
-    throw new Error(`Cannot modify read-only table (key: ${key})`);
-  });
-
-  const proxy = await lua.createTable();
-  await proxy.setMetatable(metatable);
-  return proxy;
+async function frozenTable(lua, name, table) {
+  await lua.global.set(name, table);
+  await lua.doString(`local raw = ${name}
+local proxy = {}
+local mt = {
+  __index = raw,
+  __newindex = function(table, key, value)
+    error("Attempt to modify read-only table", 2)
+  end,
+  __pairs = function()
+    return pairs(raw)
+  end,
+  __ipairs = function()
+    return ipairs(raw)
+  end,
+  __tostring = function()
+    return ""
+  end
+}
+setmetatable(proxy, mt)
+${name} = proxy`);
 }
 
 function HTMLElementFunctionsFor(elem, stdout) {
@@ -47,7 +56,7 @@ export async function createV2Lua(doc, options, stdout) {
     let tags = document.getElementsByTagName(tag);
     return all ? Array.from(tags).map(t=>HTMLElementFunctionsFor(t, stdout)) : HTMLElementFunctionsFor(tags[0], stdout);
   });
-  await lua.global.set('browser', await frozenTable(lua, {
+  await frozenTable(lua, 'browser', {
     name: 'WXV',
     agent: 'wxv',
     version: '0.1.0',
@@ -57,10 +66,10 @@ export async function createV2Lua(doc, options, stdout) {
       get_type: true,
       fetch: false
     }
-  }));
+  });
   await lua.global.set('global', window.luaGlobal);
   let parsedUrl = new URL(options.location.includes('://')?options.location:'https://'+options.location);
-  await lua.global.set('location', await frozenTable(lua, {
+  await frozenTable(lua, 'location', {
     href: `buss://${parsedUrl.hostname}${parsedUrl.pathname}?${rawQuery}`,
     domain: parsedUrl.hostname,
     protocol: 'buss',
@@ -71,7 +80,7 @@ export async function createV2Lua(doc, options, stdout) {
       document.getElementById('url').value = url.trim().replace('buss://','');
       window.view();
     }
-  }));
+  });
   await lua.global.set('print', (text) => {
     stdout(`[Log]: ${text}`);
   });
