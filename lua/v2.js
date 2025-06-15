@@ -9,7 +9,6 @@ async function frozenTable(lua, table) {
 
   const proxy = await lua.createTable();
   await proxy.setMetatable(metatable);
-
   return proxy;
 }
 
@@ -34,15 +33,6 @@ export async function createV2Lua(doc, options, stdout) {
   });
 
   // Lua global functions
-  await lua.global.set('print', (text) => {
-    stdout(`[Log]: ${text}`);
-  });
-  await lua.global.set('printw', (text) => {
-    stdout(`[Warn]: ${text}`, 'warn');
-  });
-  await lua.global.set('printe', (text) => {
-    stdout(`[Error]: ${text}`, 'error');
-  });
   await lua.global.set('get', (selector, all=false) => {
     return null;
   });
@@ -69,16 +59,28 @@ export async function createV2Lua(doc, options, stdout) {
     }
   }));
   await lua.global.set('global', window.luaGlobal);
-  // TODO: make dynamic
+  let parsedUrl = new URL(options.location.includes('://')?options.location:'https://'+options.location);
   await lua.global.set('location', await frozenTable({
-    href: 'buss://domain.app',
-    domain: 'domain.app',
+    href: `buss://${parsedUrl.hostname}${parsedUrl.pathname}?${rawQuery}`,
+    domain: parsedUrl.hostname,
     protocol: 'buss',
-    path: '/',
+    path: parsedUrl.pathname,
     query,
     rawQuery: '?'+options.query,
-    go: (url)=>{}
+    go: (url)=>{
+      document.getElementById('url').value = url.trim().replace('buss://','');
+      window.view();
+    }
   }));
+  await lua.global.set('print', (text) => {
+    stdout(`[Log]: ${text}`);
+  });
+  await lua.global.set('printw', (text) => {
+    stdout(`[Warn]: ${text}`, 'warn');
+  });
+  await lua.global.set('printe', (text) => {
+    stdout(`[Error]: ${text}`, 'error');
+  });
   /*
   get(selector, all)
 fetch(options)
