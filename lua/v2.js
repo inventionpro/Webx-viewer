@@ -82,12 +82,21 @@ export async function createV2Lua(doc, options, stdout) {
     }
   });
   await lua.global.set('print', (text) => {
+    if (Object.isObject(text)) {
+      text = JSON.stringify(text, null, 2);
+    }
     stdout(`[Log]: ${text}`);
   });
   await lua.global.set('printw', (text) => {
+    if (Object.isObject(text)) {
+      text = JSON.stringify(text, null, 2);
+    }
     stdout(`[Warn]: ${text}`, 'warn');
   });
   await lua.global.set('printe', (text) => {
+    if (Object.isObject(text)) {
+      text = JSON.stringify(text, null, 2);
+    }
     stdout(`[Error]: ${text}`, 'error');
   });
   /*

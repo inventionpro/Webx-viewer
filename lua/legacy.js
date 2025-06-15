@@ -57,6 +57,9 @@ export async function createLegacyLua(doc, options, stdout) {
 
   // Lua global functions
   await lua.global.set('print', (text) => {
+    if (Object.isObject(text)) {
+      text = JSON.stringify(text, null, 2);
+    }
     stdout(`[Log]: ${text}`);
   });
   await lua.global.set('get', (clas, all=false) => {

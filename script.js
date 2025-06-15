@@ -16,9 +16,6 @@ Object.prototype.isObject = (obj)=>{
 
 const stdoute = document.getElementById('stdout') ?? { insertAdjacentHTML:()=>{} };
 function stdout(text, type='') {
-  if (Object.isObject(text)) {
-    text = JSON.stringify(text, null, 2);
-  }
   stdoute.insertAdjacentHTML('afterbegin', `<p class="${type}">${text.replaceAll('<','&lt;')}</p>`);
 }
 
