@@ -47,7 +47,7 @@ export async function createV2Lua(doc, options, stdout) {
     let tags = document.getElementsByTagName(tag);
     return all ? Array.from(tags).map(t=>HTMLElementFunctionsFor(t, stdout)) : HTMLElementFunctionsFor(tags[0], stdout);
   });
-  await lua.global.set('browser', await frozenTable({
+  await lua.global.set('browser', await frozenTable(lua, {
     name: 'WXV',
     agent: 'wxv',
     version: '0.1.0',
@@ -60,7 +60,7 @@ export async function createV2Lua(doc, options, stdout) {
   }));
   await lua.global.set('global', window.luaGlobal);
   let parsedUrl = new URL(options.location.includes('://')?options.location:'https://'+options.location);
-  await lua.global.set('location', await frozenTable({
+  await lua.global.set('location', await frozenTable(lua, {
     href: `buss://${parsedUrl.hostname}${parsedUrl.pathname}?${rawQuery}`,
     domain: parsedUrl.hostname,
     protocol: 'buss',
