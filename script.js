@@ -9,8 +9,16 @@ import { build as cssbuilder } from './builder/css.js';
 
 import { NaptureCss, BussingaCss } from './media/css.js';
 
+// Utility
+Object.prototype.isObject = (obj)=>{
+  return (typeof obj === 'object' && !Array.isArray(obj) && obj !== null)
+}
+
 const stdoute = document.getElementById('stdout') ?? { insertAdjacentHTML:()=>{} };
 function stdout(text, type='') {
+  if (Object.isObject(text)) {
+    text = JSON.stringify(text, null, 2);
+  }
   stdoute.insertAdjacentHTML('afterbegin', `<p class="${type}">${text.replaceAll('<','&lt;')}</p>`);
 }
 
