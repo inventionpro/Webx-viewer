@@ -116,7 +116,7 @@ async function load(ip, query, html, scripts, styles) {
       bussinga: document.getElementById('bussinga').checked,
       proxy: document.getElementById('proxy').checked
     };
-    if (script.version==='2') {
+    if (script.version==='v2') {
       lua = await createV2Lua(doc, options, stdout);
     } else if (script.version==='legacy') {
       script.code = script.code
