@@ -70,7 +70,7 @@ export async function createV2Lua(doc, options, stdout) {
   await lua.global.set('global', window.luaGlobal);
   let parsedUrl = new URL(options.location.includes('://')?options.location:'https://'+options.location);
   await frozenTable(lua, 'location', {
-    href: `buss://${parsedUrl.hostname}${parsedUrl.pathname}?${rawQuery}`,
+    href: `buss://${parsedUrl.hostname}${parsedUrl.pathname}?${options.query}`,
     domain: parsedUrl.hostname,
     protocol: 'buss',
     path: parsedUrl.pathname,
