@@ -5,9 +5,7 @@ body {
 iframe {
   position: absolute;
   inset: 0px;
-  width: 100vw;
   width: 100dvw;
-  height: 100vh;
   height: 100dvh;
   border: none;
   box-sizing: border-box;
