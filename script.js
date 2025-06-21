@@ -33,13 +33,12 @@ function bussFetch(ip, path) {
     try {
       fetch(ip)
         .then(res=>res.text())
-        .then(res=>resolve(res))
-        .catch(err=>reject(err));
+        .then(res=>resolve(res));
     } catch(err) {
       reject(err);
     }
   })
-};
+}
 function getTarget(domain) {
   return new Promise((resolve, reject)=>{
     try {
@@ -80,28 +79,25 @@ async function load(ip, query, html, scripts, styles) {
   doc.head.appendChild(default_style);
 
   // Page css
-  for (let i = 0; i<styles.length; i++) {
-    if (!styles[i].endsWith('.css')) {
-      styles[i]=null;
-      continue;
+  styles.forEach(async(style) => {
+    // If not existent, skip
+    if (!style.endsWith('.css')) return;
+    // Fetch
+    try {
+      style = await bussFetch(ip, style);
+    } catch(err) {
+      // If fetch fails, ignore output (Prevents stealing css from error pages)
+      return;
     }
-    styles[i] = await bussFetch(ip, styles[i]);
-  }
-  styles
-    .filter(styl=>styl??false)
-    .forEach(styl=>{
-      if (!styl) return;
-      let dstyl = doc.createElement('style');
-      if (!document.getElementById('bussinga').checked||!styl.includes('/* bussinga! */')) {
-        if (styl.includes('/* bussinga! */')) {
-          stdout('[Warn] Site uses bussinga css, but you are not using bussinga mode.', 'warn');
-        }
-        let style = cssparser(styl);
-        styl = cssbuilder(style);
-      }
-      dstyl.innerHTML = styl;
-      doc.head.appendChild(dstyl);
-    });
+    if (!document.getElementById('bussinga').checked||!style.includes('/* bussinga! */')) {
+      if (style.includes('/* bussinga! */')) stdout('[Warn] Site uses bussinga css, but you are not using bussinga mode.', 'warn');
+      style = cssparser(style);
+      style = cssbuilder(style);
+    }
+    let dstyl = doc.createElement('style');
+    dstyl.innerHTML = style;
+    doc.head.appendChild(dstyl);
+  });
 
   // Lua
   for (let i = 0; i<scripts.length; i++) {
