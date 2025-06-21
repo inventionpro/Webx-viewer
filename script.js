@@ -19,14 +19,10 @@ function stdout(text, type='') {
   stdoute.insertAdjacentHTML('afterbegin', `<p class="${type}">${text.replaceAll('<','&lt;')}</p>`);
 }
 
-let seenwarn = false;
 function bussFetch(ip, path) {
   // TODO: Remove support for github.com
   if (ip.includes('github.com')) {
-    if (seenwarn) {
-      seenwarn = true;
-      alert('This website is using the outdated github dns target.');
-    }
+    stdout('[Warn] This website is using the outdated github dns target.', 'warn')
     if (path=='') path = 'index.html';
     ip = ip.replace('github.com','raw.githubusercontent.com')+(ip.includes('/main/')?'':'/main/')+'/'+path;
     ip = ip.replace('/tree/','/').replaceAll(/\/{2,}/g,'/').replace(':/','://');

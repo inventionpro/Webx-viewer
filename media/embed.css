@@ -1,6 +1,13 @@
 body {
+  font-family: Lexend, Arial, sans-serif;
+  width: 100dvw;
+  height: 100dvh;
   margin: 0px;
   padding: 0px;
+  background: #222;
+}
+a {
+  color: #79d;
 }
 iframe {
   position: absolute;
@@ -8,5 +15,6 @@ iframe {
   width: 100dvw;
   height: 100dvh;
   border: none;
+  background: #fff;
   box-sizing: border-box;
 }

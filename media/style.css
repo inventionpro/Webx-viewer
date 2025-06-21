@@ -2,10 +2,13 @@ body {
   display: flex;
   flex-direction: column;
   font-family: Lexend, Arial, sans-serif;
-  width: calc(100dvw - 16px);
-  height: calc(100dvh - 16px);
+  width: 100dvw;
+  height: 100dvh;
   color: #ddd;
+  margin: 0px;
+  padding: 8px;
   background: #222;
+  box-sizing: border-box;
 }
 a {
   color: #79d;
@@ -78,6 +81,9 @@ input, button, select {
   border: 2px #888 solid;
   border-radius: 0.5rem;
   background-color: transparent;
+}
+input {
+  min-width: 0px;
 }
 button {
   cursor: pointer;
