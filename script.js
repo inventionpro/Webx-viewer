@@ -20,14 +20,18 @@ function stdout(text, type='') {
 }
 
 function bussFetch(ip, path) {
-  // TODO: Remove support for github.com
-  if (ip.includes('github.com')) {
-    stdout('[Warn] This website is using the outdated github dns target.', 'warn')
-    if (path=='') path = 'index.html';
-    ip = ip.replace('github.com','raw.githubusercontent.com')+(ip.includes('/main/')?'':'/main/')+'/'+path;
-    ip = ip.replace('/tree/','/').replaceAll(/\/{2,}/g,'/').replace(':/','://');
+  if (path.match(/^https?:\/\//) !== null) {
+    ip = path;
   } else {
-    ip += path;
+    // TODO: Remove support for github.com
+    if (ip.includes('github.com')) {
+      stdout('[Warn] This website is using the outdated github dns target.', 'warn')
+      if (path=='') path = 'index.html';
+      ip = ip.replace('github.com','raw.githubusercontent.com')+(ip.includes('/main/')?'':'/main/')+'/'+path;
+      ip = ip.replace('/tree/','/').replaceAll(/\/{2,}/g,'/').replace(':/','://');
+    } else {
+      ip += path;
+    }
   }
   return new Promise((resolve, reject) => {
     try {
