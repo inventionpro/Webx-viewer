@@ -159,6 +159,7 @@ async function view() {
   if (!(/^https?:\/\//m).test(ip)) {
     try {
       target = await getTarget(ip);
+      if (!target) throw new Error('Website not found');
     } catch(err) {
       alert(err);
       return;

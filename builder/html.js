@@ -1,3 +1,5 @@
+const htmlUnallowedElements = ['style'];
+
 function attr(o) {
   let allowed = ['href','src','name','content','class','version','placeholder','type'];
   return Object.keys(o).map(t=>allowed.includes(t)?`${t}="${o[t]}"`:'').join(' ')
@@ -17,6 +19,9 @@ function normalizeIp(ip, path) {
 function convert(l, ip) {
   return l.map(e=>{
     // Special cases
+    if (htmlUnallowedElements.includes(e.name)) {
+      return ['', [], []];
+    }
     if (e.name === 'script') {
       return ['', [{src: e.attributes?.src??'', version: e.attributes?.version??'legacy'}], []];
     }
