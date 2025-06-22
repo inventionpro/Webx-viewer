@@ -13,6 +13,11 @@ body {
 a {
   color: #79d;
 }
+svg {
+  stroke: #ddd;
+  fill: #ddd;
+  margin-bottom: -3px;
+}
 
 dialog {
   color: #ddd;
@@ -88,6 +93,16 @@ input {
 button {
   cursor: pointer;
   border-radius: 0.25rem;
+  transition: 250ms;
+}
+button:hover {
+  background-color: #fff2;
+}
+button.seamless {
+  padding: 2.5px;
+  margin: 0px;
+  border: none;
+  border-radius: 0.5rem;
 }
 
 iframe {
@@ -100,7 +115,7 @@ iframe {
   display: flex;
   align-items: center;
 }
-.nav span {
+.nav input {
   flex: 1;
 }
 

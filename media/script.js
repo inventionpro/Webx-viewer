@@ -22,6 +22,8 @@ function stdout(text, type='') {
   stdoute.insertAdjacentElement('afterbegin', p);
 }
 
+window.urlhistory = [];
+window.current = 0;
 window.cache = {
   domain: {},
   fetch: {}
@@ -172,8 +174,7 @@ async function load(ip, query, html, scripts, styles) {
 
 async function view() {
   let iframe = document.querySelector('iframe');
-  let ip = document.getElementById('url').value.trim().replace(/^buss:\/\//m,'');
-  document.getElementById('url').value = ip;
+  let ip = window.urlhistory[window.current];
   let query = ip.split('?')[1]??'';
   let target = ip;
 
