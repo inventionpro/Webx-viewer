@@ -105,6 +105,7 @@ async function load(ip, query, html, scripts, styles) {
       let href = anchor.href.trim().replace(/^buss:\/\//m,'');
       window.urlhistory = window.urlhistory.slice(0,window.current+1);
       window.urlhistory.push(href);
+      window.current = window.urlhistory.length-1;
       document.getElementById('url').value = href;
       view();
     }
