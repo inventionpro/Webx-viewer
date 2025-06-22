@@ -33,11 +33,15 @@ function bussFetch(ip, path) {
       ip += path;
     }
   }
+  // Proxy
+  if (document.getElementById('proxy').checked) url = `https://api.fsh.plus/file?url=${encodeURIComponent(url)}`;
+  // Fetch
   return new Promise((resolve, reject) => {
     try {
       fetch(ip)
         .then(res=>res.text())
-        .then(res=>resolve(res));
+        .then(res=>resolve(res))
+        .catch(err=>reject(err));
     } catch(err) {
       reject(err);
     }
