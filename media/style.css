@@ -124,3 +124,10 @@ iframe {
   pointer-events: auto;
   transition: 250ms;
 }
+
+@media (max-width: 700px) {
+  #console {
+    width: 90dvw;
+    max-height: 80dvh;
+  }
+}
