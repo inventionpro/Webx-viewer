@@ -14,9 +14,13 @@ Object.prototype.isObject = (obj)=>{
   return (typeof obj === 'object' && !Array.isArray(obj) && obj !== null)
 }
 
-const stdoute = document.getElementById('stdout') ?? { insertAdjacentHTML:()=>{} };
+const stdoute = document.getElementById('stdout');
 function stdout(text, type='') {
-  stdoute.insertAdjacentHTML('afterbegin', `<p class="${type}">${text.replaceAll('<','&lt;')}</p>`);
+  if (!stdoute) return;
+  let p = document.createElement('p');
+  p.classList.add(type);
+  p.innerText = text;
+  stdoute.insertAdjacentElement('afterbegin', p);
 }
 
 function bussFetch(ip, path) {
