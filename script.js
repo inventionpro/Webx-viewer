@@ -153,7 +153,12 @@ async function view() {
   if (!target.includes('://')) target = 'https://'+target;
 
   iframe.onload = async() => {
-    let page = await bussFetch(target, '');
+    let page;
+    try {
+      page = await bussFetch(target, '');
+    } catch(err) {
+      page = `<p>Could not load page, error: ${err}</p>`;
+    }
     let tree = htmlparser(page);
     let build = htmlbuilder(tree, target);
     load(target, query, ...build[0]);
