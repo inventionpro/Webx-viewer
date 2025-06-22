@@ -22,7 +22,19 @@ function stdout(text, type='') {
   stdoute.insertAdjacentElement('afterbegin', p);
 }
 
+window.cache = {
+  domain: {},
+  fetch: {}
+};
+
 function bussFetch(ip, path) {
+  // Cache
+  if (window.cache.fetch[ip+'-|-'+path]) {
+    return new Promise((resolve, reject) => {
+      resolve(window.cache.fetch[ip+'-|-'+path])
+    });
+  }
+  // Paths
   if (path.match(/^https?:\/\//) !== null) {
     ip = path;
   } else {
@@ -43,21 +55,30 @@ function bussFetch(ip, path) {
     try {
       fetch(ip)
         .then(res=>res.text())
-        .then(res=>resolve(res))
+        .then(res=>{
+          window.cache.fetch[ip+'-|-'+path] = res;
+          resolve(res);
+        })
         .catch(err=>reject(err));
     } catch(err) {
       reject(err);
     }
-  })
+  });
 }
 function getTarget(domain) {
   return new Promise((resolve, reject)=>{
+    if (window.cache.fetch[domain]) {
+      resolve(window.cache.fetch[domain]);
+    }
     try {
       domain = domain.toLowerCase().trim().replace(/^.*?:\/\//m,'').split('/')[0].split('?')[0].trim();
       if (!(/^([a-z0-9\-]*\.)+[a-z0-9\-]*$/mi).test(domain)) reject('Invalid domain name contents');
       fetch(new URL(`/domain/${domain.replace('.','/')}`, document.getElementById('dns').value))
         .then(res=>res.json())
-        .then(res=>resolve(res.ip));
+        .then(res=>{
+          window.cache.fetch[domain] = res.ip;
+          resolve(res.ip);
+        });
     } catch(err) {
       reject(err);
     }

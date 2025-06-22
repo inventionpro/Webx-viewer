@@ -38,7 +38,8 @@
         <br>
         <label>DNS: <input placeholder="dns server" value="https://dns.webxplus.org/" id="dns" style="width:200px"></label>
         <br>
-        <button onclick="embed()">Get embed link</button>
+        <button onclick="window.cache={domain:{},fetch:{}}">Remove cache</button>
+        <button onclick="embed()">Embed link</button>
       </dialog>
       <script>
         function toggleConsole() {
