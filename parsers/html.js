@@ -93,7 +93,11 @@ function subparse(content) {
 
 export function parse(content) {
   // Remove comments
-  content = content.replaceAll(/<!--([^¬]|.)*?-->/g, '');
+  let prev;
+  do {
+    prev = content;
+    content = content.replaceAll(/<!--([^¬]|.)*?-->/g, '');
+  } while (content !== prev);
   // Handle ***INVALID*** html doctype
   if ((/<!DOCTYPE html>/gi).test(content)) {
     console.warn('[HTML PARSER] Invalid doctype html');
