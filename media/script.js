@@ -102,7 +102,7 @@ async function load(ip, query, html, scripts, styles) {
     const anchor = evt.target.closest('a[href^="buss://"]');
     if (anchor) {
       evt.preventDefault();
-      let href = anchor.value.trim().replace(/^buss:\/\//m,'');
+      let href = anchor.href.trim().replace(/^buss:\/\//m,'');
       window.urlhistory = window.urlhistory.slice(0,window.current+1);
       window.urlhistory.push(href);
       document.getElementById('url').value = href;
