@@ -54,7 +54,7 @@ function getTarget(domain) {
   return new Promise((resolve, reject)=>{
     try {
       domain = domain.toLowerCase().trim().replace(/^.*?:\/\//m,'').split('/')[0].split('?')[0].trim();
-      if (!(/^[a-z0-9\-]*.[a-z0-9\-]*$/m).test(domain)) reject();
+      if (!(/^([a-z0-9\-]*\.)+[a-z0-9\-]*$/mi).test(domain)) reject('Invalid domain name contents');
       fetch(new URL(`/domain/${domain.replace('.','/')}`, document.getElementById('dns').value))
         .then(res=>res.json())
         .then(res=>resolve(res.ip));
@@ -156,7 +156,14 @@ async function view() {
   let query = ip.split('?')[1]??'';
   let target = ip;
 
-  if (!(/^https?:\/\//m).test(ip)) target = await getTarget(ip);
+  if (!(/^https?:\/\//m).test(ip)) {
+    try {
+      target = await getTarget(ip);
+    } catch(err) {
+      alert(err);
+      return;
+    }
+  }
   if (!target.includes('://')) target = 'https://'+target;
 
   iframe.onload = async() => {
