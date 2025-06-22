@@ -1,0 +1,29 @@
+{
+  "name": "WebX Viewer",
+  "short_name": "WXV",
+  "scope": "/Webx-viewer/",
+  "start_url": "/Webx-viewer/",
+  "display": "standalone",
+  "display_override": ["minimal-ui"],
+  "theme_color": "#eebb22",
+  "background_color": "#222222",
+  "description": "View WebX websites online using WXV.",
+  "icons": [
+    {
+      "src": "https://inventionpro.github.io/Webx-viewer/media/logo/256.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    },
+    {
+      "src": "https://inventionpro.github.io/Webx-viewer/media/logo/512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "https://inventionpro.github.io/Webx-viewer/media/logo/mask.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

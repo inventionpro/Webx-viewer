@@ -1,13 +1,12 @@
-import { createLegacyLua } from './lua/legacy.js';
-import { createV2Lua } from './lua/v2.js';
+import { createLegacyLua } from '../lua/legacy.js';
+import { createV2Lua } from '../lua/v2.js';
 
-import { parse as htmlparser } from './parsers/html.js';
-import { parse as cssparser } from './parsers/css.js';
+import { parse as htmlparser } from '../parser/html.js';
+import { parse as cssparser } from '../parser/css.js';
+import { build as htmlbuilder } from '../builder/html.js';
+import { build as cssbuilder } from '../builder/css.js';
 
-import { build as htmlbuilder } from './builder/html.js';
-import { build as cssbuilder } from './builder/css.js';
-
-import { NaptureCss, BussingaCss } from './media/css.js';
+import { NaptureCss, BussingaCss } from './default_css.js';
 
 // Utility
 Object.prototype.isObject = (obj)=>{
@@ -102,7 +101,7 @@ async function load(ip, query, html, scripts, styles) {
       return;
     }
     if (!document.getElementById('bussinga').checked||!style.includes('/* bussinga! */')) {
-      if (style.includes('/* bussinga! */')) stdout('[Warn] Site uses bussinga css, but you are not using bussinga mode.', 'warn');
+      if (style.includes('/* bussinga! */')) stdout('[Warn] Site uses bussinga css comment, but you are not using bussinga mode.', 'warn');
       style = cssparser(style);
       style = cssbuilder(style);
     }
