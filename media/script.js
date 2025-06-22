@@ -27,7 +27,7 @@ function bussFetch(ip, path) {
     ip = path;
   } else {
     // TODO: Remove support for github.com
-    if (ip.includes('github.com')) {
+    if (new URL(ip).hostname==='github.com') {
       stdout('[Warn] This website is using the outdated github dns target.', 'warn')
       if (path=='') path = 'index.html';
       ip = ip.replace('github.com','raw.githubusercontent.com')+(ip.includes('/main/')?'':'/main/')+'/'+path;
