@@ -1,7 +1,7 @@
 const rules = {
   direction: 'direction',
   gap: 'size',
-  align_items: 'not-implemented',
+  align_items: 'align',
   wrap: 'wrap',
 
   width: 'size',
@@ -81,6 +81,10 @@ function handleRule(rule, value) {
     case 'wrap':
       if (!['wrap','nowrap'].includes(value.toLowerCase())) return `invalid-value: ${value} for ${rule}`;
       rule = 'flex-wrap';
+      break;
+    case 'align':
+      if (!['start','center','end','fill'].includes(value.toLowerCase())) return `invalid-value: ${value} for ${rule}`;
+      value = value.toLowerCase().replace('fill', 'stretch');
       break;
     case 'font-weight':
       if (!['ultralight','light','normal','bold','ultrabold','heavy'].includes(value.toLowerCase())) return `invalid-value: ${value} for ${rule}`;
