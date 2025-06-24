@@ -29,36 +29,38 @@ window.cache = {
   fetch: {}
 };
 
+function normalizeIp(ip, path) {
+  // If the path is a full url just go directly
+  if (path.match(/^https?:\/\//) !== null) return path;
+  // TODO: Remove support for github.com
+  if (new URL(ip).hostname==='github.com') {
+    stdout('[Warn] This website is using the outdated github dns target.', 'warn');
+    if (path=='') path = 'index.html';
+    ip = ip.replace('github.com','raw.githubusercontent.com')+(ip.includes('/main/')?'':'/main/')+'/'+path;
+    ip = ip.replace('/tree/','/').replaceAll(/\/{2,}/g,'/').replace(':/','://');
+  } else {
+    ip += path;
+  }
+  return ip;
+}
 function bussFetch(ip, path) {
+  // Normalize ip
+  ip = normalizeIp(ip, path);
+  // Proxy
+  if (document.getElementById('proxy').checked) ip = `https://api.fsh.plus/file?url=${encodeURIComponent(ip)}`;
   // Cache
-  if (window.cache.fetch[ip+'-|-'+path]) {
+  if (window.cache.fetch[ip]) {
     return new Promise((resolve, reject) => {
-      resolve(window.cache.fetch[ip+'-|-'+path])
+      resolve(window.cache.fetch[ip])
     });
   }
-  // Paths
-  if (path.match(/^https?:\/\//) !== null) {
-    ip = path;
-  } else {
-    // TODO: Remove support for github.com
-    if (new URL(ip).hostname==='github.com') {
-      stdout('[Warn] This website is using the outdated github dns target.', 'warn')
-      if (path=='') path = 'index.html';
-      ip = ip.replace('github.com','raw.githubusercontent.com')+(ip.includes('/main/')?'':'/main/')+'/'+path;
-      ip = ip.replace('/tree/','/').replaceAll(/\/{2,}/g,'/').replace(':/','://');
-    } else {
-      ip += path;
-    }
-  }
-  // Proxy
-  if (document.getElementById('proxy').checked) url = `https://api.fsh.plus/file?url=${encodeURIComponent(url)}`;
   // Fetch
   return new Promise((resolve, reject) => {
     try {
       fetch(ip)
         .then(res=>res.text())
         .then(res=>{
-          window.cache.fetch[ip+'-|-'+path] = res;
+          window.cache.fetch[ip] = res;
           resolve(res);
         })
         .catch(err=>reject(err));
@@ -99,10 +101,21 @@ async function load(ip, query, html, scripts, styles) {
 
   // Links
   doc.onclick = function(evt) {
-    const anchor = evt.target.closest('a[href^="buss://"]');
+    const anchor = evt.target.closest('a');
     if (anchor) {
+      // Validation
+      let href = anchor.href.trim();
+      if (!href.toLowerCase().startsWith('buss://')) {
+        if (href.includes('://')) return;
+      };
+      // Go to link
       evt.preventDefault();
-      let href = anchor.href.trim().replace(/^buss:\/\//m,'');
+      if (href.includes('://')) {
+        href = href.replace(/^buss:\/\//m,'');
+      } else {
+        let cur = window.urlhistory[window.current];
+        href = (cur + '/' + href).replace('://',':~~').replaceAll('//','/').replace(':~~','://');
+      }
       window.urlhistory = window.urlhistory.slice(0,window.current+1);
       window.urlhistory.push(href);
       window.current = window.urlhistory.length-1;
