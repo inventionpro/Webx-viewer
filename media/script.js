@@ -76,7 +76,7 @@ function getTarget(domain) {
     }
     try {
       domain = domain.toLowerCase().trim().replace(/^.*?:\/\//m,'').split('/')[0].split('?')[0].trim();
-      if (!(/^([a-z0-9\-]*\.)+[a-z0-9\-]*$/mi).test(domain)) reject('Invalid domain name contents');
+      if (!(/^([a-z0-9\-]{1,24}\.)+[a-z0-9\-]{1,24}$/mi).test(domain)) reject('Invalid domain name contents');
       fetch(new URL(`/domain/${domain.replace('.','/')}`, document.getElementById('dns').value))
         .then(res=>res.json())
         .then(res=>{
