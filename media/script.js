@@ -103,13 +103,16 @@ async function load(ip, query, html, scripts, styles) {
   doc.onclick = function(evt) {
     const anchor = evt.target.closest('a');
     if (anchor) {
+      evt.preventDefault();
       // Validation
-      let href = anchor.href.trim();
+      let href = anchor.getAttribute('href').trim();
       if (!href.toLowerCase().startsWith('buss://')) {
-        if (href.includes('://')) return;
+        if (href.includes('://')) {
+          window.open(href);
+          return;
+        }
       };
       // Go to link
-      evt.preventDefault();
       if (href.includes('://')) {
         href = href.replace(/^buss:\/\//m,'');
       } else {
@@ -192,6 +195,7 @@ async function load(ip, query, html, scripts, styles) {
 async function view() {
   let iframe = document.querySelector('iframe');
   let ip = window.urlhistory[window.current];
+  let path = ip.split('://').slice(-1)[0].split('/').slice(1).join('/').split('?')[0]??'';
   let query = ip.split('?')[1]??'';
   let target = ip;
 
@@ -209,7 +213,7 @@ async function view() {
   iframe.onload = async() => {
     let page;
     try {
-      page = await bussFetch(target, '');
+      page = await bussFetch(target, path);
     } catch(err) {
       page = `<p>Could not load page, error: ${err}</p>`;
     }
