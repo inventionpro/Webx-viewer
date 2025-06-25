@@ -108,7 +108,7 @@ button.seamless {
 iframe {
   flex: 1;
   border: 2px #888 solid;
-  background: #fff;
+  background: #222;
 }
 
 .nav {
