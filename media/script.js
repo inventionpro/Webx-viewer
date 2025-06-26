@@ -22,7 +22,7 @@ function stdout(text, type='') {
   stdoute.insertAdjacentElement('afterbegin', p);
 }
 
-window.urlhistory = [];
+window.urlhistory = ['search.app'];
 window.current = 0;
 window.cache = {
   domain: {},
@@ -224,6 +224,7 @@ async function view() {
   iframe.contentDocument.location.reload();
 }
 window.view = view;
+view();
 
 // Console run
 if (document.getElementById('sned')) {
