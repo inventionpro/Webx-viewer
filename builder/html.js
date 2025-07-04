@@ -1,8 +1,8 @@
-const htmlUnallowedElements = ['style'];
+const htmlUnallowedElements = { style: 'remove', canvas: 'div' };
+let allowedAttributes = ['class','id','href','src','name','content','version','placeholder','type','value','disabled'];
 
 function attr(o) {
-  let allowed = ['href','src','name','content','class','version','placeholder','type'];
-  return Object.keys(o).map(t=>allowed.includes(t)?`${t}="${o[t]}"`:'').join(' ')
+  return Object.keys(o).map(t=>allowedAttributes.includes(t)?`${t}="${o[t]}"`:'').join(' ')
 }
 
 function normalizeIp(ip, path) {
@@ -19,8 +19,13 @@ function normalizeIp(ip, path) {
 function convert(l, ip) {
   return l.map(e=>{
     // Special cases
-    if (htmlUnallowedElements.includes(e.name)) {
-      return ['', [], []];
+    if (htmlUnallowedElements[e.name]) {
+      let action = htmlUnallowedElements[e.name];
+      if (action === 'remove') {
+        return ['', [], []];
+      } else if (action === 'div') {
+        e.name = 'div';
+      }
     }
     if (e.name === 'script') {
       return ['', [{src: e.attributes?.src??'', version: e.attributes?.version??'legacy'}], []];
