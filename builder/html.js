@@ -33,7 +33,7 @@ function convert(l, ip) {
     if (e.name === 'link') {
       return ['', [], [e.attributes?.href??'']];
     }
-    if (['audio','img'].includes(e.name)) {
+    if (['audio','img','video'].includes(e.name)) {
       if (!e.attributes?.src?.includes('://')) e.attributes.src = normalizeIp(ip, e.attributes?.src);
       return [`<${e.name} ${attr(e.attributes)} controls>${e.name==='img'?'':`</${e.name}>`}`, [], []]
     }
