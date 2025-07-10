@@ -34,13 +34,20 @@ button {
   transition: 250ms;
 }
 input, textarea {
-  padding: 6px;
+  color: #F6F6F6;
+  padding: 8px;
   border: 1px #616161 solid;
   border-radius: 12px;
 }
 textarea {
   width: 400px;
   height: 100px;
+}
+select {
+  color: #F6F6F6;
+  padding: 7px;
+  border: 1px #616161 solid;
+  border-radius: 5px;
 }
 hr {
   width: 100%;
@@ -55,7 +62,6 @@ export const BussingaCss = `/* Bussinga default css */
   box-sizing: border-box;
   flex-shrink: 0;
 }
-.query { height: fit-content !important }
 body {
   word-break: break-word;
   width: calc(100vw - 24px);
@@ -75,19 +81,16 @@ hr {
 h1, h2, h3, h4, h5, h6, p, a, ul, ol { margin: 3px; }
 a { color: #50889b; }
 button, input, select, option {
-  background-color: #393838;
-  font-family: Noto Sans;
-  transition: 0.2s;
   color: white;
+  background-color: #393838;
+  font-family: Lexend, Arial, sans-serif;
+  transition: 0.2s;
   border: none;
   border-radius: 6px;
-  padding: 18px;
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding: 12px 18px;
 }
 select, option {
-  color: black;
-  margin: 0;
+  margin: 0px;
   padding-top: 8px;
   padding-bottom: 8px;
   outline: none;
