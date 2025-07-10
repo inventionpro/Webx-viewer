@@ -125,6 +125,7 @@ async function load(ip, query, html, scripts, styles) {
   doc.onclick = function(evt) {
     const anchor = evt.target.closest('a');
     if (anchor) {
+      if (anchor.getAttribute('href')===null) return;
       evt.preventDefault();
       // Validation
       let href = anchor.getAttribute('href').trim();
