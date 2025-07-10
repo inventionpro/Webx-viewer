@@ -1,10 +1,10 @@
-import { createLegacyLua } from '../lua/legacy.js';
-import { createV2Lua } from '../lua/v2.js';
+import { createLegacyLua } from './lua/legacy.js';
+import { createV2Lua } from './lua/v2.js';
 
-import { parse as htmlparser } from '../parser/html.js';
-import { parse as cssparser } from '../parser/css.js';
-import { build as htmlbuilder } from '../builder/html.js';
-import { build as cssbuilder } from '../builder/css.js';
+import { parse as htmlparser } from './parser/html.js';
+import { parse as cssparser } from './parser/css.js';
+import { build as htmlbuilder } from './builder/html.js';
+import { build as cssbuilder } from './builder/css.js';
 
 import { NaptureCss, BussingaCss } from './default_css.js';
 
@@ -32,7 +32,7 @@ window.cache = {
 function normalizeIp(ip, path) {
   // If the path is a full url just go directly
   if (path.match(/^https?:\/\//) !== null) return path;
-  // TODO: Remove support for github.com
+  // Very legacy github host support
   if (new URL(ip).hostname==='github.com') {
     stdout('[Warn] This website is using the outdated github dns target.', 'warn');
     if (path=='') path = 'index.html';
@@ -70,21 +70,43 @@ function bussFetch(ip, path) {
   });
 }
 function getTarget(domain) {
-  return new Promise((resolve, reject)=>{
-    if (window.cache.fetch[domain]) {
-      resolve(window.cache.fetch[domain]);
+  return new Promise(async(resolve, reject)=>{
+    domain = domain.toLowerCase().trim().replace(/^.*?:\/\//m,'').split('/')[0].split('?')[0].trim();
+    if (!(/^([a-z0-9\-]{1,24}\.)+[a-z0-9\-]{1,24}$/mi).test(domain)) reject('Invalid domain name contents');
+    let upper = domain.split('.').slice(-2).join('.');
+    if (window.cache.fetch[upper]) {
+      resolve(window.cache.fetch[upper][domain]);
     }
     try {
-      domain = domain.toLowerCase().trim().replace(/^.*?:\/\//m,'').split('/')[0].split('?')[0].trim();
-      if (!(/^([a-z0-9\-]{1,24}\.)+[a-z0-9\-]{1,24}$/mi).test(domain)) reject('Invalid domain name contents');
-      fetch(new URL(`/domain/${domain.replace('.','/')}`, document.getElementById('dns').value))
+      fetch(new URL(`/latest/resolve/${upper.replace('.','/')}`, document.getElementById('dns').value))
         .then(res=>res.json())
         .then(res=>{
-          window.cache.fetch[domain] = res.ip;
-          resolve(res.ip);
+          window.cache.fetch[upper] = {};
+          res
+            .filter(record=>record.type==='WEB')
+            .forEach(record=>{
+              window.cache.fetch[upper][record.name] = record.value;
+            });
+          res
+            .filter(record=>record.type==='RED')
+            .forEach(record=>{
+              window.cache.fetch[upper][record.name] = await getTarget(record.value);
+            });
+          if (!window.cache.fetch[upper][domain]) reject('Domain does not exist');
+          resolve(window.cache.fetch[upper][domain]);
         });
     } catch(err) {
-      reject(err);
+      try {
+        fetch(new URL(`/domain/${upper.replace('.','/')}`, document.getElementById('dns').value))
+          .then(res=>res.json())
+          .then(res=>{
+            window.cache.fetch[upper] = {};
+            window.cache.fetch[upper][upper] = res.ip;
+            resolve(res.ip);
+          });
+      } catch(err) {
+        reject('Could not get domain');
+      }
     }
   })
 }
@@ -97,7 +119,7 @@ async function load(ip, query, html, scripts, styles) {
   doc.querySelector('html').innerHTML = html;
 
   // Extra html
-  doc.querySelector('head').insertAdjacentHTML('beforeend', `<meta name="color-scheme" content="dark light"></meta>`);
+  doc.querySelector('head').insertAdjacentHTML('beforeend', `<meta name="color-scheme" content="dark light"><meta name="viewport" content="width=device-width, initial-scale=1.0">`);
 
   // Links
   doc.onclick = function(evt) {
@@ -117,7 +139,7 @@ async function load(ip, query, html, scripts, styles) {
         href = href.replace(/^buss:\/\//m,'');
       } else {
         let cur = window.urlhistory[window.current];
-        href = (cur + '/' + href).replace('://',':~~').replaceAll('//','/').replace(':~~','://');
+        href = (cur + '/' + href).replaceAll(/\/{2,}/g, '/').replace(':/', '://');
       }
       window.urlhistory = window.urlhistory.slice(0,window.current+1);
       window.urlhistory.push(href);
