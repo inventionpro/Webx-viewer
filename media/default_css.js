@@ -70,7 +70,7 @@ img { width: fit-content; }
 hr {
   width: 100%;
   border: none;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid currentColor;
 }
 h1, h2, h3, h4, h5, h6, p, a, ul, ol { margin: 3px; }
 a { color: #50889b; }

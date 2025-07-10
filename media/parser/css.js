@@ -1,6 +1,6 @@
 // Parser from YAB by inventionpro
 export function parse(content) {
-  let rules = {};
+  let rules = [];
   // Remove comments
   content = content.replaceAll(/\/\*([^¬]|.)*?\*\//g, '');
   // Get rules
@@ -8,13 +8,13 @@ export function parse(content) {
     .forEach(rule => {
       // Selectors
       let selector = rule.split('{')[0].trim();
-      selector = selector.split(',').map(s=>{
-        s = s.replaceAll(/\.|\#/g, '').trim();
-        if (s==='*') return '*';
-        return `${s}, .${s}`;
+      selector = selector.split(',').map(selec=>{
+        selec = selec.replaceAll(/\.|\#/g, '').trim();
+        if (selec==='*') return '*';
+        return `${selec}, .${selec}`;
       });
       // Properties
-      let o = {};
+      let prop = {};
       rule
         .match(/{(([^\{])*?)}/)[1]
         .trim()
@@ -27,11 +27,11 @@ export function parse(content) {
         })
         .filter(e=>e.length>1)
         .forEach(p=>{
-          o[p[0]] = p[1];
+          prop[p[0]] = p[1];
         })
       // Set
-      selector.forEach(s=>{
-        rules[s] = o;
+      selector.forEach(selec=>{
+        rules.push({ selector: selec, properties: prop });
       })
     });
   return rules;

@@ -95,7 +95,7 @@ function handleRule(rule, value) {
 }
 
 export function build(rules) {
-  return Object.keys(rules).map(k=>`${k} {
-  ${Object.keys(rules[k]).map(r=>handleRule(r, rules[k][r])).join(';\n  ')+';'}
+  return rules.map(rule=>`${rule.selector} {
+  ${Object.keys(rule.properties).map(r=>handleRule(r, rule.properties[r])).join(';\n  ')+';'}
 }`).join('\n');
 }
