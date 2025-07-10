@@ -89,7 +89,7 @@ function getTarget(domain) {
             });
           res
             .filter(record=>record.type==='RED')
-            .forEach(record=>{
+            .forEach(async(record)=>{
               window.cache.fetch[upper][record.name] = await getTarget(record.value);
             });
           if (!window.cache.fetch[upper][domain]) reject('Domain does not exist');
