@@ -50,7 +50,7 @@ function bussFetch(ip, path) {
   if (document.getElementById('proxy').checked) ip = `https://api.fsh.plus/file?url=${encodeURIComponent(ip)}`;
   // Cache
   if (window.cache.fetch[ip]) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve(window.cache.fetch[ip])
     });
   }
@@ -74,34 +74,34 @@ function getTarget(domain) {
     domain = domain.toLowerCase().trim().replace(/^.*?:\/\//m,'').split('/')[0].split('?')[0].trim();
     if (!(/^([a-z0-9\-]{1,24}\.)+[a-z0-9\-]{1,24}$/mi).test(domain)) reject('Invalid domain name contents');
     let upper = domain.split('.').slice(-2).join('.');
-    if (window.cache.fetch[upper]) {
-      resolve(window.cache.fetch[upper][domain]);
+    if (window.cache.domain[upper]) {
+      resolve(window.cache.domain[upper][domain]);
     }
     try {
       fetch(new URL(`/latest/resolve/${upper.replace('.','/')}`, document.getElementById('dns').value))
         .then(res=>res.json())
         .then(res=>{
-          window.cache.fetch[upper] = {};
+          window.cache.domain[upper] = {};
           res
             .filter(record=>record.type==='WEB')
             .forEach(record=>{
-              window.cache.fetch[upper][record.name] = record.value;
+              window.cache.domain[upper][record.name] = record.value;
             });
           res
             .filter(record=>record.type==='RED')
             .forEach(async(record)=>{
-              window.cache.fetch[upper][record.name] = await getTarget(record.value);
+              window.cache.domain[upper][record.name] = await getTarget(record.value);
             });
-          if (!window.cache.fetch[upper][domain]) reject('Domain does not exist');
-          resolve(window.cache.fetch[upper][domain]);
+          if (!window.cache.domain[upper][domain]) reject('Domain does not exist');
+          resolve(window.cache.domain[upper][domain]);
         });
     } catch(err) {
       try {
         fetch(new URL(`/domain/${upper.replace('.','/')}`, document.getElementById('dns').value))
           .then(res=>res.json())
           .then(res=>{
-            window.cache.fetch[upper] = {};
-            window.cache.fetch[upper][upper] = res.ip;
+            window.cache.domain[upper] = {};
+            window.cache.domain[upper][upper] = res.ip;
             resolve(res.ip);
           });
       } catch(err) {
