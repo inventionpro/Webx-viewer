@@ -1220,14 +1220,14 @@ async function initWasmModule(moduleArg = {}) {
 	var ENVIRONMENT_IS_NODE = typeof process == "object" && process.versions?.node && process.type != "renderer";
 	if (ENVIRONMENT_IS_NODE) {
 		const { createRequire } = await import("module");
-		var require = createRequire(Object(import.meta).url);
+		var require = createRequire('https://inventionpro.github.io/Webx-viewer/media/wasmoon/index.js');
 	}
 	var arguments_ = [];
 	var thisProgram = "./this.program";
 	var quit_ = (status, toThrow) => {
 		throw toThrow;
 	};
-	var _scriptName = Object(import.meta).url;
+	var _scriptName = 'https://inventionpro.github.io/Webx-viewer/media/wasmoon/index.js';
 	var scriptDirectory = "";
 	function locateFile(path) {
 		if (Module["locateFile"]) return Module["locateFile"](path, scriptDirectory);
@@ -1338,7 +1338,7 @@ async function initWasmModule(moduleArg = {}) {
 	var wasmBinaryFile;
 	function findWasmBinary() {
 		if (Module["locateFile"]) return locateFile("glue.wasm");
-		return new URL("glue.wasm", Object(import.meta).url).href;
+		return new URL("glue.wasm", 'https://inventionpro.github.io/Webx-viewer/media/wasmoon/index.js').href;
 	}
 	function getBinarySync(file) {
 		if (readBinary) return readBinary(file);
