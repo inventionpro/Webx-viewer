@@ -100,43 +100,7 @@ export async function createLegacyLua(doc, options, stdout) {
       browser: "bussinga",
       true_browser: "wxv"
     });
-  }/*
-  lua.global.set("Promise", {
-    create: (executor) => new Promise(executor),
-    resolve: (val) => Promise.resolve(val),
-    reject: (err) => Promise.reject(err),
-    all: (list) => Promise.all(list)
-  });
-
-  await lua.doString(`function async(callback)
-    return function(...)
-        local co = coroutine.create(callback)
-        local safe, result = coroutine.resume(co, ...)
-
-        return Promise.create(function(resolve, reject)
-            local checkresult
-            local step = function()
-                if coroutine.status(co) == "dead" then
-                    local send = safe and resolve or reject
-                    return send(result)
-                end
-
-                safe, result = coroutine.resume(co)
-                checkresult()
-            end
-
-            checkresult = function()
-                if safe and result == Promise.resolve(result) then
-                    result:finally(step)
-                else
-                    step()
-                end
-            end
-
-            checkresult()
-        end)
-    end
-end`);*/
+  }
 
   return lua;
 }
