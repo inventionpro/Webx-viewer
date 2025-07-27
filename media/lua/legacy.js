@@ -100,7 +100,7 @@ export async function createLegacyLua(doc, options, stdout) {
       browser: "bussinga",
       true_browser: "wxv"
     });
-  }
+  }/*
   lua.global.set("Promise", {
     create: (executor) => new Promise(executor),
     resolve: (val) => Promise.resolve(val),
@@ -136,7 +136,7 @@ export async function createLegacyLua(doc, options, stdout) {
             checkresult()
         end)
     end
-end`);
+end`);*/
 
   return lua;
 }
