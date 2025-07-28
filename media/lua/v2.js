@@ -24,9 +24,9 @@ ${name} = proxy`);
 function MediaContextFor(elem, stdout) {
   return {
     get paused() { return elem.paused },
-    set paused() {},
+    set paused(value) {},
     get duration() { return elem.duration },
-    set duration() {},
+    set duration(value) {},
     get current_time() { return elem.currentTime },
     set current_time(value) { elem.currentTime = value },
     get volume() { return elem.volume },
