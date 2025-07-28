@@ -21,9 +21,44 @@ setmetatable(proxy, mt)
 ${name} = proxy`);
 }
 
+function MediaContextFor(elem, stdout) {
+  return {
+    get paused() { return elem.paused },
+    set paused() {},
+    get duration() { return elem.duration },
+    set duration() {},
+    get current_time() { return elem.currentTime },
+    set current_time(value) { elem.currentTime = value },
+    get volume() { return elem.volume },
+    set volume(value) { if (value<0||value>1) return; elem.currentTime = volume },
+    get muted() { return elem.muted },
+    set muted(value) { elem.muted = value },
+    get playback_rate() { return elem.playbackRate },
+    set playback_rate(value) { if (value<0||value>4) return; elem.playbackRate = value },
+    get loop() { return elem.loop },
+    set loop(value) { elem.loop = value },
+
+    play: ()=>{ elem.play() },
+    pause: ()=>{ elem.pause() },
+
+    on_playback_change: (callback) => {
+      elem.addEventListener('play', () => {
+        callback(false).catch(err=>stdout(err,'error'));
+      });
+      elem.addEventListener('pause', () => {
+        callback(true).catch(err=>stdout(err,'error'));
+      });
+    }
+  };
+}
+
 function HTMLElementFunctionsFor(elem, stdout) {
   let tag = elem.tagName.toLowerCase();
   let base = {};
+  // Media Context
+  if (['audio','video'].includes(tag)) {
+    base.media_context = MediaContextFor(elem, stdout);
+  }
   return base;
 }
 
@@ -80,6 +115,13 @@ export async function createV2Lua(doc, options, stdout) {
       document.getElementById('url').value = url.trim().replace('buss://','');
       window.view();
     }
+  });
+  await lua.global.set('media_context', (url) => {
+    let audio = document.createElement('audio');
+    audio.style.display = 'noen';
+    audio.src = url;
+    document.body.appendChild(audio);
+    return MediaContextFor(audio, stdout);
   });
   await lua.global.set('print', (text) => {
     if (Object.isObject(text)) {
