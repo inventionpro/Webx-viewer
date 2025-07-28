@@ -4,25 +4,6 @@
     <title>Embed - WebX Viewer</title>
     <link rel="icon" href="./favicon.ico" type="image/png">
     <link rel="stylesheet" href="./media/embed.css">
-    <script>
-      // Set immediate polyfill
-      (() => {
-        if (window.setImmediate) return;
-        let h = 1, tasks = {};
-        const chan = new MessageChannel();
-        chan.port1.onmessage = e => {
-          const t = tasks[e.data];
-          if (t) t(), delete tasks[e.data];
-        };
-        window.setImmediate = (cb, ...a) => {
-          const id = h++;
-          tasks[id] = () => cb(...a);
-          chan.port2.postMessage(id);
-          return id;
-        };
-        window.clearImmediate = id => delete tasks[id];
-      })();
-    </script>
     <script src="./media/wasmoon/index.js"></script>
   </head>
   <body>

@@ -29,7 +29,28 @@
   _exports.decorateFunction = decorateFunction;
   _exports.decorateProxy = decorateProxy;
   _exports.decorateUserdata = decorateUserdata;
-  //#region src/decoration.ts
+  function getImportMetaUrl() {
+    if(typeof process!=='undefined'&&process.versions?.node){const{pathToFileURL}=require('url');return pathToFileURL(__filename).href;}
+    if(typeof document!=='undefined'&&document.currentScript){return document.currentScript.src;}
+    if(typeof location !== 'undefined') {return location.href;}
+    return '';
+  }
+  (() => {
+    if (window.setImmediate) return;
+    let h = 1, tasks = {};
+    const chan = new MessageChannel();
+    chan.port1.onmessage = e => {
+      const t = tasks[e.data];
+      if (t) t(), delete tasks[e.data];
+    };
+    window.setImmediate = (cb, ...a) => {
+      const id = h++;
+      tasks[id] = () => cb(...a);
+      chan.port2.postMessage(id);
+      return id;
+    };
+    window.clearImmediate = id => delete tasks[id];
+  })();
   var Decoration = class {
     constructor(target, options) {
       this.target = target;
@@ -41,17 +62,11 @@
     return new Decoration(target, options);
   }
 
-  //#endregion
-  //#region src/multireturn.ts
   var MultiReturn = class extends Array {};
 
-  //#endregion
-  //#region src/pointer.ts
   _exports.LuaMultiReturn = MultiReturn;
   var Pointer = class extends Number {};
 
-  //#endregion
-  //#region src/types.ts
   let LuaReturn = _exports.LuaReturn = function (LuaReturn$1) {
     LuaReturn$1[LuaReturn$1["Ok"] = 0] = "Ok";
     LuaReturn$1[LuaReturn$1["Yield"] = 1] = "Yield";
@@ -109,8 +124,6 @@
   }({});
   var LuaTimeoutError = class extends Error {};
 
-  //#endregion
-  //#region src/thread.ts
   _exports.LuaTimeoutError = LuaTimeoutError;
   const INSTRUCTION_HOOK_COUNT = 1e3;
   var Thread = _exports.LuaThread = class Thread {
@@ -376,8 +389,6 @@
     }
   };
 
-  //#endregion
-  //#region src/global.ts
   var Global = class extends Thread {
     memoryStats;
     allocatorFunctionPointer;
@@ -570,8 +581,6 @@
     }
   };
 
-  //#endregion
-  //#region src/type-extension.ts
   _exports.LuaGlobal = Global;
   var LuaTypeExtension = class {
     name;
@@ -605,8 +614,6 @@
     }
   };
 
-  //#endregion
-  //#region src/type-extensions/error.ts
   _exports.LuaTypeExtension = LuaTypeExtension;
   var ErrorTypeExtension = class extends LuaTypeExtension {
     gcPointer;
@@ -654,16 +661,12 @@
     return new ErrorTypeExtension(thread, injectObject);
   }
 
-  //#endregion
-  //#region src/raw-result.ts
   var RawResult = class {
     constructor(count) {
       this.count = count;
     }
   };
 
-  //#endregion
-  //#region src/type-extensions/function.ts
   _exports.LuaRawResult = RawResult;
   function decorateFunction(target, options) {
     return new Decoration(target, options);
@@ -797,8 +800,6 @@
     return new FunctionTypeExtension(thread, options);
   }
 
-  //#endregion
-  //#region src/type-extensions/null.ts
   var NullTypeExtension = class extends LuaTypeExtension {
     gcPointer;
     constructor(thread) {
@@ -844,14 +845,10 @@
     return new NullTypeExtension(thread);
   }
 
-  //#endregion
-  //#region src/utils.ts
   const isPromise = target => {
     return target && (Promise.resolve(target) === target || typeof target.then === "function");
   };
 
-  //#endregion
-  //#region src/type-extensions/promise.ts
   var PromiseTypeExtension = class extends LuaTypeExtension {
     gcPointer;
     constructor(thread, injectObject) {
@@ -939,8 +936,6 @@
     return new PromiseTypeExtension(thread, injectObject);
   }
 
-  //#endregion
-  //#region src/type-extensions/proxy.ts
   function decorateProxy(target, options) {
     return new Decoration(target, options || {});
   }
@@ -1055,8 +1050,6 @@
     return new ProxyTypeExtension(thread);
   }
 
-  //#endregion
-  //#region src/type-extensions/table.ts
   var TableTypeExtension = class extends LuaTypeExtension {
     constructor(thread) {
       super(thread, "js_table");
@@ -1141,8 +1134,6 @@
     return new TableTypeExtension(thread);
   }
 
-  //#endregion
-  //#region src/type-extensions/userdata.ts
   function decorateUserdata(target) {
     return new Decoration(target, {
       reference: true
@@ -1187,8 +1178,6 @@
     return new UserdataTypeExtension(thread);
   }
 
-  //#endregion
-  //#region src/engine.ts
   var LuaEngine = class {
     global;
     constructor(cmodule, {
@@ -1276,13 +1265,8 @@
     }
   };
 
-  //#endregion
-  //#region package-version
   _exports.LuaEngine = LuaEngine;
-  var package_version_default = "1.16.1";
 
-  //#endregion
-  //#region build/glue.js
   async function initWasmModule(moduleArg = {}) {
     var moduleRtn;
     var Module = moduleArg;
@@ -1293,14 +1277,14 @@
       const {
         createRequire
       } = await import("module");
-      var require = createRequire('https://inventionpro.github.io/Webx-viewer/media/wasmoon/index.js');
+      var require = createRequire(getImportMetaUrl());
     }
     var arguments_ = [];
     var thisProgram = "./this.program";
     var quit_ = (status, toThrow) => {
       throw toThrow;
     };
-    var _scriptName = 'https://inventionpro.github.io/Webx-viewer/media/wasmoon/index.js';
+    var _scriptName = getImportMetaUrl();
     var scriptDirectory = "";
     function locateFile(path) {
       if (Module["locateFile"]) return Module["locateFile"](path, scriptDirectory);
@@ -1413,7 +1397,7 @@
     var wasmBinaryFile;
     function findWasmBinary() {
       if (Module["locateFile"]) return locateFile("glue.wasm");
-      return new URL("glue.wasm", 'https://inventionpro.github.io/Webx-viewer/media/wasmoon/index.js').href;
+      return new URL("glue.wasm", getImportMetaUrl()).href;
     }
     function getBinarySync(file) {
       if (readBinary) return readBinary(file);
@@ -4273,8 +4257,6 @@
   }
   var glue_default = initWasmModule;
 
-  //#endregion
-  //#region src/luawasm.ts
   var LuaWasm = _exports.LuaWasm = class LuaWasm {
     static async initialize(customWasmFileLocation, environmentVariables) {
       const module = await glue_default({
@@ -4671,8 +4653,6 @@
     }
   };
 
-  //#endregion
-  //#region src/factory.ts
   var LuaFactory = class {
     luaWasmPromise;
     /**
