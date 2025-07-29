@@ -11,9 +11,7 @@ body, div {
   display: flex;
   gap: 10px;
   flex-direction: column;
-  align-items: self-start;
 }
-div { width: 100% }
 h1, h2, h3, h4, h5, h6, p {
  font-weight: normal;
  margin: 0px;

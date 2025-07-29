@@ -85,14 +85,14 @@ function handleRule(rule, value) {
     case 'align':
       if (!['start','center','end','fill'].includes(value.toLowerCase())) return `invalid-value: ${value} for ${rule}`;
       value = value.toLowerCase().replace('fill', 'stretch');
-      return `align_items: ${value};
-  justify-content: ${value}`;
+      return `align_items: ${value} !important;
+  justify-content: ${value} !important`;
     case 'font-weight':
       if (!['ultralight','light','normal','bold','ultrabold','heavy'].includes(value.toLowerCase())) return `invalid-value: ${value} for ${rule}`;
       value = weightnum[value.toLowerCase()];
       break;
   }
-  return `${rule}: ${value}`;
+  return `${rule}: ${value} !important`;
 }
 
 export function build(rules) {
