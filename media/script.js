@@ -143,7 +143,7 @@ async function load(ip, query, html, scripts, styles) {
         href = href.replace(/^buss:\/\//m,'');
       } else {
         let cur = window.urlhistory[window.current];
-        href = new URL(href, 'https://'+cur).href;
+        href = new URL(href, 'https://'+cur).href.replace('https://','');
       }
       window.urlhistory = window.urlhistory.slice(0,window.current+1);
       window.urlhistory.push(href);
