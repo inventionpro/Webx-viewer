@@ -56,14 +56,14 @@ function HTMLElementFunctionsFor(elem, stdout) {
   let tag = elem.tagName.toLowerCase();
   let base = {
     get content() {
-      if (['input','textarea','select'].includes(tags)) return elem.value ?? elem.checked;
-      if (['img','audio','video'].includes(tags)) return elem.src;
+      if (['input','textarea','select'].includes(tag)) return elem.value ?? elem.checked;
+      if (['img','audio','video'].includes(tag)) return elem.src;
       return elem.textContent;
     },
     set content(value) {
-      if (['input','textarea','select'].includes(tags)) {
+      if (['input','textarea','select'].includes(tag)) {
         elem.value = value;
-      } else if (['img','audio','video'].includes(tags)) {
+      } else if (['img','audio','video'].includes(tag)) {
         elem.src = value;
       } else {
         elem.innerText = value;
@@ -73,18 +73,18 @@ function HTMLElementFunctionsFor(elem, stdout) {
     remove: ()=>{ elem.remove() },
 
     on_click: (callback) => {
-      elem.addEventListener('click' () => {
+      elem.addEventListener('click', () => {
         callback().catch(err=>stdout(err,'error'));
       })
     },
     on_input: (callback) => {
-      elem.addEventListener('input' () => {
+      elem.addEventListener('input', () => {
         callback(elem.value).catch(err=>stdout(err,'error'));
       })
     },
     on_keypress: (callback) => {
-      elem.addEventListener('keydown' (event) => {
-        callback(event.key).catch(err=>stdout(err,'error'));
+      elem.addEventListener('keydown', (evt) => {
+        callback(evt.key).catch(err=>stdout(err,'error'));
       })
     },
     on_submit: (callback) => {
