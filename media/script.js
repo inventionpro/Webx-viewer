@@ -7,6 +7,7 @@ import { build as htmlbuilder } from './builder/html.js';
 import { build as cssbuilder } from './builder/css.js';
 
 import { NaptureCss, BussingaCss } from './default_css.js';
+import { errorPage } from './pages.js';
 
 // Utility
 Object.prototype.isObject = (obj)=>{
@@ -59,7 +60,7 @@ function bussFetch(ip, path) {
     try {
       fetch(ip)
         .then(res=>{
-          if (!res.status.toString().startsWith('2')) reject('Non 2xx response');
+          if (!res.status.toString().startsWith('2')) reject('Non 2xx response: '+res.status);
           return res.text();
         })
         .then(res=>{
@@ -239,7 +240,11 @@ async function view() {
     try {
       page = await bussFetch(target, path);
     } catch(err) {
-      page = `<p>Could not load page, error: ${err}</p>`;
+      if (err.toString().includes('Non 2xx response')) {
+        page = errorPage.replace('Message', 'The page returned a '+err.toString().split(': ')[1]+' code (Non Ok)');
+      } else {
+        page = errorPage.replace('Message', 'Unknown error while loading page: '+err.toString());
+      }
     }
     let tree = htmlparser(page);
     let build = htmlbuilder(tree, target);
