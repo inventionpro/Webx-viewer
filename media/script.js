@@ -58,7 +58,10 @@ function bussFetch(ip, path) {
   return new Promise((resolve, reject) => {
     try {
       fetch(ip)
-        .then(res=>res.text())
+        .then(res=>{
+          if (!res.status.toString().startsWith('2')) reject('Non 2xx response');
+          return res.text();
+        })
         .then(res=>{
           window.cache.fetch[ip] = res;
           resolve(res);
