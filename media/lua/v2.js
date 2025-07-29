@@ -80,16 +80,16 @@ export async function createV2Lua(doc, options, stdout) {
   await lua.global.set('get', (selector, all=false) => {
     return null;
   });
-  await lua.global.set('getId', (id) => {
+  await lua.global.set('get_id', (id) => {
     return HTMLElementFunctionsFor(doc.getElementById(id), stdout);
   });
-  await lua.global.set('getClass', (clas, all=false) => {
-    let tags = document.getElementsByClassName(clas);
-    return all ? Array.from(tags).map(t=>HTMLElementFunctionsFor(t, stdout)) : HTMLElementFunctionsFor(tags[0], stdout);
+  await lua.global.set('get_class', (clas, all=false) => {
+    let tags = Array.from(document.getElementsByClassName(clas));
+    return all ? tags.map(t=>HTMLElementFunctionsFor(t, stdout)) : HTMLElementFunctionsFor(tags[0], stdout);
   });
-  await lua.global.set('getTag', (tag, all=false) => {
-    let tags = document.getElementsByTagName(tag);
-    return all ? Array.from(tags).map(t=>HTMLElementFunctionsFor(t, stdout)) : HTMLElementFunctionsFor(tags[0], stdout);
+  await lua.global.set('get_tag', (tag, all=false) => {
+    let tags = Array.from(document.getElementsByTagName(tag));
+    return all ? tags.map(t=>HTMLElementFunctionsFor(t, stdout)) : HTMLElementFunctionsFor(tags[0], stdout);
   });
   await frozenTable(lua, 'browser', {
     name: 'WXV',
@@ -99,7 +99,8 @@ export async function createV2Lua(doc, options, stdout) {
       print: true,
       get: false,
       get_type: true,
-      fetch: false
+      fetch: false,
+      media_context: true
     }
   });
   await lua.global.set('global', window.luaGlobal);
