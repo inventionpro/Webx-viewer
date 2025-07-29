@@ -54,7 +54,48 @@ function MediaContextFor(elem, stdout) {
 
 function HTMLElementFunctionsFor(elem, stdout) {
   let tag = elem.tagName.toLowerCase();
-  let base = {};
+  let base = {
+    get content() {
+      if (['input','textarea','select'].includes(tags)) return elem.value ?? elem.checked;
+      if (['img','audio','video'].includes(tags)) return elem.src;
+      return elem.textContent;
+    },
+    set content(value) {
+      if (['input','textarea','select'].includes(tags)) {
+        elem.value = value;
+      } else if (['img','audio','video'].includes(tags)) {
+        elem.src = value;
+      } else {
+        elem.innerText = value;
+      }
+    },
+
+    remove: ()=>{ elem.remove() },
+
+    on_click: (callback) => {
+      elem.addEventListener('click' () => {
+        callback().catch(err=>stdout(err,'error'));
+      })
+    },
+    on_input: (callback) => {
+      elem.addEventListener('input' () => {
+        callback(elem.value).catch(err=>stdout(err,'error'));
+      })
+    },
+    on_keypress: (callback) => {
+      elem.addEventListener('keydown' (event) => {
+        callback(event.key).catch(err=>stdout(err,'error'));
+      })
+    },
+    on_submit: (callback) => {
+      elem.addEventListener('submit', () => {
+        callback(elem.value || elem.checked).catch(err=>stdout(err,'error'));
+      });
+      elem.addEventListener('keyup', (evt) => {
+        if (evt.key == "Enter") callback(elem.value ?? elem.checked).catch(err=>stdout(err,'error'));
+      });
+    }
+  };
   // Media Context
   if (['audio','video'].includes(tag)) {
     base.media_context = MediaContextFor(elem, stdout);

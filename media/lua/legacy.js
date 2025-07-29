@@ -7,8 +7,8 @@ function HTMLElementFunctionsFor(elem, bussinga, stdout) {
     get_source: () => elem.src,
     get_opacity: () => elem.style.opacity,
 
-    set_content: (text) => elem[['input','textarea'].includes(tag)?'value':'innerText'] = text,
-    set_contents: (text) => elem[['input','textarea'].includes(tag)?'value':'innerText'] = text,
+    set_content: (text) => elem[['input','textarea','select'].includes(tag)?'value':'innerText'] = text,
+    set_contents: (text) => elem[['input','textarea','select'].includes(tag)?'value':'innerText'] = text,
     set_href: (text) => elem.href = text,
     set_source: (src) => elem.src = src,
     set_opacity: (opa) => elem.style.opacity = opa,
@@ -36,7 +36,7 @@ function HTMLElementFunctionsFor(elem, bussinga, stdout) {
     }
   };
   if (bussinga) {
-    base.set_contents = (text) => elem[['input','textarea'].includes(tag)?'value':'innerHTML'] = text;
+    base.set_contents = (text) => elem[['input','textarea','select'].includes(tag)?'value':'innerHTML'] = text;
     base.set_content = base.set_contents;
     base.get_css_name = () => elem.className || elem.tagName;
     base.set_value = (text) => elem.value = text;
