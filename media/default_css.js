@@ -1,6 +1,7 @@
 export const NaptureCss = `/* Napture default css */
 @import url('https://fonts.googleapis.com/css2?family=Lexend:ital,wght@0,100..900;1,100..600&display=swap');
 body {
+  width: calc(100vw - 16px);
   font-family: Lexend, Arial, sans-serif;
   color: #F7F7F7;
   background-color: #2C2C2C;
@@ -12,6 +13,7 @@ body, div {
   flex-direction: column;
   align-items: self-start;
 }
+div { width: 100% }
 h1, h2, h3, h4, h5, h6, p {
  font-weight: normal;
  margin: 0px;

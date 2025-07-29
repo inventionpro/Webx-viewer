@@ -85,7 +85,8 @@ function handleRule(rule, value) {
     case 'align':
       if (!['start','center','end','fill'].includes(value.toLowerCase())) return `invalid-value: ${value} for ${rule}`;
       value = value.toLowerCase().replace('fill', 'stretch');
-      break;
+      return `align_items: ${value};
+  justify-content: ${value}`;
     case 'font-weight':
       if (!['ultralight','light','normal','bold','ultrabold','heavy'].includes(value.toLowerCase())) return `invalid-value: ${value} for ${rule}`;
       value = weightnum[value.toLowerCase()];
