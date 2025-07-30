@@ -118,6 +118,42 @@ export async function createV2Lua(doc, options, stdout) {
   });
 
   // Lua global functions
+  await frozenTable(lua, 'browser', {
+    name: 'WXV',
+    agent: 'wxv',
+    version: '0.1.0',
+    api: {
+      print: true,
+      get: false,
+      get_type: true,
+      fetch: false,
+      media_context: true
+    }
+  });
+  await lua.global.set('fetch', async(o) => {
+    let url = o.url;
+    let opts = {
+      method: o.method?.toUpperCase()??'GET',
+      headers: o.headers??{}
+    };
+    if (!['GET','HEAD'].includes(opts.method) && o.body) opts.body = o.body;
+    if (options.proxy) url = `https://api.fsh.plus/file?url=${encodeURIComponent(url)}`;
+
+    // Fetch
+    let req = await fetch(url, opts);
+    let body = await req.text();
+    try {
+      body = JSON.parse(body)
+    } catch(err) {
+      // Ignore :3
+    }
+
+    return {
+      status: req.status,
+      headers: Object.fromEntries(req.headers.entries()),
+      body
+    };
+  });
   await lua.global.set('get', (selector, all=false) => {
     return null;
   });
@@ -131,18 +167,6 @@ export async function createV2Lua(doc, options, stdout) {
   await lua.global.set('get_tag', (tag, all=false) => {
     let tags = Array.from(document.getElementsByTagName(tag));
     return all ? tags.map(t=>HTMLElementFunctionsFor(t, stdout)) : HTMLElementFunctionsFor(tags[0], stdout);
-  });
-  await frozenTable(lua, 'browser', {
-    name: 'WXV',
-    agent: 'wxv',
-    version: '0.1.0',
-    api: {
-      print: true,
-      get: false,
-      get_type: true,
-      fetch: false,
-      media_context: true
-    }
   });
   await lua.global.set('global', window.luaGlobal);
   let parsedUrl = new URL(options.location.includes('://')?options.location:'https://'+options.location);
@@ -183,10 +207,6 @@ export async function createV2Lua(doc, options, stdout) {
     }
     stdout(`[Error]: ${text}`, 'error');
   });
-  /*
-  get(selector, all)
-fetch(options)
-*/
 
   return lua;
 }

@@ -72,25 +72,24 @@ export async function createLegacyLua(doc, options, stdout) {
     }
   });
   await lua.global.set('fetch', async(o) => {
-      let url = o.url;
-      let opts = {
-        method: o.method?.toUpperCase()??'GET',
-        headers: o.headers??{}
-      };
-      if (!['GET','HEAD'].includes(opts.method)) opts.body = o.body;
-      if (options.proxy) url = `https://api.fsh.plus/file?url=${encodeURIComponent(url)}`;
+    let url = o.url;
+    let opts = {
+      method: o.method?.toUpperCase()??'GET',
+      headers: o.headers??{}
+    };
+    if (!['GET','HEAD'].includes(opts.method) && o.body) opts.body = o.body;
+    if (options.proxy) url = `https://api.fsh.plus/file?url=${encodeURIComponent(url)}`;
 
-      // Fetch
-      let req = await fetch(url, opts);
-      let body = await req.text();
-      try {
-        body = JSON.parse(body)
-      } catch(err) {
-        // Ignore :3
-      }
+    // Fetch
+    let req = await fetch(url, opts);
+    let body = await req.text();
+    try {
+      body = JSON.parse(body)
+    } catch(err) {
+      // Ignore :3
+    }
 
-      // Save and respond
-      return body;
+    return body;
   });
   // Bussinga globals
   if (options.bussinga) {
