@@ -1,8 +1,8 @@
 function HTMLElementFunctionsFor(elem, bussinga, stdout) {
   let tag = elem.tagName.toLowerCase();
   let base = {
-    get_content: () => elem.value || elem.checked || elem.textContent,
-    get_contents: () => elem.value || elem.checked || elem.textContent,
+    get_content: () => elem.value ?? elem.checked ?? elem.textContent,
+    get_contents: () => elem.value ?? elem.checked ?? elem.textContent,
     get_href: () => elem.href,
     get_source: () => elem.src,
     get_opacity: () => elem.style.opacity,
@@ -20,25 +20,25 @@ function HTMLElementFunctionsFor(elem, bussinga, stdout) {
     },
     on_input: (callback) => {
       elem.addEventListener('keyup', () => {
-        callback(elem.value || elem.checked).catch(err=>stdout(err,'error'));
+        callback(elem.value ?? elem.checked).catch(err=>stdout(err,'error'));
       });
       elem.addEventListener('change', () => {
-        callback(elem.value || elem.checked).catch(err=>stdout(err,'error'));
+        callback(elem.value ?? elem.checked).catch(err=>stdout(err,'error'));
       });
     },
     on_submit: (callback) => {
       elem.addEventListener('submit', () => {
-        callback(elem.value || elem.checked).catch(err=>stdout(err,'error'));
+        callback(elem.value ?? elem.checked).catch(err=>stdout(err,'error'));
       });
       elem.addEventListener('keyup', (evt) => {
-        if (evt.key == "Enter") callback(elem.value || elem.checked).catch(err=>stdout(err,'error'));
+        if (evt.key == "Enter") callback(elem.value ?? elem.checked).catch(err=>stdout(err,'error'));
       });
     }
   };
   if (bussinga) {
     base.set_contents = (text) => elem[['input','textarea','select'].includes(tag)?'value':'innerHTML'] = text;
     base.set_content = base.set_contents;
-    base.get_css_name = () => elem.className || elem.tagName;
+    base.get_css_name = () => elem.className ?? elem.tagName;
     base.set_value = (text) => elem.value = text;
   }
   return base;
