@@ -18,7 +18,7 @@ const stdoute = document.getElementById('stdout');
 function stdout(text, type='') {
   if (!stdoute) return;
   let p = document.createElement('p');
-  p.classList.add(type);
+  if (type.length) p.classList.add(type);
   p.innerText = text;
   stdoute.insertAdjacentElement('afterbegin', p);
 }
