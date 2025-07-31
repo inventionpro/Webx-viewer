@@ -74,30 +74,55 @@ function HTMLElementFunctionsFor(elem, stdout) {
 
     on_click: (callback) => {
       elem.addEventListener('click', () => {
-        callback().catch(err=>stdout(err,'error'));
+        try {
+          callback();
+        } catch(err) {
+          stdout(err, 'error');
+        }
       })
     },
     on_input: (callback) => {
       elem.addEventListener('input', () => {
-        callback(elem.value).catch(err=>stdout(err,'error'));
+        try {
+          callback(elem.value);
+        } catch(err) {
+          stdout(err, 'error');
+        }
       })
     },
     on_keypress: (callback) => {
       elem.addEventListener('keydown', (evt) => {
-        callback(evt.key).catch(err=>stdout(err,'error'));
+        try {
+          callback(evt.key);
+        } catch(err) {
+          stdout(err, 'error');
+        }
       })
     },
     on_load: (callback) => {
       elem.addEventListener((['video','audio'].includes(tag)?'canplay':'load'), () => {
-        callback().catch(err=>stdout(err,'error'));
+        try {
+          callback();
+        } catch(err) {
+          stdout(err, 'error');
+        }
       })
     },
     on_submit: (callback) => {
       elem.addEventListener('submit', () => {
-        callback(elem.value || elem.checked).catch(err=>stdout(err,'error'));
+        try {
+          callback(elem.value ?? elem.checked);
+        } catch(err) {
+          stdout(err, 'error');
+        }
       });
       elem.addEventListener('keyup', (evt) => {
-        if (evt.key == "Enter") callback(elem.value ?? elem.checked).catch(err=>stdout(err,'error'));
+        if (evt.key !== 'Enter') return;
+        try {
+          callback(elem.value ?? elem.checked);
+        } catch(err) {
+          stdout(err, 'error');
+        }
       });
     }
   };

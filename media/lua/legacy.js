@@ -15,23 +15,44 @@ function HTMLElementFunctionsFor(elem, bussinga, stdout) {
 
     on_click: (callback) => {
       elem.addEventListener('click', () => {
-        callback();
+        try {
+          callback();
+        } catch(err) {
+          stdout(err, 'error');
+        }
       });
     },
     on_input: (callback) => {
       elem.addEventListener('keyup', () => {
-        callback(elem.value ?? elem.checked).catch(err=>stdout(err,'error'));
+        try {
+          callback(elem.value ?? elem.checked);
+        } catch(err) {
+          stdout(err, 'error');
+        }
       });
       elem.addEventListener('change', () => {
-        callback(elem.value ?? elem.checked).catch(err=>stdout(err,'error'));
+        try {
+          callback(elem.value ?? elem.checked);
+        } catch(err) {
+          stdout(err, 'error');
+        }
       });
     },
     on_submit: (callback) => {
       elem.addEventListener('submit', () => {
-        callback(elem.value ?? elem.checked).catch(err=>stdout(err,'error'));
+        try {
+          callback(elem.value ?? elem.checked);
+        } catch(err) {
+          stdout(err, 'error');
+        }
       });
       elem.addEventListener('keyup', (evt) => {
-        if (evt.key == "Enter") callback(elem.value ?? elem.checked).catch(err=>stdout(err,'error'));
+        if (evt.key !== 'Enter') return;
+        try {
+          callback(elem.value ?? elem.checked);
+        } catch(err) {
+          stdout(err, 'error');
+        }
       });
     }
   };
