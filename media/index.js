@@ -11,14 +11,14 @@ function showTabs() {
     .map(tab=>`<button>`);
 }
 
-const Browser = new Browser({
+const browser = new Browser({
   startUrl: 'buss://search.app',
   bussinga: false,
   proxy: false,
   dns: 'https://dns.webxplus.org/',
   stdout
 });
-window.Browser = Browser;
+window.browser = browser;
 Browser.createTab();
 
 showTabs();

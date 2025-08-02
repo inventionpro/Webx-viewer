@@ -1,0 +1,54 @@
+body {
+  display: flex;
+  flex-direction: column;
+  width: 100dvw;
+  height: 100dvh;
+  color: #ddd;
+  margin: 0px;
+  background-color: #2a2a2a;
+}
+button:has(svg) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+svg {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+#tabs {
+  background-color: #1a1a1a;
+}
+
+.nav {
+  display: flex;
+  gap: 5px;
+  padding: 5px 10px;
+  border-bottom: 2px #383838 solid;
+}
+.nav input {
+  flex: 1;
+  color: currentColor;
+  padding: 8px;
+  border: none;
+  border-radius: 1rem;
+  outline: none;
+  background-color: #1a1a1a;
+}
+.nav button {
+  color: currentColor;
+  padding: 5px;
+  border: none;
+  border-radius: 1rem;
+  background: none;
+  transition: background 500ms;
+}
+.nav button:hover {
+  background-color: #383838;
+}
+
+iframe {
+  flex: 1;
+  border: none;
+}
