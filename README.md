@@ -1,2 +1,2 @@
 # WebX Viewer
-View WebX websites online using WXV.
+View and use WebX websites comfortably from your browser using WXV.

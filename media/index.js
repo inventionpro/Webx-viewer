@@ -1,0 +1,24 @@
+import { Browser } from './core.js'
+
+window.logs = {};
+function stdout(text, type, tab) {
+  if (!window.logs[tab]) window.logs[tab] = [];
+  window.logs[tab].push([text, type]);
+}
+
+function showTabs() {
+  document.getElementById('tabs').innerHTML = Browser.tabs
+    .map(tab=>`<button>`);
+}
+
+const Browser = new Browser({
+  startUrl: 'buss://search.app',
+  bussinga: false,
+  proxy: false,
+  dns: 'https://dns.webxplus.org/',
+  stdout
+});
+window.Browser = Browser;
+Browser.createTab();
+
+showTabs();
