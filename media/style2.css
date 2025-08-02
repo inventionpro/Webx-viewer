@@ -4,8 +4,22 @@ body {
   width: 100dvw;
   height: 100dvh;
   color: #ddd;
+  font-family: Lexend, Arial, sans-serif;
   margin: 0px;
   background-color: #2a2a2a;
+}
+input {
+  color: currentColor;
+  border: none;
+  outline: none;
+  background-color: #1a1a1a;
+}
+button {
+  cursor: pointer;
+  color: currentColor;
+  border: none;
+  background: none;
+  transition: background 500ms;
 }
 button:has(svg) {
   display: flex;
@@ -17,8 +31,48 @@ svg {
   stroke: currentColor;
 }
 
+dialog {
+  color: #ddd;
+  font-family: Lexend, Arial, sans-serif;
+  padding: 10px;
+  border: 2px #383838 solid;
+  border-radius: 1rem;
+  background: #2a2a2a;
+  overflow: visible;
+}
+.modal-close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+}
+
 #tabs {
+  display: flex;
   background-color: #1a1a1a;
+}
+#tabs button {
+  flex: 1;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  max-width: 175px;
+  text-align: left;
+  padding: 8px;
+  border-right: 2px #383838 solid;
+}
+#tabs button:hover {
+  background-color: #383838;
+}
+#tabs button[active] {
+  border-right-color: #2a2a2a;
+  background-color: #2a2a2a;
+}
+#tabs button img {
+  height: 16px;
 }
 
 .nav {
@@ -29,20 +83,12 @@ svg {
 }
 .nav input {
   flex: 1;
-  color: currentColor;
   padding: 8px;
-  border: none;
   border-radius: 1rem;
-  outline: none;
-  background-color: #1a1a1a;
 }
 .nav button {
-  color: currentColor;
   padding: 5px;
-  border: none;
   border-radius: 1rem;
-  background: none;
-  transition: background 500ms;
 }
 .nav button:hover {
   background-color: #383838;

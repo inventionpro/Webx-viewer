@@ -7,9 +7,11 @@ function stdout(text, type, tab) {
 }
 
 function showTabs() {
-  document.getElementById('tabs').innerHTML = Browser.tabs
-    .map(tab=>`<button>`);
+  document.getElementById('tabs').innerHTML = window.browser.tabs
+    .map(tab=>`<button onclick="window.browser.changeTab('${tab.id}');showTabs()"${window.browser.activeTab===tab.id?' active':''}><img src="${tab.icon}">${tab.title}</button>`)
+    .join('');
 }
+window.showTabs = showTabs;
 
 const browser = new Browser({
   startUrl: 'buss://search.app',
@@ -19,6 +21,6 @@ const browser = new Browser({
   stdout
 });
 window.browser = browser;
-Browser.createTab();
+browser.createTab();
 
 showTabs();

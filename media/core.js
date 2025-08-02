@@ -23,8 +23,10 @@ class Tab {
     this.url = startUrl;
     this.title = 'Loading...';
     this.icon = this.browser.defFavicon;
-    this.history = [startUrl];
+    this.history = [];
     this.position = 0;
+
+    this.goTo(startUrl);
   }
   _check() {
     if (this.closed) throw new Error('This tab has been closed');
@@ -96,10 +98,13 @@ export class Browser {
     if (!url.includes('://')) url = 'buss://'+url;
   }
   createTab() {
-    let tab = new Tab(this.startUrl);
+    let tab = new Tab(this, this.startUrl);
     this.activeTab = tab.id;
     this.tabs.push(tab);
     return tab;
+  }
+  changeTab(id) {
+    this.activeTab = id;
   }
   deleteCache() {
     this.cache = new Map();
