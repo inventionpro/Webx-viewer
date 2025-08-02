@@ -60,7 +60,9 @@
           }
         }
         function embed() {
-          navigator.clipboard.writeText(`https://inventionpro.github.io/Webx-viewer/embed?url=${document.getElementById('url').value}&bussinga=${document.getElementById('bussinga').checked}&dns=${document.getElementById('dns').value}`);
+          let url = `https://inventionpro.github.io/Webx-viewer/embed?url=${document.getElementById('url').value}&bussinga=${document.getElementById('bussinga').checked}&proxy=${document.getElementById('proxy').checked}&dns=${document.getElementById('dns').value}`;
+          url = url.replace('&bussinga=false','').replace('&proxy=false','').replace('&dns=https://dns.webxplus.org/','');
+          navigator.clipboard.writeText(url);
         }
       </script>
     </div>
