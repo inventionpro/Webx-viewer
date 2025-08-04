@@ -192,7 +192,7 @@ class Tab {
   }
   goForward(steps=1) {
     this._check();
-    this.position = Math.min(this.position+Math.round(steps), 0);
+    this.position = Math.min(this.position+Math.round(steps), this.history.length-1);
     this.url = this.history[this.position];
     this._load();
   }
