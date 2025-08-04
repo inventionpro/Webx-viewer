@@ -47,6 +47,11 @@ class Tab {
       let doc = this.iframe.contentDocument;
       doc.querySelector('html').innerHTML = build.html;
 
+      // Get data
+      _this.title = doc.querySelector('title').innerText??target;
+      _this.icon = doc.querySelector('div[tag="link"]').getAttribute('href')??_this.browser.defFavicon;
+      if (_this.icon.endsWith('.css')) _this.icon = _this.browser.defFavicon;
+
       // Extra html
       doc.querySelector('head').insertAdjacentHTML('beforeend', `<meta name="color-scheme" content="dark light"><meta name="viewport" content="width=device-width, initial-scale=1.0">`);
 

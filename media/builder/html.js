@@ -33,10 +33,10 @@ function convert(l, ip) {
       }
     }
     if (e.name === 'script') {
-      return [`<div tag="script"${attr(e.attributes)}></div>`, [{src: e.attributes?.src??'', version: e.attributes?.version??'legacy'}], []];
+      return [`<div tag="script" style="display:none"${attr(e.attributes)}></div>`, [{src: e.attributes?.src??'', version: e.attributes?.version??'legacy'}], []];
     }
     if (e.name === 'link') {
-      return [`<div tag="link"${attr(e.attributes)}></div>`, [], [e.attributes?.href??'']];
+      return [`<div tag="link" style="display:none"${attr(e.attributes)}></div>`, [], [e.attributes?.href??'']];
     }
     if (['audio','img','video'].includes(e.name)) {
       if (!e.attributes?.src?.includes('://')) e.attributes.src = normalizeIp(ip, e.attributes?.src);

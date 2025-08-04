@@ -11,7 +11,7 @@ function showTabs() {
     .map(tab=>`<button onclick="window.browser.changeTab('${tab.id}')"${window.browser.activeTab===tab.id?' active':''}>
   <img src="${tab.icon}">
   <span class="title">${tab.title}</span>
-  <span class="close" onclick="window.browser.closeTab('${tab.id}')">x</span>
+  <span class="close" onclick="event.stopPropagation();window.browser.closeTab('${tab.id}')">x</span>
 </button>`)
     .join('')+`<button class="add" onclick="window.browser.createTab()"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 256 256"><rect x="103" width="50" height="256" rx="25"/><rect y="103" width="256" height="50" rx="25"/></svg></button>`;
 }
@@ -30,3 +30,7 @@ const browser = new Browser({
 });
 window.browser = browser;
 browser.createTab();
+
+setInterval(() => {
+  window.showTabs();
+}, 500);
