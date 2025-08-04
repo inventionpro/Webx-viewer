@@ -26,6 +26,7 @@ class Tab {
     this.icon = this.browser.defFavicon;
     this.history = [];
     this.position = 0;
+    this.luaEngine = [];
     this.iframe = document.createElement('iframe');
     this.iframe.style.display = 'none';
     this.iframe.id = this.id;
@@ -93,6 +94,7 @@ class Tab {
           style = await _this._fetch(csstarget);
         } catch(err) {
           // If fetch fails, ignore output (Prevents stealing css from error pages)
+          _this.browser.stdout('[Error] Could not load a css resource: '+style, 'error', _this.id);
           return;
         }
         if (!_this.browser.bussinga||!style.includes('/* bussinga! */')) {
@@ -104,42 +106,41 @@ class Tab {
         dstyl.innerHTML = style;
         doc.head.appendChild(dstyl);
       });
-/*
       // Lua
       for (let i = 0; i<build.scripts.length; i++) {
-        build.scripts[i].code = await bussFetch(ip, build.scripts[i].src);
+        try {
+          let luatarget = this.browser._normalizeIp(target, build.scripts[i].src, this.id);
+          build.scripts[i].code = await _this._fetch(luatarget);
+        } catch(err) {
+          _this.browser.stdout('[Error] Could not load a lua resource: '+style, 'error', _this.id);
+        }
       }
-      window.luaEngine = [];
-      window.luaGlobal = {};
+      _this.luaEngine = [];
+      window.luaGlobal = {}; // TODO: Make it be tab independent
       build.scripts.forEach(async script => {
         let lua;
         let options = {
-          location: document.getElementById('url').value,
-          query,
+          location: _this.url,
+          query: _this.url.split('?')[1]??'',
           bussinga: _this.browser.bussinga,
           proxy: _this.browser.proxy
         };
         if (script.version==='v2') {
-          lua = await createV2Lua(doc, options, stdout);
+          lua = await createV2Lua(doc, options, (text,type)=>{_this.browser.stdout(text,type,_this.id)});
         } else if (script.version==='legacy') {
           script.code = script.code
             .replace(/(\bfetch\s*\(\{[\s\S]*?\}\))(?!(\s*:\s*await\s*\())/g, '$1:await()');
-          lua = await createLegacyLua(doc, options, stdout);
+          lua = await createLegacyLua(doc, options, (text,type)=>{_this.browser.stdout(text,type,_this.id)});
         } else {
-          stdout(`Unknwon version: ${script.version} for: ${script.src}`, 'error');
+          stdout(`[Error] Unknwon version: ${script.version} for: ${script.src}`, 'error', _this.id);
         }
-        if (has_console) {
-          window.luaEngine.push([lua, script.version]);
-          let i = -1;
-          document.getElementById('ctx').innerHTML = window.luaEngine.map(r=>{i++;return`<option value="${i}">${i} (${r[1]})</option>`}).join('');
-        }
+        _this.luaEngine.push([lua, script.version]);
         try {
           await lua.doString(script.code);
         } catch(err) {
-          console.log(err);
-          stdout(err.message, 'error');
+          _this.browser.stdout(err.message, 'error', _this.id);
         }
-      });*/
+      });
     };
     this.iframe.contentDocument.location.reload();
   }
@@ -167,15 +168,11 @@ class Tab {
     } else {
       let fetchtarget = target;
       if (this.browser.proxy) fetchtarget = `https://api.fsh.plus/file?url=${encodeURIComponent(target)}`;
-      fetch(fetchtarget)
-        .then(res=>{
-          if (!res.status.toString().startsWith('2')) throw new Error('Non 2xx response (Not Ok): '+res.status);
-          return res.text();
-        })
-        .then(res=>{
-          this.browser.cache.set('fetch-'+target, res);
-          return res;
-        })
+      let req = await fetch(fetchtarget);
+      if (!res.status.toString().startsWith('2')) throw new Error('Non 2xx response (Not Ok): '+res.status);
+      req = await req.text();
+      this.browser.cache.set('fetch-'+target, req);
+      return req;
     }
   }
   goTo(url) {

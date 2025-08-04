@@ -1,8 +1,9 @@
 import { Browser } from './core.js'
 
 window.logs = {};
-function stdout(text, type, tab) {
+function stdout(text, type='log', tab='Browser') {
   if (!window.logs[tab]) window.logs[tab] = [];
+  console[type](text+' from '+tab);
   window.logs[tab].push([text, type]);
 }
 

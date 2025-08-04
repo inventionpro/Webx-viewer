@@ -223,7 +223,7 @@ export async function createV2Lua(doc, options, stdout) {
     if (Object.isObject(text)) {
       text = JSON.stringify(text, null, 2);
     }
-    stdout(`[Log]: ${text}`);
+    stdout(`[Log]: ${text}`, 'log');
   });
   await lua.global.set('printw', (text) => {
     if (Object.isObject(text)) {
