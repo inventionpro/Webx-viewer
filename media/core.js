@@ -33,8 +33,105 @@ class Tab {
   _check() {
     if (this.closed) throw new Error('This tab has been closed');
   }
-  _loadHTML(html) {
-    console.log('Html got', html)
+  _loadHTML(html, target) {
+    if (!target) target =  location.href;
+    const _this = this;
+    this.iframe.onload = async() => {
+      let htmltree = htmlparser(page);
+      let build = htmlbuilder(htmltree, target);
+
+      let doc = this.iframe.contentDocument;
+      doc.querySelector('html').innerHTML = build.html;
+
+      // Extra html
+      doc.querySelector('head').insertAdjacentHTML('beforeend', `<meta name="color-scheme" content="dark light"><meta name="viewport" content="width=device-width, initial-scale=1.0">`);
+
+      // Links
+      doc.onclick = function(evt) {
+        const anchor = evt.target.closest('a');
+        if (anchor) {
+          if (anchor.getAttribute('href')===null) return;
+          evt.preventDefault();
+          // Validation
+          let href = anchor.getAttribute('href').trim();
+          if (!href.toLowerCase().startsWith('buss://')) {
+            if (href.includes('://')) {
+              window.open(href);
+              return;
+            }
+          };
+          // Go to link
+          if (!href.includes('://')) {
+            href = new URL(href, this.url).href;
+          }
+          _this.goTo(href);
+        }
+      }
+
+      // Default css
+      let default_style = doc.createElement('style');
+      default_style.innerHTML = _this.browser.bussinga ? BussingaCss : NaptureCss;
+      doc.head.appendChild(default_style);
+
+      // Page css
+      build.styles.forEach(async(style) => {
+        // If not existent, skip
+        if (!style.endsWith('.css')) return;
+        // Fetch
+        try {
+          let target = this.browser._normalizeIp(target, style, this.id);
+          style = await _this._fetch(target);
+        } catch(err) {
+          // If fetch fails, ignore output (Prevents stealing css from error pages)
+          return;
+        }
+        if (!_this.browser.bussinga||!style.includes('/* bussinga! */')) {
+          if (style.includes('/* bussinga! */')) _this.browser.stdout('[Warn] Site uses bussinga css comment, but you are not using bussinga mode.', 'warn', _this.id);
+          style = cssparser(style);
+          style = cssbuilder(style);
+        }
+        let dstyl = doc.createElement('style');
+        dstyl.innerHTML = style;
+        doc.head.appendChild(dstyl);
+      });
+/*
+      // Lua
+      for (let i = 0; i<build.scripts.length; i++) {
+        build.scripts[i].code = await bussFetch(ip, build.scripts[i].src);
+      }
+      window.luaEngine = [];
+      window.luaGlobal = {};
+      build.scripts.forEach(async script => {
+        let lua;
+        let options = {
+          location: document.getElementById('url').value,
+          query,
+          bussinga: _this.browser.bussinga,
+          proxy: _this.browser.proxy
+        };
+        if (script.version==='v2') {
+          lua = await createV2Lua(doc, options, stdout);
+        } else if (script.version==='legacy') {
+          script.code = script.code
+            .replace(/(\bfetch\s*\(\{[\s\S]*?\}\))(?!(\s*:\s*await\s*\())/g, '$1:await()');
+          lua = await createLegacyLua(doc, options, stdout);
+        } else {
+          stdout(`Unknwon version: ${script.version} for: ${script.src}`, 'error');
+        }
+        if (has_console) {
+          window.luaEngine.push([lua, script.version]);
+          let i = -1;
+          document.getElementById('ctx').innerHTML = window.luaEngine.map(r=>{i++;return`<option value="${i}">${i} (${r[1]})</option>`}).join('');
+        }
+        try {
+          await lua.doString(script.code);
+        } catch(err) {
+          console.log(err);
+          stdout(err.message, 'error');
+        }
+      });*/
+    };
+    this.iframe.contentDocument.location.reload();
   }
   async _load() {
     let destination;
@@ -47,8 +144,16 @@ class Tab {
     }
     let url = new URL(this.url);
     let target = this.browser._normalizeIp(destination, url.pathname, this.id);
+    try {
+      let fetch = await this._fetch(target);
+      this._loadHTML(fetch, target);
+    } catch(err) {
+      this._loadHTML(errorPage.replace('Message', err));
+    }
+  }
+  async _fetch(target) {
     if (this.browser.cache.get('fetch-'+target)) {
-      this._loadHTML(this.browser.cache.get('fetch-'+target));
+      return this.browser.cache.get('fetch-'+target);
     } else {
       let fetchtarget = target;
       if (this.browser.proxy) fetchtarget = `https://api.fsh.plus/file?url=${encodeURIComponent(target)}`;
@@ -58,11 +163,8 @@ class Tab {
           return res.text();
         })
         .then(res=>{
-          this.browser.cache.get('fetch-'+target, res);
-          this._loadHTML(res);
-        })
-        .catch(err=>{
-          this._loadHTML(errorPage.replace('Message', err));
+          this.browser.cache.set('fetch-'+target, res);
+          return res;
         })
     }
   }
@@ -141,6 +243,7 @@ export class Browser {
   }
   _normalizeBuss(url) {
     if (!url.includes('://')) url = 'buss://'+url;
+    return url;
   }
   async _fetchDomain(url) {
     url = this._normalizeBuss(url);
@@ -182,9 +285,9 @@ export class Browser {
   }
   createTab() {
     let tab = new Tab(this, this.startUrl);
-    this.activeTab = tab.id;
     this.tabs.push(tab);
     this.onTabCreate(tab);
+    this.changeTab(tab.id);
     return tab;
   }
   changeTab(id) {
