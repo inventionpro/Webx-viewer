@@ -41,7 +41,7 @@ class Tab {
     if (!target) target =  location.href;
     const _this = this;
     this.iframe.onload = async() => {
-      let htmltree = htmlparser(page);
+      let htmltree = htmlparser(html);
       let build = htmlbuilder(htmltree, target);
 
       let doc = this.iframe.contentDocument;
