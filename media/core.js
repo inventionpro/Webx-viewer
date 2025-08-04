@@ -83,8 +83,8 @@ class Tab {
         if (!style.endsWith('.css')) return;
         // Fetch
         try {
-          let target = this.browser._normalizeIp(target, style, this.id);
-          style = await _this._fetch(target);
+          let csstarget = this.browser._normalizeIp(target, style, this.id);
+          style = await _this._fetch(csstarget);
         } catch(err) {
           // If fetch fails, ignore output (Prevents stealing css from error pages)
           return;
