@@ -196,6 +196,10 @@ class Tab {
     this.url = this.history[this.position];
     this._load();
   }
+  reload() {
+    this._check();
+    this._load();
+  }
   close() {
     this._check();
     this.closed = true;
