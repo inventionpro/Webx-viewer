@@ -16,11 +16,11 @@
   <body>
     <dialog id="settings">
       <button onclick="this.parentElement.close()" class="modal-close">x</button>
-      <label class="notice-p">Bussinga: <input id="bussinga" type="checkbox" onchange="window.Browser.bussinga=this.checked"><div class="notice">This can be unsafe, <a href="https://github.com/inventionpro/bussinga-attack" target="_blank">check here</a>.</div></label>
+      <label class="notice-p">Bussinga: <input id="bussinga" type="checkbox" onchange="window.browser.bussinga=this.checked"></label>
+      <div class="notice">Bussinga emulation can be unsafe, <a href="https://github.com/inventionpro/bussinga-attack" target="_blank">check here</a>.</div>
+      <label>Proxy fetches: <input id="proxy" type="checkbox" onchange="window.browser.proxy=this.checked"></label>
       <br>
-      <label>Proxy fetches: <input id="proxy" type="checkbox" onchange="window.Browser.proxy=this.checked"></label>
-      <br>
-      <label>DNS: <input placeholder="dns server" value="https://dns.webxplus.org/" id="dns" style="width:200px"  onchange="window.Browser.dns=this.value"></label>
+      <label>DNS: <input placeholder="dns server" value="https://dns.webxplus.org/" id="dns" style="width:200px"  onchange="window.browser.dns=this.value"></label>
       <br>
       <button onclick="window.cache={domain:{},fetch:{}}">Remove cache</button>
       <button onclick="embedPage()">Embed link</button>
