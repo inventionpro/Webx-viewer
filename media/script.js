@@ -115,12 +115,12 @@ function getTarget(domain) {
   })
 }
 
-async function load(ip, query, html, scripts, styles) {
+async function load(ip, query, build) {
   let iframe = document.querySelector('iframe');
   let doc = iframe.contentDocument;
   let has_console = !!document.getElementById('sned');
 
-  doc.querySelector('html').innerHTML = html;
+  doc.querySelector('html').innerHTML = build.html;
 
   // Extra html
   doc.querySelector('head').insertAdjacentHTML('beforeend', `<meta name="color-scheme" content="dark light"><meta name="viewport" content="width=device-width, initial-scale=1.0">`);
@@ -160,7 +160,7 @@ async function load(ip, query, html, scripts, styles) {
   doc.head.appendChild(default_style);
 
   // Page css
-  styles.forEach(async(style) => {
+  build.styles.forEach(async(style) => {
     // If not existent, skip
     if (!style.endsWith('.css')) return;
     // Fetch
@@ -181,12 +181,12 @@ async function load(ip, query, html, scripts, styles) {
   });
 
   // Lua
-  for (let i = 0; i<scripts.length; i++) {
-    scripts[i].code = await bussFetch(ip, scripts[i].src);
+  for (let i = 0; i<build.scripts.length; i++) {
+    build.scripts[i].code = await bussFetch(ip, build.scripts[i].src);
   }
   window.luaEngine = [];
   window.luaGlobal = {};
-  scripts.forEach(async script => {
+  build.scripts.forEach(async script => {
     let lua;
     let options = {
       location: document.getElementById('url').value,
@@ -248,7 +248,7 @@ async function view() {
     }
     let tree = htmlparser(page);
     let build = htmlbuilder(tree, target);
-    load(target, query, ...build[0]);
+    load(target, query, build);
   };
   iframe.contentDocument.location.reload();
 }

@@ -1,9 +1,9 @@
-// Parser from YAB by inventionpro
 export const nonTerminatingElements = ['audio','hr','img','input','link','meta','script','textarea', 'video'];
 
 function subparse(content) {
   let tree = [];
   // Go through string and parse
+  let plain = '';
   for (let i = 0; i<content.length; i++) {
     let stack = [];
     let level = 0;
@@ -14,6 +14,13 @@ function subparse(content) {
     };
     let char = content[i];
     if (char === '<') {
+      if (plain.length) {
+        tree.push({
+          text: true,
+          content: plain
+        });
+        plain = '';
+      }
       while (char !== '>' && i<content.length) {
         i++;
         char = content[i];
@@ -86,6 +93,8 @@ function subparse(content) {
       }
 
       tree.push(temp);
+    } else {
+      plain += char;
     }
   }
   return tree;

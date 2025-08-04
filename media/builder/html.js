@@ -2,7 +2,8 @@ const htmlUnallowedElements = { style: 'remove', canvas: 'div' };
 let allowedAttributes = ['class','id','href','src','name','content','version','placeholder','type','value','disabled'];
 
 function attr(o) {
-  return Object.keys(o).map(t=>allowedAttributes.includes(t)?`${t}="${o[t]}"`:'').join(' ')
+  o = Object.keys(o).map(t=>allowedAttributes.includes(t)?`${t}="${o[t]}"`:'').join(' ');
+  return o.length<1?'':' '+o;
 }
 
 function normalizeIp(ip, path) {
@@ -19,26 +20,30 @@ function normalizeIp(ip, path) {
 function convert(l, ip) {
   return l.map(e=>{
     // Special cases
+    if (e.text) {
+      return [e.content, [], []];
+    }
     if (htmlUnallowedElements[e.name]) {
       let action = htmlUnallowedElements[e.name];
       if (action === 'remove') {
         return ['', [], []];
       } else if (action === 'div') {
+        e.tag = e.name;
         e.name = 'div';
       }
     }
     if (e.name === 'script') {
-      return ['', [{src: e.attributes?.src??'', version: e.attributes?.version??'legacy'}], []];
+      return [`<div tag="script"${attr(e.attributes)}></div>`, [{src: e.attributes?.src??'', version: e.attributes?.version??'legacy'}], []];
     }
     if (e.name === 'link') {
-      return ['', [], [e.attributes?.href??'']];
+      return [`<div tag="link"${attr(e.attributes)}></div>`, [], [e.attributes?.href??'']];
     }
     if (['audio','img','video'].includes(e.name)) {
       if (!e.attributes?.src?.includes('://')) e.attributes.src = normalizeIp(ip, e.attributes?.src);
-      return [`<${e.name} ${attr(e.attributes)} controls>${e.name==='img'?'':`</${e.name}>`}`, [], []]
+      return [`<${e.name}${attr(e.attributes)} controls>${e.name==='img'?'':`</${e.name}>`}`, [], []]
     }
     if ((typeof e.content)==='string') {
-      return [`<${e.name} ${attr(e.attributes)}>${e.content}</${e.name}>`, [], []]
+      return [`<${e.name}${attr(e.attributes)}>${e.content}</${e.name}>`, [], []]
     }
     // Get inner elements
     let inner = '';
@@ -49,10 +54,15 @@ function convert(l, ip) {
       scri.push(t[1]);
       styl.push(t[2]);
     });
-    return [`<${e.name} ${attr(e.attributes)}>${inner}</${e.name}>`, scri.flat(Infinity), styl.flat(Infinity)];
+    return [`<${e.name}${e.tag?` tag="${e.tag}"`:''}${attr(e.attributes)}>${inner}</${e.name}>`, scri.flat(Infinity), styl.flat(Infinity)];
   })
 }
 
 export function build(tree, ip) {
-  return convert(tree, ip);
+  let h = convert(tree, ip).flat(Infinity);
+  return {
+    html: h[0],
+    scripts: h[1]??[],
+    styles: h[2]??[]
+  }
 }
