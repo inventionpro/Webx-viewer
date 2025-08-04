@@ -59,7 +59,7 @@ function convert(l, ip) {
 }
 
 export function build(tree, ip) {
-  let h = convert(tree, ip).flat(Infinity);
+  let h = convert(tree, ip).flat(1);
   return {
     html: h[0],
     scripts: h[1]??[],
