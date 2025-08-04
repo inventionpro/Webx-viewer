@@ -297,7 +297,7 @@ export class Browser {
   }
   changeTab(id) {
     this.activeTab = id;
-    Arrya.from(this.box.querySelectorAll('iframe')).forEach(iframe=>iframe.style.display='none');
+    Array.from(this.box.querySelectorAll('iframe')).forEach(iframe=>iframe.style.display='none');
     this.box.querySelector(`iframe[id="${id}"]`).style.display = '';
     this.onTabSwitch(id);
   }
