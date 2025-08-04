@@ -106,6 +106,7 @@ export class Browser {
    * @param {function(string, string, string): void} options.stdout - Function to handle logs (text, type, tab id).
    * @param {function(Object): void} options.onTabCreate - Function to tab creation (tab).
    * @param {function(string): void} options.onTabSwitch - Function to handle tab switching (tab id).
+   * @param {function(string): void} options.onTabClose - Function to handle tab closing (tab id).
    */
   constructor(options={}) {
     // Settings
@@ -116,6 +117,7 @@ export class Browser {
     this.stdout = options.stdout??(()=>{});
     this.onTabCreate = options.onTabCreate??(()=>{});
     this.onTabSwitch = options.onTabSwitch??(()=>{});
+    this.onTabClose = options.onTabClose??(()=>{});
 
     // Data
     this.defFavicon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAP1BMVEVHcEzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMcdVmAAAAFHRSTlMA+AftYxEo5DW6GtxHjXXIp5mDz2/sM+oAAAK5SURBVFjDrVfZgoMwCDSH5j7r/3/rWqJWzbm7zWMrExgGCNNUPjOnQSiC1hURJQLl8/SLM2vj3rafg4gzehRjse5mfII4u4yYR7VWj4o9iNmqm+NsO7dglG0GwsX5JROGar5IuXBNjWAnqOBVc0yPz4inC779tVBPDmiKK+6b3VdieOETzM2Oj0wxDOnPOGmN4LB74WXLfnMhahttQTxYuxrC7O85BxxHMwgZUpz+8Q825cTnlGObwjB3miiqSOeVJ40CAroRxVlVfCInIiGwC/Qs6upFOifcoge0XRsnFCQRANqe6VUtAFUQnoRsqqOy4to8KOSy0UBDHHEAosDlIHYXbM/+kbJ0K+QNWJhdF2AVOQ2gPPdOhEZ9AJI3Ik6OHJu+fUkMGIrHjEVQVBPdY+Bk/VMIiUbC62XUIXHCIuUnjERQbFEmCV0MAIRiFwUSxKT69xekPB35V1OXQ1fr4kA/mXocsltLws80oOnjabErfYp+m9nRC2/oO6BZSizBAACIUErQxQqGEGJXIBTPO7VIzqLX9qXbDGICeP/KthGIYYBprZdzfHzif1/+wSWXKxCQSPhjiEXxYsp5KvdxIqpMEUhjLnUspTx6Jo4NolUSEq2+Fzaclv0mpLBXZWnc67CR9ULtng3FVCqWcwx2qgT0xArlKkeqZKM/NZQCCXHAHpoiVKXPYpBqBMAcRUV4sdaGWl2KwfwJANp6GiwZjQsbALCX0fbsOtj37Y/pCnyTp5x5n8V4G+/u2bi4G3TgGK9Z65S2LWP7eOJcms8Qk9fXU3pkkUyPrbl3b5ZpPuUIdnTY7A9NYvFoRT0emsdTNxsi0pQHh59rj22n8aNBWi8ySbSe6yTkzWF59e0vCwfLF47FXyKpLBztlYf7U1PVlae9dKH6BvDNte//i+cXVt8vLN+/W/9/AFuoonzbORQ+AAAAAElFTkSuQmCC';
@@ -141,7 +143,7 @@ export class Browser {
     if (!url.includes('://')) url = 'buss://'+url;
   }
   async _fetchDomain(url) {
-    url = _normalizeBuss(url);
+    url = this._normalizeBuss(url);
     let domain = new URL(url, 'https://search.app').hostname;
     let topdomain = domain.split('.').slice(-2).join('.');
     if (!(/^([a-z0-9\-]{1,24}\.)+[a-z0-9\-]{1,24}$/mi).test(domain)) throw new Error('Invalid domain name');
@@ -187,7 +189,11 @@ export class Browser {
   }
   changeTab(id) {
     this.activeTab = id;
-    this.onTabSwitch(tab);
+    this.onTabSwitch(id);
+  }
+  closeTab(id) {
+    this.tabs.find(tab=>tab.id===id).close();
+    this.onTabClose(id);
   }
   deleteCache() {
     this.cache = new Map();

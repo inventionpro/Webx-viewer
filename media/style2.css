@@ -68,6 +68,10 @@ dialog {
 #tabs button:hover {
   background-color: #383838;
 }
+#tabs button.add {
+  flex: 0;
+  border-radius: 1rem;
+}
 #tabs button[active] {
   margin-bottom: 0px;
   border-radius: 0.75rem 0.75rem 0px 0px;
@@ -75,6 +79,16 @@ dialog {
 }
 #tabs button img {
   height: 16px;
+}
+#tabs button .title {
+  flex: 1;
+}
+#tabs button .close {
+  padding: 0px 5px;
+  border-radius: 1rem;
+}
+#tabs button .close:hover {
+  background-color: #383838;
 }
 
 .nav {
