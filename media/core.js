@@ -50,8 +50,13 @@ class Tab {
 
       // Get data
       _this.title = doc.querySelector('title')?.innerText??target;
-      _this.icon = doc.querySelector('div[tag="link"]')?.getAttribute('href')??_this.browser.defFavicon;
-      if (_this.icon.endsWith('.css')) _this.icon = _this.browser.defFavicon;
+      _this.icon = doc.querySelector('div[tag="link"]')?.getAttribute('href');
+      if (!_this.icon) {
+        _this.icon = _this.browser.defFavicon;
+      } else {
+        _this.icon = new URL(_this.icon, target).href;
+        if (_this.icon.endsWith('.css')) _this.icon = _this.browser.defFavicon;
+      }
       _this.browser.onTabLoad(_this.id);
 
       // Extra html
