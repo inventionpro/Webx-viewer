@@ -18,6 +18,7 @@ function showTabs() {
 window.showTabs = showTabs;
 
 const browser = new Browser({
+  box: 'box',
   startUrl: 'buss://search.app',
   bussinga: false,
   proxy: false,

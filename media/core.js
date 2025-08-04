@@ -27,6 +27,9 @@ class Tab {
     this.history = [];
     this.position = 0;
     this.iframe = document.createElement('iframe');
+    this.iframe.style.display = 'none';
+    this.iframe.setAttribute('sandbox', 'allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-same-origin');
+    browser.box.appendChild(this.iframe);
 
     this.goTo(startUrl);
   }
@@ -201,6 +204,7 @@ export class Browser {
    * Create the browser instance
    * @constructor
    * @param {Object} options - Options of the browser.
+   * @param {string} options.box - Box to place iframes.
    * @param {string} options.startUrl - The intial urls for tabs.
    * @param {boolean} options.bussinga - Whether to imitate bussinga in legacy context.
    * @param {boolean} options.proxy - Proxy fetches in lua.
@@ -212,6 +216,7 @@ export class Browser {
    */
   constructor(options={}) {
     // Settings
+    this.box = document.getElementById(options.box??'box');
     this.startUrl = options.startUrl??'buss://search.app';
     this.bussinga = options.bussinga??false;
     this.proxy = options.proxy??false;
@@ -292,6 +297,8 @@ export class Browser {
   }
   changeTab(id) {
     this.activeTab = id;
+    Arrya.from(this.box.querySelectorAll('iframe')).forEach(iframe=>iframe.style.display='none');
+    this.box.querySelector(`iframe[id="${id}"]`).style.display = '';
     this.onTabSwitch(id);
   }
   closeTab(id) {
