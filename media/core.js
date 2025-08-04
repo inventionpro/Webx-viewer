@@ -49,8 +49,8 @@ class Tab {
       doc.querySelector('html').innerHTML = build.html;
 
       // Get data
-      _this.title = doc.querySelector('title').innerText??target;
-      _this.icon = doc.querySelector('div[tag="link"]').getAttribute('href')??_this.browser.defFavicon;
+      _this.title = doc.querySelector('title')?.innerText??target;
+      _this.icon = doc.querySelector('div[tag="link"]')?.getAttribute('href')??_this.browser.defFavicon;
       if (_this.icon.endsWith('.css')) _this.icon = _this.browser.defFavicon;
       _this.browser.onTabLoad(_this.id);
 
@@ -169,7 +169,7 @@ class Tab {
       let fetchtarget = target;
       if (this.browser.proxy) fetchtarget = `https://api.fsh.plus/file?url=${encodeURIComponent(target)}`;
       let req = await fetch(fetchtarget);
-      if (!res.status.toString().startsWith('2')) throw new Error('Non 2xx response (Not Ok): '+res.status);
+      if (!req.status.toString().startsWith('2')) throw new Error('Non 2xx response (Not Ok): '+req.status);
       req = await req.text();
       this.browser.cache.set('fetch-'+target, req);
       return req;
