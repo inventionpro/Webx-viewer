@@ -51,6 +51,7 @@ class Tab {
       _this.title = doc.querySelector('title').innerText??target;
       _this.icon = doc.querySelector('div[tag="link"]').getAttribute('href')??_this.browser.defFavicon;
       if (_this.icon.endsWith('.css')) _this.icon = _this.browser.defFavicon;
+      _this.browser.onTabLoad(_this.id);
 
       // Extra html
       doc.querySelector('head').insertAdjacentHTML('beforeend', `<meta name="color-scheme" content="dark light"><meta name="viewport" content="width=device-width, initial-scale=1.0">`);
@@ -216,7 +217,8 @@ export class Browser {
    * @param {boolean} options.proxy - Proxy fetches in lua.
    * @param {string} options.dns - DNS url, where to fetch domains.
    * @param {function(string, string, string): void} options.stdout - Function to handle logs (text, type, tab id).
-   * @param {function(Object): void} options.onTabCreate - Function to tab creation (tab).
+   * @param {function(Object): void} options.onTabCreate - Function to handle tab creation (tab).
+   * @param {function(string): void} options.onTabLoad - Function to handle tab load (tab id).
    * @param {function(string): void} options.onTabSwitch - Function to handle tab switching (tab id).
    * @param {function(string): void} options.onTabClose - Function to handle tab closing (tab id).
    */
@@ -229,6 +231,7 @@ export class Browser {
     this.dns = options.dns??'https://dns.webxplus.org/';
     this.stdout = options.stdout??(()=>{});
     this.onTabCreate = options.onTabCreate??(()=>{});
+    this.onTabLoad = options.onTabLoad??(()=>{});
     this.onTabSwitch = options.onTabSwitch??(()=>{});
     this.onTabClose = options.onTabClose??(()=>{});
 

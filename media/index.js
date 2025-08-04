@@ -9,7 +9,7 @@ function stdout(text, type, tab) {
 function showTabs() {
   document.getElementById('tabs').innerHTML = window.browser.tabs
     .map(tab=>`<button onclick="window.browser.changeTab('${tab.id}')"${window.browser.activeTab===tab.id?' active':''}>
-  <img src="${tab.icon}">
+  <img src="${tab.icon}" width="16" height="16">
   <span class="title">${tab.title}</span>
   <span class="close" onclick="event.stopPropagation();window.browser.closeTab('${tab.id}')">x</span>
 </button>`)
@@ -25,12 +25,9 @@ const browser = new Browser({
   dns: 'https://dns.webxplus.org/',
   stdout,
   onTabCreate: ()=>{ window.showTabs() },
+  onTabLoad: ()=>{ window.showTabs() },
   onTabSwitch: ()=>{ window.showTabs() },
   onTabClose: ()=>{ window.showTabs() }
 });
 window.browser = browser;
 browser.createTab();
-
-setInterval(() => {
-  window.showTabs();
-}, 500);
