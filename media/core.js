@@ -28,6 +28,7 @@ class Tab {
     this.position = 0;
     this.iframe = document.createElement('iframe');
     this.iframe.style.display = 'none';
+    this.iframe.id = this.id;
     this.iframe.setAttribute('sandbox', 'allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-same-origin');
     browser.box.appendChild(this.iframe);
 
