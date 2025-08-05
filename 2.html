@@ -16,8 +16,8 @@
   <body>
     <dialog id="settings">
       <button onclick="this.parentElement.close()" class="modal-close">x</button>
-      <label class="notice-p">Bussinga: <input id="bussinga" type="checkbox" onchange="window.browser.bussinga=this.checked"></label>
-      <div class="notice">Bussinga emulation can be unsafe, <a href="https://github.com/inventionpro/bussinga-attack" target="_blank">check here</a>.</div>
+      <label>Bussinga: <input id="bussinga" type="checkbox"></label>
+      <div>Bussinga emulation can be unsafe, <a href="https://github.com/inventionpro/bussinga-attack" target="_blank">check here</a>.</div>
       <label>Proxy fetches: <input id="proxy" type="checkbox" onchange="window.browser.proxy=this.checked"></label>
       <br>
       <label>DNS: <input placeholder="dns server" value="https://dns.webxplus.org/" id="dns" style="width:200px"  onchange="window.browser.dns=this.value"></label>
@@ -25,6 +25,26 @@
       <button onclick="window.cache={domain:{},fetch:{}}">Remove cache</button>
       <button onclick="embedPage()">Embed link</button>
     </dialog>
+    <script>
+      const BussingaInput = document.getElementById('bussinga');
+      BussingaInput.checked = localStorage.getItem('bussinga')??false;
+      BussingaInput.onchange = (evt)=>{
+        window.browser.bussinga = evt.target.checked;
+        localStorage.setItem('bussinga', evt.target.checked);
+      };
+      const ProxyInput = document.getElementById('proxy');
+      ProxyInput.checked = localStorage.getItem('proxy')??false;
+      ProxyInput.onchange = (evt)=>{
+        window.browser.proxy = evt.target.checked;
+        localStorage.setItem('proxy', evt.target.checked);
+      };
+      const DNSInput = document.getElementById('dns');
+      DNSInput.checked = localStorage.getItem('dns')??'https://dns.webxplus.org/';
+      DNSInput.onchange = (evt)=>{
+        window.browser.dns = evt.target.value;
+        localStorage.setItem('dns', evt.target.value);
+      };
+    </script>
     <div id="tabs"></div>
     <div class="nav">
       <button onclick="window.browser.tabs.find(tab=>tab.id===window.browser.activeTab).goBack()" aria-label="Backwards"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path d="M15 128H241" stroke-width="30" stroke-linecap="round"/><path d="M86 57L15.2893 127.711" stroke-width="30" stroke-linecap="round"/><path d="M86 198.711L15.2893 128" stroke-width="30" stroke-linecap="round"/></svg></button>
