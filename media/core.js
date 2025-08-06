@@ -209,6 +209,7 @@ class Tab {
     this._check();
     this.closed = true;
     this.browser.tabs = this.browser.tabs.filter(tab=>tab.id!==this.id);
+    this.iframe.remove();
   }
 }
 
@@ -317,6 +318,14 @@ export class Browser {
     this.onTabSwitch(id);
   }
   closeTab(id) {
+    if (this.tabs.length===1) {
+      this.tabs[0].close();
+      this.onTabClose(id);
+      try {
+        window.close();
+      } catch(err) { /* Ignore :3 */ }
+      return;
+    }
     let last;
     if (this.activeTab===id) last = this.tabs.findIndex(tab=>tab.id===id);
     this.tabs.find(tab=>tab.id===id).close();
