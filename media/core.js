@@ -268,13 +268,13 @@ export class Browser {
     // If the path is a full url just go directly
     if (path.match(/^https?:\/\//) !== null) return path;
     // Very legacy github host support
-    if (new URL(target).hostname==='github.com') {
+    if (['github.com','raw.githubusercontent.com'].includes(new URL(target).hostname)) {
       this.stdout('[Warn] This website is using the outdated github dns target.', 'warn', tab);
       if (path=='') path = 'index.html';
       target = target.replace('github.com','raw.githubusercontent.com')+(target.includes('/main/')?'':'/main/')+'/'+path;
-      target = target.replace('/tree/','/');
+      target = target.replace('/tree/','/').replace(/\/[^\/]+?\/?\.(\/.+?)$/, '$1');
     } else {
-      target += path;
+      target = new URL(path, target).href;
     }
     return target.replaceAll(/\/{2,}/g, '/').replace(':/', '://');
   }
