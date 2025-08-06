@@ -107,6 +107,7 @@ dialog {
 }
 #tabs button .title {
   flex: 1;
+  white-space: nowrap;
   overflow: hidden;
 }
 #tabs button .close {

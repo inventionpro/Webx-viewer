@@ -304,6 +304,9 @@ export class Browser {
       return record[domain];
     }
   }
+  getActiveTab() {
+    return  this.tabs.find(tab=>tab.id===this.activeTab);
+  }
   createTab() {
     let tab = new Tab(this, this.startUrl);
     this.tabs.push(tab);
@@ -328,7 +331,7 @@ export class Browser {
     }
     let last;
     if (this.activeTab===id) last = this.tabs.findIndex(tab=>tab.id===id);
-    this.tabs.find(tab=>tab.id===id).close();
+    this.getActiveTab().close();
     if (this.activeTab===id) this.changeTab(this.tabs[Math.min(last, this.tabs.length-1)].id);
     this.onTabClose(id);
   }

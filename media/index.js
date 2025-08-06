@@ -18,8 +18,15 @@ function stdout(text, type='log', tab='Browser') {
   window.logs[tab].push([text, type]);
 }
 
+const UrlBar = document.getElementById('url');
+function updateUrl() {
+  if (document.activeElement !== UrlBar) {
+    UrlBar.value = window.browser.getActiveTab().url;
+  }
+}
+
 function showTabs() {
-  TabContainer.style.width = `calc(${window.browser.tabs.length} * 179px)`;
+  TabContainer.style.width = window.browser.tabs.length*179 + 'px';
   TabContainer.innerHTML = window.browser.tabs
     .map(tab=>`<button onclick="window.browser.changeTab('${tab.id}')"${window.browser.activeTab===tab.id?' active':''} draggable="true">
   <img src="${tab.icon}" width="16" height="16">
@@ -38,8 +45,14 @@ const browser = new Browser({
   dns: DNSInput.value,
   stdout,
   onTabCreate: ()=>{ window.showTabs() },
-  onTabLoad: ()=>{ window.showTabs() },
-  onTabSwitch: ()=>{ window.showTabs() },
+  onTabLoad: ()=>{
+    updateUrl();
+    window.showTabs();
+  },
+  onTabSwitch: ()=>{
+    updateUrl();
+    window.showTabs();
+  },
   onTabClose: ()=>{ window.showTabs() }
 });
 window.browser = browser;
