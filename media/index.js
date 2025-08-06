@@ -19,6 +19,7 @@ function stdout(text, type='log', tab='Browser') {
 }
 
 function showTabs() {
+  TabContainer.style.width = `calc(${window.browser.tabs.length} * 179px)`;
   TabContainer.innerHTML = window.browser.tabs
     .map(tab=>`<button onclick="window.browser.changeTab('${tab.id}')"${window.browser.activeTab===tab.id?' active':''} draggable="true">
   <img src="${tab.icon}" width="16" height="16">
