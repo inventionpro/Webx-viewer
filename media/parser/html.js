@@ -14,7 +14,7 @@ function subparse(content) {
     };
     let char = content[i];
     if (char === '<') {
-      if (plain.length) {
+      if (plain.trim().length) {
         tree.push({
           text: true,
           content: plain
