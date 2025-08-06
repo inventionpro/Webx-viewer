@@ -9,7 +9,7 @@ new Sortable(TabContainer, {
     TabContainer.appendChild(document.querySelector('#tabs button.add'));
     let item = window.browser.tabs.splice(evt.oldIndex, 1)[0];
     window.browser.tabs.splice(evt.newIndex, 0, item);
-    window.browser.tabs = window.browser.tabs.filter(tab=>tab!===undefined);
+    window.browser.tabs = window.browser.tabs.filter(tab=>tab!==undefined);
 	}
 });
 
