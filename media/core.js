@@ -117,7 +117,7 @@ class Tab {
           let luatarget = this.browser._normalizeIp(target, build.scripts[i].src, this.id);
           build.scripts[i].code = await _this._fetch(luatarget);
         } catch(err) {
-          _this.browser.stdout('[Error] Could not load a lua resource: '+style, 'error', _this.id);
+          _this.browser.stdout('[Error] Could not load a lua resource: '+build.scripts[i].src, 'error', _this.id);
         }
       }
       _this.luaEngine = [];
