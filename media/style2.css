@@ -62,15 +62,34 @@ dialog {
   gap: 5px;
   align-items: center;
   max-width: 175px;
+  min-width: 0px;
   text-align: left;
   margin: 2px;
   border-radius: 0.5rem;
+  overflow: hidden;
+  container-type: inline-size;
+}
+@container (max-width: 45px) {
+  #tabs button .title {
+    display: none;
+  }
+}
+@container (max-width: 35px) {
+  #tabs button[active] img {
+    display: none;
+  }
+}
+@container (max-width: 30px) {
+  #tabs button:not([active]) .close {
+    display: none;
+  }
 }
 #tabs button:hover {
   background-color: #383838;
 }
 #tabs button.add {
   flex: 0;
+  min-width: 26px;
   border-radius: 1rem;
 }
 #tabs button[active] {
@@ -83,6 +102,7 @@ dialog {
 }
 #tabs button .title {
   flex: 1;
+  overflow: hidden;
 }
 #tabs button .close {
   padding: 0px 5px;

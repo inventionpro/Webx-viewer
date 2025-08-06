@@ -1,5 +1,15 @@
 import { Browser } from './core.js'
 
+new Sortable(document.getElementById('tabs'), {
+  animation: 150,
+  filter: '.add',
+  preventOnFilter: false,
+	onEnd: (evt)=>{
+    let item = window.browser.tabs.splice(evt.oldIndex, 1)[0];
+    window.browser.tabs.splice(evt.newIndex, 0, item);
+	}
+});
+
 window.logs = {};
 function stdout(text, type='log', tab='Browser') {
   if (!window.logs[tab]) window.logs[tab] = [];
@@ -9,7 +19,7 @@ function stdout(text, type='log', tab='Browser') {
 
 function showTabs() {
   document.getElementById('tabs').innerHTML = window.browser.tabs
-    .map(tab=>`<button onclick="window.browser.changeTab('${tab.id}')"${window.browser.activeTab===tab.id?' active':''}>
+    .map(tab=>`<button onclick="window.browser.changeTab('${tab.id}')"${window.browser.activeTab===tab.id?' active':''} draggable="true">
   <img src="${tab.icon}" width="16" height="16">
   <span class="title">${tab.title}</span>
   <span class="close" onclick="event.stopPropagation();window.browser.closeTab('${tab.id}')">x</span>
