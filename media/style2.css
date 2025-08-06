@@ -52,6 +52,7 @@ dialog {
 }
 
 #tabs {
+  display: flex;
   height: 30px;
   background-color: #1a1a1a;
 }

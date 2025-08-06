@@ -46,7 +46,10 @@
         localStorage.setItem('dns', evt.target.value);
       };
     </script>
-    <div id="tabs"></div>
+    <div id="tabs">
+      <div></div>
+      <button class="add" onclick="window.browser.createTab()"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 256 256"><rect x="103" width="50" height="256" rx="25"/><rect y="103" width="256" height="50" rx="25"/></svg></button>
+    </div>
     <div class="nav">
       <button onclick="window.browser.tabs.find(tab=>tab.id===window.browser.activeTab).goBack()" aria-label="Backwards"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path d="M15 128H241" stroke-width="30" stroke-linecap="round"/><path d="M86 57L15.2893 127.711" stroke-width="30" stroke-linecap="round"/><path d="M86 198.711L15.2893 128" stroke-width="30" stroke-linecap="round"/></svg></button>
       <button onclick="window.browser.tabs.find(tab=>tab.id===window.browser.activeTab).goForward()" aria-label="Forwards"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path d="M241 122H15" stroke-width="30" stroke-linecap="round"></path><path d="M170 51L240.711 121.711" stroke-width="30" stroke-linecap="round"></path><path d="M170 192.711L240.711 122" stroke-width="30" stroke-linecap="round"></path></svg></button>
