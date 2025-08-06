@@ -1,12 +1,15 @@
 import { Browser } from './core.js'
 
-new Sortable(document.getElementById('tabs'), {
+const TabContainer = document.getElementById('tabs');
+new Sortable(TabContainer, {
   animation: 150,
   filter: '.add',
   preventOnFilter: false,
 	onEnd: (evt)=>{
+    TabContainer.appendChild(document.querySelector('#tabs button.add'));
     let item = window.browser.tabs.splice(evt.oldIndex, 1)[0];
     window.browser.tabs.splice(evt.newIndex, 0, item);
+    window.browser.tabs = window.browser.tabs.filter(tab=>tab!===undefined);
 	}
 });
 
@@ -18,7 +21,7 @@ function stdout(text, type='log', tab='Browser') {
 }
 
 function showTabs() {
-  document.getElementById('tabs').innerHTML = window.browser.tabs
+  TabContainer.innerHTML = window.browser.tabs
     .map(tab=>`<button onclick="window.browser.changeTab('${tab.id}')"${window.browser.activeTab===tab.id?' active':''} draggable="true">
   <img src="${tab.icon}" width="16" height="16">
   <span class="title">${tab.title}</span>
