@@ -73,7 +73,7 @@ export async function createLegacyLua(doc, options, stdout) {
   options.query.split('&').map(param=>{
     if (param.length<1) return;
     param = param.split('=');
-    query[param.shift()] = param.join('=');
+    query[param.shift()] = decodeURIComponent(param.join('='));
   });
 
   // Lua global functions

@@ -140,11 +140,10 @@ export async function createV2Lua(doc, options, stdout) {
   let query = {};
   options.query.split('&').map(param=>{
     if (param.length<1) return;
-    param = decodeURIComponent(param);
-    param = param.split('=');
-    let key = param.shift().trim();
+    param = decodeURIComponent(param).split('=');
+    let key = param.shift();
     if (key.length<1) return;
-    query[key] = param.join('=').trim();
+    query[key] = param.join('=');
   });
 
   // Lua global functions
