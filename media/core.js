@@ -180,8 +180,23 @@ class Tab {
       return req;
     }
   }
+  _isUrl(val) {
+    // Valid url with protocol
+    try {
+      const url = new URL(val);
+      return ['buss:', 'http:', 'https:'].includes(url.protocol);
+    } catch (e) { /* Ignore :3 */ }
+    // Looks like a domain (with dot, no spaces)
+    if ((/^[^\s]+\.[^\s]+$/).test(val) && !val.includes(' ') && !(/^(buss|https?):\/\//).test(val)) {
+      return true;
+    }
+    return false;
+  }
   goTo(url) {
     this._check();
+    if (!this._isUrl(url)) {
+      url = this.browser.searchUrl.replaceAll('%1', encodeURIComponent(url));
+    }
     url = this.browser._normalizeBuss(url);
     this.url = url;
     this.position += 1;
@@ -233,6 +248,7 @@ export class Browser {
     // Settings
     this.box = document.getElementById(options.box??'box');
     this.startUrl = options.startUrl??'buss://search.app';
+    this.searchUrl = options.searchUrl??'buss://search.app?q=%1';
     this.bussinga = options.bussinga??false;
     this.proxy = options.proxy??false;
     this.dns = options.dns??'https://dns.webxplus.org/';
