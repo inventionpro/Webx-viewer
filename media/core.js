@@ -274,7 +274,7 @@ export class Browser {
       target = target.replace('github.com','raw.githubusercontent.com')+(target.includes('/main/')?'':'/main/')+'/'+path;
       target = target.replace('/tree/','/').replace(/\/[^\/]+?\/?\.(\/.+?)$/, '$1');
     } else {
-      target = new URL(path, target).href;
+      target = new URL(('.'+path).replace(/^../,'.'), target+'/').href;
     }
     return target.replaceAll(/\/{2,}/g, '/').replace(':/', '://');
   }
