@@ -162,6 +162,7 @@ class Tab {
     let target = this.browser._normalizeIp(destination, url.pathname, this.id);
     try {
       let fetch = await this._fetch(target);
+      if (fetch.includes('<title>Site not found &middot;GitHub Pages</title>')) throw new Error('This website points to a non-existant GitHub Pages page.');
       this._loadHTML(fetch, target);
     } catch(err) {
       this._loadHTML(errorPage.replace('Message', err));
