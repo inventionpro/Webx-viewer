@@ -32,14 +32,14 @@
       <div id="settings">
         <b>Browsing</b>
         <label>Bussinga: <input id="bussinga" type="checkbox"></label>
-        <div>Bussinga emulation can be unsafe, <a href="https://github.com/inventionpro/bussinga-attack" target="_blank">check here</a>.</div>
+        <div style="color:#999;font-size:75%;">Bussinga emulation can be unsafe, <a href="https://github.com/inventionpro/bussinga-attack" target="_blank">check here</a>.</div>
         <label>Proxy: <input id="proxy" type="checkbox"></label>
-        <br>
+        <hr>
         <b>Browser</b>
         <label>Start URL: <input placeholder="Start URL" value="buss://search.app" id="startUrl"></label>
         <label>Search URL: <input placeholder="Search URL" value="buss://search.app?q=%1" id="searchUrl"></label>
         <label>DNS: <input placeholder="DNS server" value="https://dns.webxplus.org/" id="dns"></label>
-        <br>
+        <hr>
         <button onclick="window.browser.deleteCache()">Remove cache</button>
         <button onclick="embedPage()">Embed link</button>
       </div>
