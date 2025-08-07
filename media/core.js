@@ -270,6 +270,7 @@ export class Browser {
   _normalizeIp(target, path, tab='browser') {
     // If the path is a full url just go directly
     if (path.match(/^https?:\/\//) !== null) return path;
+    if (path.startsWith('data:')) return path;
     // Very legacy github host support
     if (['github.com','raw.githubusercontent.com'].includes(new URL(target).hostname)) {
       this.stdout('[Warn] This website is using the outdated github dns target.', 'warn', tab);
