@@ -39,10 +39,6 @@ window.showTabs = showTabs;
 
 const browser = new Browser({
   box: 'box',
-  startUrl: 'buss://search.app',
-  bussinga: BussingaInput.checked,
-  proxy: ProxyInput.checked,
-  dns: DNSInput.value,
   stdout,
   onTabCreate: ()=>{ window.showTabs() },
   onTabLoad: ()=>{
@@ -56,4 +52,5 @@ const browser = new Browser({
   onTabClose: ()=>{ window.showTabs() }
 });
 window.browser = browser;
+window.setSettings();
 browser.createTab();

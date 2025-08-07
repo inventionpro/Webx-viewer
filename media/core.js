@@ -250,10 +250,10 @@ export class Browser {
   constructor(options={}) {
     // Settings
     this.box = document.getElementById(options.box??'box');
-    this.startUrl = options.startUrl??'buss://search.app';
-    this.searchUrl = options.searchUrl??'buss://search.app?q=%1';
     this.bussinga = options.bussinga??false;
     this.proxy = options.proxy??false;
+    this.startUrl = options.startUrl??'buss://search.app';
+    this.searchUrl = options.searchUrl??'buss://search.app?q=%1';
     this.dns = options.dns??'https://dns.webxplus.org/';
     this.stdout = options.stdout??(()=>{});
     this.onTabCreate = options.onTabCreate??(()=>{});
