@@ -55,7 +55,7 @@ function convert(l, ip) {
       styl.push(t[2]);
     });
     return [`<${e.name}${e.tag?` tag="${e.tag}"`:''}${attr(e.attributes)}>${inner}</${e.name}>`, scri.flat(Infinity), styl.flat(Infinity)];
-  }).join('')
+  });
 }
 
 export function build(tree, ip) {
