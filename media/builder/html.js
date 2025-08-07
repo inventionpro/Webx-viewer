@@ -39,7 +39,7 @@ function convert(l, ip) {
       return [`<div tag="link" style="display:none"${attr(e.attributes)}></div>`, [], [e.attributes?.href??'']];
     }
     if (['audio','img','video'].includes(e.name)) {
-      if (!e.attributes?.src?.includes('://')) e.attributes.src = normalizeIp(ip, e.attributes?.src);
+      if (e.attributes.src && !e.attributes.src.startsWith('data:') && !e.attributes.src.includes('://')) e.attributes.src = normalizeIp(ip, e.attributes.src);
       return [`<${e.name}${attr(e.attributes)} controls>${e.name==='img'?'':`</${e.name}>`}`, [], []]
     }
     if ((typeof e.content)==='string') {
