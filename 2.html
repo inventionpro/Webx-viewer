@@ -30,6 +30,11 @@
     <main>
       <div id="box"></div>
       <div id="settings">
+        <div class="title">
+          <img src="./favicon.ico" alt="WXV Logo">
+          <h1>WebX Viewer</h1>
+        </div>
+        <hr>
         <b>Browsing</b>
         <label>Bussinga: <input id="bussinga" type="checkbox"></label>
         <div style="color:#999;font-size:75%;">Bussinga emulation can be unsafe, <a href="https://github.com/inventionpro/bussinga-attack" target="_blank">check here</a>.</div>
@@ -40,8 +45,8 @@
         <label>Search URL: <input placeholder="Search URL" value="buss://search.app?q=%1" id="searchUrl"></label>
         <label>DNS: <input placeholder="DNS server" value="https://dns.webxplus.org/" id="dns"></label>
         <hr>
-        <button onclick="window.browser.deleteCache()">Remove cache</button>
-        <button onclick="embedPage()">Embed link</button>
+        <button onclick="window.browser.deleteCache()">Remove Cache</button>
+        <button onclick="embedPage()">Embed Page</button>
       </div>
       <script src="./media/settings.js"></script>
     </main>

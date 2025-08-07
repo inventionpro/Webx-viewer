@@ -1,4 +1,7 @@
 body {
+  --base: #1a1a1a;
+  --up: color-mix(in oklab, var(--base) 50%, #3a3a3a 50%);
+  --top: color-mix(in oklab, #1a1a1a 50%, #585858 50%);
   display: flex;
   flex-direction: column;
   width: 100dvw;
@@ -6,8 +9,11 @@ body {
   color: #ddd;
   font-family: Lexend, Arial, sans-serif;
   margin: 0px;
-  background-color: #2a2a2a;
+  background-color: var(--up);
   overflow: hidden;
+}
+h1 {
+  margin: 0px;
 }
 a {
   color: #8af;
@@ -17,7 +23,7 @@ input {
   border: none;
   outline: none;
   border-radius: 1rem;
-  background-color: #1a1a1a;
+  background-color: var(--base);
 }
 button {
   cursor: pointer;
@@ -41,9 +47,9 @@ dialog {
   color: #ddd;
   font-family: Lexend, Arial, sans-serif;
   padding: 10px;
-  border: 2px #383838 solid;
+  border: 2px var(--top) solid;
   border-radius: 1rem;
-  background: #2a2a2a;
+  background: var(--up);
   overflow: visible;
 }
 .modal-close {
@@ -59,7 +65,7 @@ dialog {
 #tabs {
   display: flex;
   height: 30px;
-  background-color: #1a1a1a;
+  background-color: var(--base);
 }
 #tabs div {
   display: flex;
@@ -95,7 +101,7 @@ dialog {
   }
 }
 #tabs button:hover {
-  background-color: #383838;
+  background-color: var(--top);
 }
 #tabs button.add {
   flex: 0;
@@ -105,7 +111,7 @@ dialog {
 #tabs button[active] {
   margin-bottom: 0px;
   border-radius: 0.75rem 0.75rem 0px 0px;
-  background-color: #2a2a2a;
+  background-color: var(--up);
 }
 #tabs button img {
   height: 16px;
@@ -120,14 +126,14 @@ dialog {
   border-radius: 1rem;
 }
 #tabs button .close:hover {
-  background-color: #383838;
+  background-color: var(--top);
 }
 
 .nav {
   display: flex;
   gap: 5px;
   padding: 5px;
-  border-bottom: 2px #383838 solid;
+  border-bottom: 2px var(--top) solid;
 }
 .nav input {
   flex: 1;
@@ -137,7 +143,7 @@ dialog {
   border-radius: 1rem;
 }
 .nav button:hover {
-  background-color: #383838;
+  background-color: var(--top);
 }
 
 main, #box {
@@ -157,12 +163,12 @@ iframe {
 #settings {
   position: absolute;
   top: 0px;
-  right: 0px;
+  right: -30dvw;
   bottom: 0px;
   width: 30dvw;
   padding: 10px;
-  border-left: 2px #383838 solid;
-  background: #2a2a2a;
+  border-left: 2px var(--top) solid;
+  background: var(--up);
   box-sizing: border-box;
   transition: right 500ms;
 }
@@ -179,5 +185,14 @@ iframe {
 #settings button {
   color: #ccc;
   border-radius: 0.5rem;
-  background-color: #1a1a1a;
+  background-color: var(--base);
+}
+
+.title {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.title img {
+  height: 30px;
 }
