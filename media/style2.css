@@ -12,6 +12,9 @@ body {
   background-color: var(--up);
   overflow: hidden;
 }
+* {
+  transition: background 500ms;
+}
 h1 {
   margin: 0px;
 }
@@ -31,7 +34,6 @@ button {
   padding: 5px;
   border: none;
   background: none;
-  transition: background 500ms;
 }
 button:has(svg) {
   display: flex;
@@ -170,7 +172,7 @@ iframe {
   border-left: 2px var(--top) solid;
   background: var(--up);
   box-sizing: border-box;
-  transition: right 500ms;
+  transition: right 500ms, background 500ms;
 }
 #settings b, #settings label {
   display: block;
