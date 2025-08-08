@@ -31,7 +31,7 @@
       <div id="box"></div>
       <div id="settings">
         <div class="title">
-          <img src="./favicon.ico" alt="WXV Logo">
+          <img src="./media/logo/svg.svg" alt="WXV Logo">
           <h1>WebX Viewer</h1>
         </div>
         <hr>
@@ -41,6 +41,14 @@
         <label>Proxy: <input id="proxy" type="checkbox"></label>
         <hr>
         <b>Browser</b>
+        <div class="themes">
+          <button style="--color:#1a1a1a" onclick="theme.value='#1a1a1a'">Dark</button>
+          <button style="--color:#a1a1a1;color:#222;" onclick="theme.value='#a1a1a1'">Light</button>
+          <button style="--color:#795069" onclick="theme.value='#795069'">Pink</button>
+          <button style="--color:#695079" onclick="theme.value='#695079'">Purple</button>
+          <button style="--color:#404860" onclick="theme.value='#404860'">Blue</button>
+        </div>
+        <label>Theme: <input type="color" id="theme"></label>
         <label>Start URL: <input placeholder="Start URL" value="buss://search.app" id="startUrl"></label>
         <label>Search URL: <input placeholder="Search URL" value="buss://search.app?q=%1" id="searchUrl"></label>
         <label>DNS: <input placeholder="DNS server" value="https://dns.webxplus.org/" id="dns"></label>

@@ -1,16 +1,19 @@
 // Load preferences and listen for changes
 window.setSettings = ()=>{
-  function setntrack(name, prop, def, brow=true) {
+  function setntrack(name, prop, def, brow=true, handle=()=>{}) {
     const input = document.getElementById(name);
     input[prop] = localStorage.getItem(name)??def;
     if (brow) window.browser[name] = input[prop];
+    handle(input[prop]);
     input.onchange = (evt)=>{
       if (brow) window.browser[name] = evt.target[prop];
+      handle(evt.target[prop]);
       localStorage.setItem(name, evt.target[prop]);
     };
   }
   setntrack('bussinga', 'checked', false);
   setntrack('proxy', 'checked', false);
+  setntrack('theme', 'value', '#1a1a1a', false, (val)=>{document.body.style.setProperty('--base',val)});
   setntrack('startUrl', 'value', 'buss://search.app');
   setntrack('searchUrl', 'value', 'buss://search.app?q=%1');
   setntrack('dns', 'value', 'https://dns.webxplus.org/');

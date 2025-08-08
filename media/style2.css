@@ -196,3 +196,22 @@ iframe {
 .title img {
   height: 30px;
 }
+
+.themes {
+  display: flex;
+  gap: 5px;
+  justify-content: space-between;
+  align-items: center;
+}
+#settings .themes button {
+  flex: 1;
+  color: #ddd;
+  background-color: var(--color);
+  aspect-ratio: 16 / 9;
+}
+
+input[type="color"] {
+  height: 25px;
+  padding: 0px !important;
+  border-radius: 5px;
+}
