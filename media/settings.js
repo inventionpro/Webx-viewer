@@ -45,7 +45,6 @@ let currentPanel = '';
 function openClosePanels() {
   historyPanel.style.right = (currentPanel==='history')?'0px':'';
   settingsPanel.style.right = (currentPanel==='settings')?'0px':'';
-  switch(currentPanel)
 }
 function toggleSettings() {
   currentPanel = (currentPanel==='settings')?'':'settings';

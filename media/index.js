@@ -35,8 +35,8 @@ function showTabs() {
 </button>`)
     .join('');
   document.getElementById('history').innerHTML = window.browser.history
-    .toReversed(log=>`<span><img src="${log.icon??window.browser.defFavicon}>${log.title??log.url}</span>`)
-    .map()
+    .toReversed()
+    .map(log=>`<span><img src="${log.icon??window.browser.defFavicon}>${log.title??log.url}</span>`)
     .join('');
 }
 window.showTabs = showTabs;
