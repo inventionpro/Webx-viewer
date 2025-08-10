@@ -34,6 +34,10 @@ function showTabs() {
   <span class="close" onclick="event.stopPropagation();window.browser.closeTab('${tab.id}')">x</span>
 </button>`)
     .join('');
+  document.getElementById('history').innerHTML = window.browser.history
+    .toReversed(log=>`<span><img src="${log.icon??window.browser.defFavicon}>${log.title??log.url}</span>`)
+    .map()
+    .join('');
 }
 window.showTabs = showTabs;
 

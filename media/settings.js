@@ -39,12 +39,23 @@ box.insertAdjacentElement('afterbegin', tabs)
 */
 
 // Open
+const historyPanel = document.getElementById('history');
 const settingsPanel = document.getElementById('settings');
-let settingsPanelOpen = false;
-function toggleSettings() {
-  settingsPanelOpen = !settingsPanelOpen;
-  settingsPanel.style.right = settingsPanelOpen?'0px':'';
+let currentPanel = '';
+function openClosePanels() {
+  historyPanel.style.right = (currentPanel==='history')?'0px':'';
+  settingsPanel.style.right = (currentPanel==='settings')?'0px':'';
+  switch(currentPanel)
 }
+function toggleSettings() {
+  currentPanel = (currentPanel==='settings')?'':'settings';
+  openClosePanels();
+}
+function toggleHistory() {
+  currentPanel = (currentPanel==='history')?'':'history';
+  openClosePanels();
+}
+
 function embedPage() {
   let url = `https://inventionpro.github.io/Webx-viewer/embed?url=${document.getElementById('url').value}&bussinga=${window.Browser.bussinga}&proxy=${window.Browser.proxy}&dns=${window.Browser.dns}`;
   url = url.replace('&bussinga=false','').replace('&proxy=false','').replace('&dns=https://dns.webxplus.org/','');

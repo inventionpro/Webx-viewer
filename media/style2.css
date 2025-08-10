@@ -164,7 +164,7 @@ iframe {
   box-sizing: border-box;
 }
 
-#settings {
+#settings, #history {
   position: absolute;
   top: 0px;
   right: -30dvw;
@@ -222,9 +222,15 @@ input[type="color"] {
   border-radius: 5px;
 }
 
+#history {
+  display: flex;
+  gap: 2px;
+  flex-direction: column;
+}
+
 /* Mobile */
 @media (max-width: 700px) {
-  #settings {
+  #settings, #history {
     right: -100dvw;
     width: 100dvw;
     border: none;
