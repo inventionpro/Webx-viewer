@@ -139,6 +139,7 @@ dialog {
 }
 .nav input {
   flex: 1;
+  min-width: 0px;
   padding: 8px;
 }
 .nav button {
@@ -153,6 +154,7 @@ main, #box {
   position: relative;
   display: flex;
   flex-direction: row;
+  overflow: hidden;
 }
 iframe {
   flex: 1;
@@ -174,11 +176,13 @@ iframe {
   box-sizing: border-box;
   transition: right 500ms, background 500ms;
 }
-#settings b, #settings label {
-  display: block;
-}
 #settings b {
+  display: block;
   font-size: 125%;
+}
+#settings label {
+  display: block;
+  padding: 2px 0px;
 }
 #settings input {
   color: #ccc;
@@ -216,4 +220,13 @@ input[type="color"] {
   height: 25px;
   padding: 0px !important;
   border-radius: 5px;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  #settings {
+    right: -100dvw;
+    width: 100dvw;
+    border: none;
+  }
 }

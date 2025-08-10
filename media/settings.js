@@ -43,7 +43,7 @@ const settingsPanel = document.getElementById('settings');
 let settingsPanelOpen = false;
 function toggleSettings() {
   settingsPanelOpen = !settingsPanelOpen;
-  settingsPanel.style.right = settingsPanelOpen?'0px':'-30dvw';
+  settingsPanel.style.right = settingsPanelOpen?'0px':'';
 }
 function embedPage() {
   let url = `https://inventionpro.github.io/Webx-viewer/embed?url=${document.getElementById('url').value}&bussinga=${window.Browser.bussinga}&proxy=${window.Browser.proxy}&dns=${window.Browser.dns}`;
