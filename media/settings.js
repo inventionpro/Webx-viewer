@@ -52,6 +52,7 @@ function toggleSettings() {
 }
 function toggleHistory() {
   currentPanel = (currentPanel==='history')?'':'history';
+  window.showTabs();
   openClosePanels();
 }
 

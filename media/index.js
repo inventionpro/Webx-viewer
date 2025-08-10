@@ -34,9 +34,9 @@ function showTabs() {
   <span class="close" onclick="event.stopPropagation();window.browser.closeTab('${tab.id}')">x</span>
 </button>`)
     .join('');
-  document.getElementById('history').innerHTML = window.browser.history
+  document.querySelector('#history .inner').innerHTML = window.browser.history
     .toReversed()
-    .map(log=>`<span><img src="${log.icon??window.browser.defFavicon}>${log.title??log.url}</span>`)
+    .map(log=>`<span onclick="window.browser.getActiveTab().goTo('${log.url}')"><img src="${log.icon??window.browser.defFavicon}" width="24" height="24">${log.title??log.url}</span>`)
     .join('');
 }
 window.showTabs = showTabs;

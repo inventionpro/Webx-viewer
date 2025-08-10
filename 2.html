@@ -30,7 +30,11 @@
     </div>
     <main>
       <div id="box"></div>
-      <div id="history"></div>
+      <div id="history">
+        <h2 style="display:inline">History</h2>
+        <button onclick="window.browser.history=[];window.showTabs()">Delete all</button>
+        <div class="inner"></div>
+      </div>
       <div id="settings">
         <div class="title">
           <img src="./media/logo/svg.svg" alt="WXV Logo">

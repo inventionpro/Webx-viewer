@@ -15,7 +15,7 @@ body {
 * {
   transition: background 500ms;
 }
-h1 {
+h1, h2 {
   margin: 0px;
 }
 a {
@@ -116,7 +116,9 @@ dialog {
   background-color: var(--up);
 }
 #tabs button img {
+  width: 16px;
   height: 16px;
+  object-fit: contain;
 }
 #tabs button .title {
   flex: 1;
@@ -188,7 +190,7 @@ iframe {
   color: #ccc;
   padding: 2px;
 }
-#settings button {
+#settings button, #history button {
   color: #ccc;
   border-radius: 0.5rem;
   background-color: var(--base);
@@ -222,10 +224,21 @@ input[type="color"] {
   border-radius: 5px;
 }
 
-#history {
+#history .inner {
   display: flex;
   gap: 2px;
   flex-direction: column;
+}
+#history span {
+  cursor: pointer;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+#history img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 /* Mobile */
