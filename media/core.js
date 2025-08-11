@@ -79,7 +79,7 @@ class Tab {
           };
           // Go to link
           if (!href.includes('://')) {
-            href = new URL(href, this.url).href;
+            href = new URL(href, _this.url).href;
           }
           _this.goTo(href);
         }
@@ -176,6 +176,7 @@ class Tab {
     }
   }
   async _fetch(target) {
+    target = target.replace(/\/$/,'');
     if (this.browser.cache.get('fetch-'+target)) {
       return this.browser.cache.get('fetch-'+target);
     } else {
