@@ -2,7 +2,9 @@
 window.setSettings = ()=>{
   function setntrack(name, prop, def) {
     const input = document.getElementById(name);
-    input[prop] = localStorage.getItem(name)??def;
+    let val = localStorage.getItem(name)??def;
+    if ((typeof val).toLowerCase()==='string' && ['true','false'].includes(val)) val = val==='true';
+    input[prop] = val;
     window.browser[name] = input[prop];
     input.onchange = (evt)=>{
       window.browser[name] = evt.target[prop];
