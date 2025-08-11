@@ -152,12 +152,16 @@ class Tab {
   }
   async _load() {
     let destination;
-    try {
-      destination = await this.browser._fetchDomain(this.url);
-      if (!destination) throw new Error('Non');
-    } catch(err) {
-      this._loadHTML(errorPage.replace('Message', 'Could not resolve website, does it exist?'));
-      return;
+    if ((/^https?:\/\//).test(this.url)) {
+      destination = 'https://'+new URL(this.url).host;
+    } else {
+      try {
+        destination = await this.browser._fetchDomain(this.url);
+        if (!destination) throw new Error('Non');
+      } catch(err) {
+        this._loadHTML(errorPage.replace('Message', 'Could not resolve website, does it exist?'));
+        return;
+      }
     }
     let url = new URL(this.url);
     let target = this.browser._normalizeIp(destination, url.pathname, this.id);
@@ -201,7 +205,7 @@ class Tab {
     if (!this._isUrl(url)) {
       url = this.browser.searchUrl.replaceAll('%1', encodeURIComponent(url));
     }
-    url = this.browser._normalizeBuss(url);
+    if (!(/^https?:\/\//).test(url)) url = this.browser._normalizeBuss(url);
     this.url = url;
     this.position += 1;
     this.history = this.history.slice(0, this.position);
