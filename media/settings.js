@@ -59,7 +59,7 @@ function toggleHistory() {
 }
 
 function embedPage() {
-  let url = `https://inventionpro.github.io/Webx-viewer/embed?url=${document.getElementById('url').value}&bussinga=${window.Browser.bussinga}&proxy=${window.Browser.proxy}&dns=${window.Browser.dns}`;
+  let url = `https://inventionpro.github.io/Webx-viewer/embed?url=${document.getElementById('url').value}&bussinga=${window.browser.bussinga}&proxy=${window.browser.proxy}&dns=${window.browser.dns}`;
   url = url.replace('&bussinga=false','').replace('&proxy=false','').replace('&dns=https://dns.webxplus.org/','');
   navigator.clipboard.writeText(url);
 }
