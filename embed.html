@@ -7,26 +7,25 @@
     <script src="https://cdn.jsdelivr.net/npm/wasmoon-async-fix@1.17.5"></script>
   </head>
   <body>
-    <div style="display:none" aria-hidden="true" inert>
-      <input id="url">
-      <input id="bussinga" type="checkbox">
-      <input id="proxy" type="checkbox">
-      <input id="dns">
-      <script>
-        let query = {};
-        location.search.replace('?','').split('&').forEach(p=>query[p.split('=')[0]]=p.split('=')[1]);
-        document.getElementById('url').value = query.url??'search.app';
-        document.getElementById('bussinga').checked = query?.bussinga?.toLowerCase()==='true';
-        document.getElementById('proxy').checked = query?.proxy?.toLowerCase()==='true';
-        document.getElementById('dns').value = query.dns??'https://dns.webxplus.org/';
-      </script>
-    </div>
-    <iframe sandbox="allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-same-origin"></iframe>
-    <script src="./media/script.js" type="module"></script>
+    <div id="box"></div>
     <script type="module">
-      window.urlhistory = [document.getElementById('url').value];
-      window.current = 0;
-      window.view();
+      let query = {};
+      location.search.replace('?','').split('&').forEach(p=>query[p.split('=')[0]]=p.split('=')[1]);
+      query.url = query.url??'search.app';
+      query.bussinga = query.bussinga?.toLowerCase()==='true';
+      query.proxy = query.proxy?.toLowerCase()==='true';
+      query.dns = query.dns??'https://dns.webxplus.org/';
+
+      import { Browser } from './media/core.js'
+
+      const browser = new Browser({
+        bussinga: query.bussinga,
+        proxy: query.proxy,
+        dns: query.dns
+      });
+      window.browser = browser;
+      browser.createTab();
+      browser.getActiveTab().goTo(query.url);
     </script>
   </body>
 </html>
