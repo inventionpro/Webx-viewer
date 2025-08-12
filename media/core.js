@@ -281,6 +281,7 @@ export class Browser {
     // Very legacy github host support, github.io is fine tho
     if (['github.com','raw.githubusercontent.com'].includes(new URL(target).hostname)) {
       this.stdout('[Warn] This website is using the outdated github dns target.', 'warn', tab);
+      target = target.replace('index.html','');
       if (!path.includes('.')) path += '/index.html';
       target = target.replace('github.com','raw.githubusercontent.com')+(target.includes('/main/')?'':'/main/')+'/'+path;
       target = target.replace('/tree/','/').replace('raw.githubusercontent.com/main','raw.githubusercontent.com').replace(/\/[^\/]+?\/?\.(\/.+?)$/, '$1');
