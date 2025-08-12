@@ -287,7 +287,7 @@ export class Browser {
       target = target.replace('/tree/','/').replace('raw.githubusercontent.com/main','raw.githubusercontent.com').replace(/\/[^\/]+?\/?\.(\/.+?)$/, '$1');
       if (!target.includes('/main/')) {
         target = target.split('/').filter(seg=>seg.length);
-        target.splice(5, 0, 'main');
+        target.splice(4, 0, 'main');
         target = target.join('/').replace(':/','://');
       }
     } else {
