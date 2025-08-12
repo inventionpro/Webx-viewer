@@ -278,10 +278,10 @@ export class Browser {
     // If the path is a full url just go directly
     if (path.match(/^https?:\/\//) !== null) return path;
     if (path.startsWith('data:')) return path;
-    // Very legacy github host support
+    // Very legacy github host support, github.io is fine tho
     if (['github.com','raw.githubusercontent.com'].includes(new URL(target).hostname)) {
       this.stdout('[Warn] This website is using the outdated github dns target.', 'warn', tab);
-      if (path=='') path = 'index.html';
+      if (!path.includes('index.html')) path += '/index.html';
       target = target.replace('github.com','raw.githubusercontent.com')+(target.includes('/main/')?'':'/main/')+'/'+path;
       target = target.replace('/tree/','/').replace('raw.githubusercontent.com/main','raw.githubusercontent.com').replace(/\/[^\/]+?\/?\.(\/.+?)$/, '$1');
     } else {
