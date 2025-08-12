@@ -286,9 +286,9 @@ export class Browser {
       target = target.replace('github.com','raw.githubusercontent.com')+(target.includes('/main/')?'':'/main/')+'/'+path;
       target = target.replace('/tree/','/').replace('raw.githubusercontent.com/main','raw.githubusercontent.com').replace(/\/[^\/]+?\/?\.(\/.+?)$/, '$1');
       if (!target.includes('/main/')) {
-        target = target.split('/');
+        target = target.split('/').filter(seg=>seg.length);
         target.splice(5, 0, 'main');
-        target = target.join('/');
+        target = target.join('/').replace(':/','://');
       }
     } else {
       target = new URL(('.'+path).replace(/^\.\./,'.').replace(/^\.([^\/])/,'./$1'), target+'/').href;
