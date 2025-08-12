@@ -290,6 +290,7 @@ export class Browser {
         target.splice(4, 0, 'main');
         target = target.join('/').replace(':/','://');
       }
+      if (!path.includes('.')) path += '/index.html';
     } else {
       target = new URL(('.'+path).replace(/^\.\./,'.').replace(/^\.([^\/])/,'./$1'), target+'/').href;
     }
