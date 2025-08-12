@@ -283,7 +283,7 @@ export class Browser {
       this.stdout('[Warn] This website is using the outdated github dns target.', 'warn', tab);
       if (path=='') path = 'index.html';
       target = target.replace('github.com','raw.githubusercontent.com')+(target.includes('/main/')?'':'/main/')+'/'+path;
-      target = target.replace('/tree/','/').replace(/\/[^\/]+?\/?\.(\/.+?)$/, '$1');
+      target = target.replace('/tree/','/').replace('raw.githubusercontent.com/main','raw.githubusercontent.com').replace(/\/[^\/]+?\/?\.(\/.+?)$/, '$1');
     } else {
       target = new URL(('.'+path).replace(/^\.\./,'.').replace(/^\.([^\/])/,'./$1'), target+'/').href;
     }
@@ -316,10 +316,14 @@ export class Browser {
       }
 
       let record = {};
-      data.filter(rec=>rec.type==='WEB').forEach(rec=>record[rec.name]=rec.value);
+      data.filter(rec=>rec.type==='WEB').forEach(rec=>{
+        if (!rec.name.includes(topdomain)) rec.name = rec.name+'.'+topdomain;
+        record[rec.name] = rec.value
+      });
       this.cache.set('domain-'+topdomain, record); // Partial fill
       data.filter(rec=>rec.type==='RED').forEach(async(rec)=>{
-        if (rec.name===rec.value) return;
+        if (!rec.name.includes(topdomain)) rec.name = rec.name+'.'+topdomain;
+        if (rec.name===rec.value) return; // No loops
         let where;
         try {
           where = await _fetchDomain(rec.value);
