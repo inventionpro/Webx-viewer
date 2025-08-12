@@ -19,13 +19,13 @@
       import { Browser } from './media/core.js'
 
       const browser = new Browser({
+        startUrl: query.url,
         bussinga: query.bussinga,
         proxy: query.proxy,
         dns: query.dns
       });
       window.browser = browser;
       browser.createTab();
-      browser.getActiveTab().goTo(query.url);
     </script>
   </body>
 </html>
