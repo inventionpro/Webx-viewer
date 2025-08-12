@@ -115,7 +115,7 @@ export async function createLegacyLua(doc, options, stdout) {
   // Bussinga globals
   if (options.bussinga) {
     await lua.global.set('window', {
-      location: document.getElementById('url').value,
+      location: options.location,
       query: query,
       browser: "bussinga",
       true_browser: "wxv"

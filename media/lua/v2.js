@@ -150,7 +150,7 @@ export async function createV2Lua(doc, options, stdout) {
   await frozenTable(lua, 'browser', {
     name: 'WXV',
     agent: 'wxv',
-    version: '0.1.0',
+    version: '2',
     api: {
       print: true,
       get: false,
