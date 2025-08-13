@@ -21,7 +21,7 @@ h1, h2 {
 a {
   color: #8af;
 }
-input {
+input, select {
   color: currentColor;
   border: none;
   outline: none;
@@ -208,7 +208,7 @@ iframe {
   display: block;
   padding: 2px 0px;
 }
-#settings input {
+#settings input, #settings select {
   color: #ccc;
   padding: 2px;
 }

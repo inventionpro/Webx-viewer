@@ -49,7 +49,7 @@ class Tab {
       doc.querySelector('html').innerHTML = build.html;
 
       // Get tab data
-      _this.title = doc.querySelector('title')?.innerText??target;
+      _this.title = doc.querySelector('title')?.innerText??_this.url;
       _this.icon = doc.querySelector('div[tag="link"]')?.getAttribute('href');
       if (!_this.icon) {
         _this.icon = _this.browser.defFavicon;
