@@ -24,6 +24,18 @@ window.setSettings = ()=>{
     document.body.style.setProperty('--base', evt.target.value);
     localStorage.setItem('theme', evt.target.value);
   };
+
+  const LayoutInput = document.getElementById('layout');
+  LayoutInput.value = localStorage.getItem('layout')??'h';
+  if (LayoutInput.value === 'v') document.getElementById('box').insertAdjacentElement('afterbegin', document.getElementById('tabs'));
+  LayoutInput.onchange = (evt)=>{
+    if (evt.target.value === 'v') {
+      document.getElementById('box').insertAdjacentElement('afterbegin', document.getElementById('tabs'));
+    } else {
+      document.body.insertAdjacentElement('afterbegin', document.getElementById('tabs'))
+    }
+    localStorage.setItem('layout', evt.target.value);
+  };
 };
 
 Array.from(document.querySelectorAll('.themes button'))
@@ -34,11 +46,6 @@ Array.from(document.querySelectorAll('.themes button'))
       theme.dispatchEvent(new Event('input', { bubbles: true }));
     }
   });
-
-/*
-document.body.insertAdjacentElement('afterbegin', tabs)
-box.insertAdjacentElement('afterbegin', tabs)
-*/
 
 // Open
 const historyPanel = document.getElementById('history');

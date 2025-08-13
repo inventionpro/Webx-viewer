@@ -133,6 +133,29 @@ dialog {
   background-color: var(--top);
 }
 
+/* Vertical tabs */
+#box #tabs {
+  flex-direction: column;
+  height: 100%;
+  border-right: 2px var(--top) solid;
+  background: none;
+}
+#box #tabs div {
+  flex-direction: column;
+  width: 180px !important;
+  height: unset;
+}
+#box #tabs button[active] {
+  margin: 2px;
+  border-radius: 0.5rem;
+  background-color: var(--base);
+}
+#box #tabs button.add {
+  width: fit-content;
+  min-height: 26px;
+  margin-inline: auto;
+}
+
 .nav {
   display: flex;
   gap: 5px;
@@ -155,7 +178,6 @@ main, #box {
   flex: 1;
   position: relative;
   display: flex;
-  flex-direction: row;
   overflow: hidden;
 }
 iframe {
