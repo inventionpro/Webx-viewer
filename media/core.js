@@ -208,9 +208,9 @@ class Tab {
     }
     if (!(/^https?:\/\//).test(url)) url = this.browser._normalizeBuss(url);
     this.url = url;
-    this.position += 1;
     this.history = this.history.slice(0, this.position);
     this.history.push(url);
+    this.position = this.history.length-1;
     this._load();
   }
   goBack(steps=1) {
