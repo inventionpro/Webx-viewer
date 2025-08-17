@@ -49,19 +49,10 @@ dialog {
   color: #ddd;
   font-family: Lexend, Arial, sans-serif;
   padding: 10px;
-  border: 2px var(--top) solid;
+  border: 2px var(--base) solid;
   border-radius: 1rem;
   background: var(--up);
   overflow: visible;
-}
-.modal-close {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 18px;
-  height: 18px;
-  padding: 0;
-  border: none;
 }
 
 #tabs {

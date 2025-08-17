@@ -156,7 +156,8 @@ export async function createV2Lua(doc, options, stdout) {
       get: false,
       get_type: true,
       fetch: false,
-      media_context: true
+      media_context: true,
+      _wxv_browser_theme_color: true
     }
   });
   await lua.global.set('fetch', async(o) => {
