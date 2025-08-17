@@ -13,7 +13,7 @@ body {
   overflow: hidden;
 }
 * {
-  transition: background 500ms;
+  transition: background 500ms, border-color 500ms;
 }
 h1, h2 {
   margin: 0px;
@@ -189,7 +189,7 @@ iframe {
   border-left: 2px var(--top) solid;
   background: var(--up);
   box-sizing: border-box;
-  transition: right 500ms, background 500ms;
+  transition: right 500ms, background 500ms, border-color 500ms;
 }
 #settings b {
   display: block;
