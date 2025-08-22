@@ -2,6 +2,8 @@ export const NaptureCss = `/* Napture default css */
 @import url('https://fonts.googleapis.com/css2?family=Lexend:ital,wght@0,100..900;1,100..600&display=swap');
 body {
   width: calc(100vw - 16px);
+  padding: 0px;
+  margin: 8px;
   font-family: Lexend, Arial, sans-serif;
   color: #F7F7F7;
   background-color: #2C2C2C;
@@ -65,8 +67,8 @@ export const BussingaCss = `/* Bussinga default css */
 }
 body {
   word-break: break-word;
-  width: calc(100vw - 24px);
-  min-height: calc(100vh - 24px);
+  width: 100vw;
+  min-height: 100vh;
   font-family: Lexend, Arial, sans-serif;
   padding: 12px;
   margin: 0px;
