@@ -19,13 +19,13 @@ window.setSettings = ()=>{
 
   const ThemeInput = document.getElementById('theme');
   ThemeInput.value = localStorage.getItem('theme')??'#1a1a1a';
-  document.body.style.setProperty('--base', ThemeInput.value);
-  ThemeInput.oninput = (evt)=>{
-    document.body.style.setProperty('--base', evt.target.value);
-    document.body.style.setProperty('--text', (parseInt(evt.target.value.replace('#',''),16)>0x888888)?'#222':'#ddd');
-    document.body.style.setProperty('--text-dim', (parseInt(evt.target.value.replace('#',''),16)>0x888888)?'#111':'#ccc');
-    localStorage.setItem('theme', evt.target.value);
+  ThemeInput.oninput = ()=>{
+    document.body.style.setProperty('--base', ThemeInput.value);
+    document.body.style.setProperty('--text', (parseInt(ThemeInput.value.replace('#',''),16)>0x888888)?'#222':'#ddd');
+    document.body.style.setProperty('--text-dim', (parseInt(ThemeInput.value.replace('#',''),16)>0x888888)?'#111':'#ccc');
+    localStorage.setItem('theme', ThemeInput.value);
   };
+  ThemeInput.oninput();
 
   const LayoutInput = document.getElementById('layout');
   LayoutInput.value = localStorage.getItem('layout')??'h';
