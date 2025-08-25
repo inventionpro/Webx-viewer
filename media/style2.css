@@ -1,4 +1,6 @@
 body {
+  --text: #ddd;
+  --text-dim: #ccc;
   --base: #1a1a1a;
   --up: color-mix(in oklab, var(--base) 50%, #3a3a3a 50%);
   --top: color-mix(in oklab, var(--base) 50%, #585858 50%);
@@ -6,7 +8,7 @@ body {
   flex-direction: column;
   width: 100dvw;
   height: 100dvh;
-  color: #ddd;
+  color: var(--text);
   font-family: Lexend, Arial, sans-serif;
   margin: 0px;
   background-color: var(--up);
@@ -46,7 +48,7 @@ svg {
 }
 
 dialog {
-  color: #ddd;
+  color: var(--text);
   font-family: Lexend, Arial, sans-serif;
   padding: 10px;
   border: 2px var(--base) solid;
@@ -201,13 +203,17 @@ iframe {
   padding: 2px 0px;
 }
 #settings input, #settings select {
-  color: #ccc;
+  color: var(--text-dim);
   padding: 2px;
 }
 #settings button, #history button {
-  color: #ccc;
+  color: var(--text-dim);
   border-radius: 0.5rem;
   background-color: var(--base);
+}
+#settings .notice {
+  color: var(--text-dim);
+  font-size: 75%;
 }
 
 .title {

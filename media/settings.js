@@ -22,6 +22,8 @@ window.setSettings = ()=>{
   document.body.style.setProperty('--base', ThemeInput.value);
   ThemeInput.oninput = (evt)=>{
     document.body.style.setProperty('--base', evt.target.value);
+    document.body.style.setProperty('--text', (parseInt(evt.target.value.replace('#',''),16)>0x888888)?'#222':'#ddd');
+    document.body.style.setProperty('--text-dim', (parseInt(evt.target.value.replace('#',''),16)>0x888888)?'#111':'#ccc');
     localStorage.setItem('theme', evt.target.value);
   };
 
