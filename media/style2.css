@@ -197,6 +197,7 @@ iframe {
 }
 #settings label {
   display: block;
+  width: fit-content;
   padding: 2px 0px;
 }
 #settings input, #settings select {

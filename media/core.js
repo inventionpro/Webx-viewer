@@ -369,7 +369,7 @@ export class Browser {
     }
     let last;
     if (this.activeTab===id) last = this.tabs.findIndex(tab=>tab.id===id);
-    this.getActiveTab().close();
+    this.tabs.find(tab=>tab.id===id).close();
     if (this.activeTab===id) this.changeTab(this.tabs[Math.min(last, this.tabs.length-1)].id);
     this.onTabClose(id);
   }
