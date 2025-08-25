@@ -60,11 +60,13 @@ function handleRule(rule, value) {
       if (!(/px|pt/).test(value)) value+='px';
       break;
     case 'color':
-      if (value.toLowerCase()==='-wxv-browser-theme-color') value = document.body.style.getPropertyValue('--base')??'#1a1a1a';
+      if (value.toLowerCase()==='-wxv-browser-theme-bg') value = document.body.style.getPropertyValue('--base')??'#1a1a1a';
+      if (value.toLowerCase()==='-wxv-browser-theme-txt') value = document.body.style.getPropertyValue('--text')??'#ddd';
       if (!(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/m).test(value)) return `invalid-value: ${value} for ${rule}`;
       break;
     case 'color-deco':
-      if (value.toLowerCase()==='-wxv-browser-theme-color') value = document.body.style.getPropertyValue('--base')??'#1a1a1a';
+      if (value.toLowerCase()==='-wxv-browser-theme-bg') value = document.body.style.getPropertyValue('--base')??'#1a1a1a';
+      if (value.toLowerCase()==='-wxv-browser-theme-txt') value = document.body.style.getPropertyValue('--text')??'#ddd';
       if (!(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/m).test(value)) return `invalid-value: ${value} for ${rule}`;
       return`text-decoration-line: ${rulex.split('_')[0].replace('strikethrough','line-through')};
   text-decoration-color: ${value};`;
