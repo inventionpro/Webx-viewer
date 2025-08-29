@@ -44,12 +44,12 @@ function showTabs() {
     .map(tab=>`<button onclick="window.browser.changeTab('${tab.id}')"${window.browser.activeTab===tab.id?' active':''} oncontextmenu="event.preventDefault();window.rclick(event, '${tab.id}')" draggable="true">
   <img src="${tab.icon}" width="16" height="16">
   <span class="title">${tab.title}</span>
-  <span class="close" onclick="event.stopPropagation();window.browser.closeTab('${tab.id}')">x</span>
+  <span class="close" role="button" tabindex="0" onclick="event.stopPropagation();window.browser.closeTab('${tab.id}')" onkeydown="if(event.key==='Enter'||event.key===' ')this.click();">x</span>
 </button>`)
     .join('');
   document.querySelector('#history .inner').innerHTML = window.browser.history
     .toReversed()
-    .map(log=>`<span onclick="window.browser.getActiveTab().goTo('${log.url}')"><img src="${log.icon??window.browser.defFavicon}" width="24" height="24">${log.title??log.url}</span>`)
+    .map(log=>`<span role="button" tabindex="0" onclick="window.browser.getActiveTab().goTo('${log.url}')" onkeydown="if(event.key==='Enter'||event.key===' ')this.click();"><img src="${log.icon??window.browser.defFavicon}" width="24" height="24">${log.title??log.url}</span>`)
     .join('');
 }
 window.showTabs = showTabs;

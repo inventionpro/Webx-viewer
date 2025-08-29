@@ -55,7 +55,9 @@ const settingsPanel = document.getElementById('settings');
 let currentPanel = '';
 function openClosePanels() {
   historyPanel.style.right = (currentPanel==='history')?'0px':'';
+  historyPanel[(currentPanel==='history')?'removeAttribute':'setAttribute']('inert', true);
   settingsPanel.style.right = (currentPanel==='settings')?'0px':'';
+  settingsPanel[(currentPanel==='settings')?'removeAttribute':'setAttribute']('inert', true);
 }
 function toggleSettings() {
   currentPanel = (currentPanel==='settings')?'':'settings';

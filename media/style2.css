@@ -27,7 +27,6 @@ a {
 input, select {
   color: currentColor;
   border: none;
-  outline: none;
   border-radius: 1rem;
   background-color: var(--base);
 }
@@ -180,6 +179,9 @@ dialog {
 }
 .nav button:hover {
   background-color: var(--top);
+}
+#url {
+  outline: none;
 }
 
 main, #box {
