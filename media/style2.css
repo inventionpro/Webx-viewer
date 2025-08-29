@@ -51,11 +51,25 @@ svg {
 dialog {
   color: var(--text);
   font-family: Lexend, Arial, sans-serif;
-  padding: 10px;
+  padding: 5px;
   border: 2px var(--base) solid;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   background: var(--up);
   overflow: visible;
+}
+
+.rmenu {
+  position: absolute;
+  flex-direction: column;
+  margin: 0px;
+  z-index: 999;
+}
+.rmenu[open] {
+  display: flex;
+}
+.rmenu button {
+  margin: 0px;
+  padding: 4px 2px;
 }
 
 #tabs {

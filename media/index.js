@@ -25,10 +25,23 @@ function updateUrl() {
   }
 }
 
+window.rclick = (event, id)=>{
+  let menu = document.querySelector('dialog.rmenu');
+  menu.show();
+  menu.style.left = event.clientX+'px';
+  menu.style.top = event.clientY+'px';
+  menu.innerHTML = `<button onclick="browser.tabs.find(tab=>tab.id==='${id}').reload()">Reload</button>
+<button onclick="browser.createTab().goTo(browser.tabs.find(tab=>tab.id==='${id}').url)">Duplicate</button>
+<button onclick="window.browser.closeTab('${id}')">Close</button>`;
+};
+window.onclick = window.onblur = ()=>{
+  let menu = document.querySelector('dialog.rmenu');
+  menu.close();
+}
 function showTabs() {
   TabContainer.style.width = window.browser.tabs.length*179 + 'px';
   TabContainer.innerHTML = window.browser.tabs
-    .map(tab=>`<button onclick="window.browser.changeTab('${tab.id}')"${window.browser.activeTab===tab.id?' active':''} draggable="true">
+    .map(tab=>`<button onclick="window.browser.changeTab('${tab.id}')"${window.browser.activeTab===tab.id?' active':''} oncontextmenu="event.preventDefault();window.rclick(event, '${tab.id}')" draggable="true">
   <img src="${tab.icon}" width="16" height="16">
   <span class="title">${tab.title}</span>
   <span class="close" onclick="event.stopPropagation();window.browser.closeTab('${tab.id}')">x</span>

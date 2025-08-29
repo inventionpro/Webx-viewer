@@ -1,10 +1,8 @@
 import { createLegacyLua } from './lua/legacy.js';
 import { createV2Lua } from './lua/v2.js';
 
-import { parse as htmlparser } from './parser/html.js';
-import { parse as cssparser } from './parser/css.js';
-import { build as htmlbuilder } from './builder/html.js';
-import { build as cssbuilder } from './builder/css.js';
+import { htmlparser, htmlbuilder } from './html.js';
+import { cssparser, cssbuilder } from './css.js';
 
 import { NaptureCss, BussingaCss } from './default_css.js';
 import { errorPage } from './pages.js';
