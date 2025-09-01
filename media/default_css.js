@@ -1,17 +1,3 @@
-export const styles = {
-  napture_dark: NaptureDark,
-
-  bussinga_dark: BussingaDark,
-  bussinga_light: BussingaLight,
-  bussinga_midnight: BussingaMidnight,
-  bussinga_discord: BussingaDiscord,
-  bussinga_catgirl: BussingaCatgirl,
-  bussinga_blu: BussingaBlu,
-  bussinga_hacker: BussingaHacker,
-  bussinga_chill: BussingaChill,
-  bussinga_volcano: BussingaVolcano
-};
-
 /* Napture */
 const NaptureDark = `/* Napture Dark default css */
 @import url('https://fonts.googleapis.com/css2?family=Lexend:ital,wght@0,100..900;1,100..600&display=swap');
@@ -222,3 +208,18 @@ button, input, select, option {
 button:hover {
   background-color: #e23e57;
 }`;
+
+/* Declare */
+export const styles = {
+  napture_dark: NaptureDark,
+
+  bussinga_dark: BussingaDark,
+  bussinga_light: BussingaLight,
+  bussinga_midnight: BussingaMidnight,
+  bussinga_discord: BussingaDiscord,
+  bussinga_catgirl: BussingaCatgirl,
+  bussinga_blu: BussingaBlu,
+  bussinga_hacker: BussingaHacker,
+  bussinga_chill: BussingaChill,
+  bussinga_volcano: BussingaVolcano
+};
