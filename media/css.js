@@ -14,7 +14,7 @@ export function cssparser(content) {
         return `${selec}, .${selec}`;
       });
       // Properties
-      let prop = {};
+      let prop = [];
       rule
         .match(/{(([^\{])*?)}/)[1]
         .trim()
@@ -27,7 +27,7 @@ export function cssparser(content) {
         })
         .filter(e=>e.length>1)
         .forEach(p=>{
-          prop[p[0]] = p[1];
+          prop.push([p[0], p[1]]);
         })
       // Set
       selector.forEach(selec=>{
@@ -141,6 +141,6 @@ function handleRule(rule, value) {
 
 export function cssbuilder(rules) {
   return rules.map(rule=>`${rule.selector} {
-  ${Object.keys(rule.properties).map(r=>handleRule(r, rule.properties[r])).join(';\n  ')+';'}
+  ${rule.properties.map(r=>handleRule(r[0], r[1])).join(';\n  ')+';'}
 }`).join('\n');
 }
