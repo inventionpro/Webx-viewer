@@ -4,7 +4,7 @@ import { createV2Lua } from './lua/v2.js';
 import { htmlparser, htmlbuilder } from './html.js';
 import { cssparser, cssbuilder } from './css.js';
 
-import { NaptureCss, BussingaCss } from './default_css.js';
+import { styles } from './default_css.js';
 import { errorPage } from './pages.js';
 
 // Utility
@@ -85,7 +85,7 @@ class Tab {
 
       // Default css
       let default_style = doc.createElement('style');
-      default_style.innerHTML = _this.browser.bussinga ? BussingaCss : NaptureCss;
+      default_style.innerHTML = styles[_this.browser.style];
       doc.head.appendChild(default_style);
 
       // Page css
@@ -242,6 +242,7 @@ export class Browser {
    * @param {Object} options - Options of the browser.
    * @param {string} options.box - Box to place iframes.
    * @param {string} options.startUrl - The intial urls for tabs.
+   * @param {string} options.style - Page style, on what style should pages be based on.
    * @param {boolean} options.bussinga - Whether to imitate bussinga in legacy context.
    * @param {boolean} options.proxy - Proxy fetches in lua.
    * @param {string} options.dns - DNS url, where to fetch domains.
@@ -254,6 +255,7 @@ export class Browser {
   constructor(options={}) {
     // Settings
     this.box = document.getElementById(options.box??'box');
+    this.style = options.style??'napture_dark';
     this.bussinga = options.bussinga??false;
     this.proxy = options.proxy??false;
     this.startUrl = options.startUrl??'buss://search.app';

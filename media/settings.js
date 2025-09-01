@@ -11,6 +11,7 @@ window.setSettings = ()=>{
       localStorage.setItem(name, evt.target[prop]);
     };
   }
+  setntrack('style', 'value', 'napture_dark');
   setntrack('bussinga', 'checked', false);
   setntrack('proxy', 'checked', false);
   setntrack('startUrl', 'value', 'buss://search.app');
@@ -70,7 +71,7 @@ function toggleHistory() {
 }
 
 function embedPage() {
-  let url = `https://inventionpro.github.io/Webx-viewer/embed?url=${document.getElementById('url').value}&bussinga=${window.browser.bussinga}&proxy=${window.browser.proxy}&dns=${window.browser.dns}`;
-  url = url.replace('&bussinga=false','').replace('&proxy=false','').replace('&dns=https://dns.webxplus.org/','');
+  let url = `https://inventionpro.github.io/Webx-viewer/embed?url=${document.getElementById('url').value}&style=${window.browser.style}&bussinga=${window.browser.bussinga}&proxy=${window.browser.proxy}&dns=${window.browser.dns}`;
+  url = url.replace('&style=napture_dark','').replace('&bussinga=false','').replace('&proxy=false','').replace('&dns=https://dns.webxplus.org/','');
   navigator.clipboard.writeText(url);
 }

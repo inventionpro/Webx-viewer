@@ -4,7 +4,7 @@ import { createV2Lua } from './lua/v2.js';
 import { htmlparser, htmlbuilder } from './html.js';
 import { cssparser, cssbuilder } from './css.js';
 
-import { NaptureCss, BussingaCss } from './default_css.js';
+import { styles } from './default_css.js';
 import { errorPage } from './pages.js';
 
 // Utility
@@ -154,7 +154,7 @@ async function load(ip, query, build) {
 
   // Default css
   let default_style = doc.createElement('style');
-  default_style.innerHTML = document.getElementById('bussinga').checked ? BussingaCss : NaptureCss;
+  default_style.innerHTML = document.getElementById('bussinga').checked ? styles.bussinga_dark : styles.napture_dark;
   doc.head.appendChild(default_style);
 
   // Page css

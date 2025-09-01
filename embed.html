@@ -12,6 +12,7 @@
       let query = {};
       location.search.replace('?','').split('&').forEach(p=>query[p.split('=')[0]]=p.split('=')[1]);
       query.url = query.url??'search.app';
+      query.style = query.style?.toLowerCase()??'napture_dark';
       query.bussinga = query.bussinga?.toLowerCase()==='true';
       query.proxy = query.proxy?.toLowerCase()==='true';
       query.dns = query.dns??'https://dns.webxplus.org/';
@@ -20,6 +21,7 @@
 
       const browser = new Browser({
         startUrl: query.url,
+        style: query.style,
         bussinga: query.bussinga,
         proxy: query.proxy,
         dns: query.dns
