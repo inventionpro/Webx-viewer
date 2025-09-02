@@ -1,13 +1,11 @@
 /* Napture */
-const NaptureDark = `/* Napture Dark default css */
+const NaptureBase = `/* Napture Dark default css */
 @import url('https://fonts.googleapis.com/css2?family=Lexend:ital,wght@0,100..900;1,100..600&display=swap');
 body {
   width: calc(100vw - 16px);
   padding: 0px;
   margin: 8px;
   font-family: Lexend, Arial, sans-serif;
-  color: #F7F7F7;
-  background-color: #2C2C2C;
   word-break: break-word;
 }
 body, div {
@@ -28,19 +26,15 @@ h5 { font-size: 16pt; }
 h6 { font-size: 14pt; }
 a { color: #67B7D1; }
 button {
-  color: #F6F6F6;
   font-weight: bold;
   font-family: inherit;
   padding: 9px;
   border: none;
   border-radius: 5px;
-  background-color: #414141;
   transition: 250ms;
 }
 input, textarea {
-  color: #F6F6F6;
   padding: 8px;
-  border: 1px #616161 solid;
   border-radius: 12px;
 }
 textarea {
@@ -48,16 +42,43 @@ textarea {
   height: 100px;
 }
 select {
-  color: #F6F6F6;
   padding: 7px;
-  border: 1px #616161 solid;
   border-radius: 5px;
 }
 hr {
   width: 100%;
   height: 1px;
   border: none;
-  background-color: #4A4A4A;
+}`;
+const NaptureDark = NaptureBase+`body {
+  color: #f7f7f7;
+  background-color: #2c2c2c;
+}
+button {
+  color: #F6F6F6;
+  background-color: #414141;
+}
+input, textarea, select {
+  color: #F6F6F6;
+  border: 1px #616161 solid;
+}
+hr {
+  background-color: #4a4a4a;
+}`;
+const NaptureLight = NaptureBase+`body {
+  color: #3d3d3d;
+  background-color: #fafafa;
+}
+button {
+  color: #3d3d3d;
+  background-color: #e7e7e7;
+}
+input, textarea, select {
+  color: #3d3d3d;
+  border: 1px #616161 solid;
+}
+hr {
+  background-color: #dedede;
 }`;
 
 /* Bussinga */
@@ -212,6 +233,7 @@ button:hover {
 /* Declare */
 export const styles = {
   napture_dark: NaptureDark,
+  napture_light: NaptureLight,
 
   bussinga_dark: BussingaDark,
   bussinga_light: BussingaLight,
