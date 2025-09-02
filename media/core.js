@@ -5,7 +5,7 @@ import { htmlparser, htmlbuilder } from './html.js';
 import { cssparser, cssbuilder } from './css.js';
 
 import { styles } from './default_css.js';
-import { errorPage } from './pages.js';
+import { errorPage, noPage } from './pages.js';
 
 // Utility
 Object.prototype.isObject = (obj)=>{
@@ -165,11 +165,12 @@ class Tab {
     let target = this.browser._normalizeIp(destination, url.pathname, this.id);
     try {
       let fetch = await this._fetch(target);
-      if ((/<title>Site not found (&middot;|·) GitHub Pages<\/title>/i).test(fetch)) throw new Error('This website points to a non-existant GitHub Pages page.');
+      if ((/<title>(Site|Page) not found (&middot;|·) GitHub Pages<\/title>/i).test(fetch)) throw new Error('This website points to a non-existant GitHub Pages page.');
       // Long boi
       fetch = fetch.replace(/<script>\(function\(\){function .\(\){var .=..contentDocument\|\|..contentWindow.document;if\(.\){var .=..createElement\('script'\);..innerHTML="window.__CF\$..\$params={r:'.+?',t:'.+?'};var .=document.createElement\('script'\);..nonce='';..src='\/cdn-cgi\/challenge-platform\/scripts\/jsd\/main.js';document.getElementsByTagName\('head'\)\[0]\.appendChild\(.\);";..getElementsByTagName\('head'\)\[0].appendChild\(.\)}}if\(document.body\){var .=document\.createElement\('iframe'\);..height=1;..width=1;..style.position='absolute';..style.top=0;..style.left=0;..style.border='none';..style.visibility='hidden';document.body.appendChild\(.\);if\('loading'!==document.readyState\).\(\);else if\(window.addEventListener\)document.addEventListener\('DOMContentLoaded',.\);else{var .=document.onreadystatechange\|\|function\(\){};document.onreadystatechange=function\(.\){.\(.\);'loading'!==document.readyState&&\(document.onreadystatechange=.,.\(\)\)}}}}\)\(\);<\/script>/,'');
       this._loadHTML(fetch, target);
     } catch(err) {
+      if (err.includes('TypeError: Failed to fetch')) err = 'Could not fetch page, make sure you typed the url right or try enabling proxy';
       this._loadHTML(errorPage.replace('Message', err));
     }
   }
@@ -181,7 +182,10 @@ class Tab {
       let fetchtarget = target;
       if (this.browser.proxy) fetchtarget = `https://api.fsh.plus/file?url=${encodeURIComponent(target)}`;
       let req = await fetch(fetchtarget, { redirect: 'follow' });
-      if (!req.status.toString().startsWith('2')) throw new Error('Non 2xx response (Not Ok): '+req.status);
+      if (!req.status.toString().startsWith('2')) {
+        if (req.status===404) return noPage;
+        throw new Error('Non 2xx response (Not Ok): '+req.status);
+      }
       req = await req.text();
       this.browser.cache.set('fetch-'+target, req);
       return req;
