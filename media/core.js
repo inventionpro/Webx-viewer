@@ -11,6 +11,8 @@ import { errorPage, noPage } from './pages.js';
 Object.prototype.isObject = (obj)=>{
   return (typeof obj === 'object' && !Array.isArray(obj) && obj !== null)
 }
+const ipv4 = /^(?:(?:(?:25[0-5]|2[0-4]\d|1?\d{1,2}|0x(?:0{0,7}[0-9A-Fa-f]{1,2})|0[0-3]?[0-7]{0,2})\.(?:25[0-5]|2[0-4]\d|1?\d{1,2}|0x(?:0{0,7}[0-9A-Fa-f]{1,2})|0[0-3]?[0-7]{0,2})\.(?:25[0-5]|2[0-4]\d|1?\d{1,2}|0x(?:0{0,7}[0-9A-Fa-f]{1,2})|0[0-3]?[0-7]{0,2})\.(?:25[0-5]|2[0-4]\d|1?\d{1,2}|0x(?:0{0,7}[0-9A-Fa-f]{1,2})|0[0-3]?[0-7]{0,2}))|(?:429496729[0-5]|42949672[0-8]\d|4294967[01]\d{2}|429496[0-6]\d{3}|42949[0-5]\d{4}|4294[0-8]\d{5}|429[0-3]\d{6}|42[0-8]\d{7}|4[01]\d{8}|[1-3]?\d{1,9}))$/;
+const ipv6 = /^(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|:)|fe80:(?::[0-9A-Fa-f]{0,4}){0,4}%[0-9A-Za-z]{1,}|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(?!$)|$)){4}|(?:[0-9A-Fa-f]{1,4}:){1,4}:(?:(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(?!$)|$)){4})$/;
 
 // Classes
 class Tab {
@@ -73,7 +75,7 @@ class Tab {
           evt.preventDefault();
           // Validation
           let href = anchor.getAttribute('href').trim();
-          if (!href.toLowerCase().startsWith('buss://')) {
+          if (!href.toLowerCase().startsWith('buss://')&&!ipv4.test(href)&&!ipv6.test(href)) {
             if (href.includes('://')) {
               window.open(href);
               return;
@@ -302,7 +304,7 @@ export class Browser {
     return target.replaceAll(/\/{2,}/g, '/').replace(':/', '://');
   }
   _normalizeBuss(url) {
-    if (!url.includes('://')) url = 'buss://'+url;
+    if (!url.includes('://')&&!ipv4.test(url)&&!ipv6.test(url)) url = 'buss://'+url;
     return url;
   }
   async _fetchDomain(url) {
