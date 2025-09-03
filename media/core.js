@@ -185,6 +185,7 @@ class Tab {
         throw new Error('Non 2xx response (Not Ok): '+req.status);
       }
       req = await req.text();
+      if (req==='404: Not Found') return noPage;
       this.browser.cache.set('fetch-'+target, req);
       return req;
     }
