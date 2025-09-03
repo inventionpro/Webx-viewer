@@ -151,7 +151,7 @@ class Tab {
     let destination;
     if ((/^https?:\/\//).test(this.url)) {
       destination = new URL(this.url).host;
-      destination = 'http'+(ipv4.test(destination)||ipv6.test(destination))?'s':''+'://'+destination;
+      destination = 'http'+((ipv4.test(destination)||ipv6.test(destination))?'s':'')+'://'+destination;
     } else {
       try {
         destination = await this.browser._fetchDomain(this.url);
