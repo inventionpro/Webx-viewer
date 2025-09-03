@@ -304,7 +304,13 @@ export class Browser {
     return target.replaceAll(/\/{2,}/g, '/').replace(':/', '://');
   }
   _normalizeBuss(url) {
-    if (!url.includes('://')&&!ipv4.test(url)&&!ipv6.test(url)) url = 'buss://'+url;
+    if (!url.includes('://')&&!ipv4.test(url)&&!ipv6.test(url)) {
+      if (ipv4.test(url)||ipv6.test(url)) {
+        url = 'http://'+url;
+      } else {
+        url = 'buss://'+url;
+      }
+    }
     return url;
   }
   async _fetchDomain(url) {
