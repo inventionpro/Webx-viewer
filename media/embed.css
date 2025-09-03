@@ -9,16 +9,11 @@ body {
 a {
   color: #79d;
 }
-#box {
+iframe {
   position: absolute;
   inset: 0px;
-  display: flex;
   width: 100dvw;
   height: 100dvh;
-  box-sizing: border-box;
-}
-iframe {
-  flex: 1;
   border: none;
   background: #222;
   box-sizing: border-box;

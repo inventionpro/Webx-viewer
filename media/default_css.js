@@ -65,21 +65,6 @@ input, textarea, select {
 hr {
   background-color: #4a4a4a;
 }`;
-const NaptureLight = NaptureBase+`body {
-  color: #3d3d3d;
-  background-color: #fafafa;
-}
-button {
-  color: #3d3d3d;
-  background-color: #e7e7e7;
-}
-input, textarea, select {
-  color: #3d3d3d;
-  border: 1px #616161 solid;
-}
-hr {
-  background-color: #dedede;
-}`;
 
 /* Bussinga */
 const BussingaBase = `/* Bussinga Dark default css */
@@ -133,115 +118,9 @@ button, input, select, option {
 button:hover {
   background-color: #656565;
 }`;
-const BussingaLight = BussingaBase+`body {
-  color: black;
-  background-color: white;
-}
-a { color: #007bff; }
-button, input, select, option {
-  color: black;
-  background-color: #ececec;
-}
-button:hover {
-  background-color: #d0d0d0;
-}`;
-const BussingaMidnight = BussingaBase+`body {
-  color: white;
-  background-color: #181818;
-}
-a { color: #00bfff; }
-button, input, select, option {
-  color: white;
-  background-color: #2c2c2c;
-}
-button:hover {
-  background-color: #444444;
-}`;
-const BussingaDiscord = BussingaBase+`body {
-  color: white;
-  background-color: #34383e;
-}
-a { color: #285ee9; }
-button, input, select, option {
-  color: white;
-  background-color: #f4f4f5;
-}
-button:hover {
-  background-color: #72777c;
-}`;
-const BussingaCatgirl = BussingaBase+`body {
-  color: black;
-  background-color: #ad88c6;
-}
-a { color: #7469b6; }
-button, input, select, option {
-  color: black;
-  background-color: #e1afd1;
-}
-button:hover {
-  background-color: #ffe6e6;
-}`;
-const BussingaBlu = BussingaBase+`body {
-  color: white;
-  background-color: #344c64;
-}
-a { color: #57a6a1; }
-button, input, select, option {
-  color: white;
-  background-color: #577b8d;
-}
-button:hover {
-  background-color: #57a6a1;
-}`;
-const BussingaHacker = BussingaBase+`body {
-  color: white;
-  background-color: #006769;
-}
-a { color: #e6ff94; }
-button, input, select, option {
-  color: white;
-  background-color: #40a578;
-}
-button:hover {
-  background-color: #40a578;
-}`;
-const BussingaChill = BussingaBase+`body {
-  color: black;
-  background-color: #defcf9;
-}
-a { color: #cca8e9; }
-button, input, select, option {
-  color: black;
-  background-color: #c3bef0;
-}
-button:hover {
-  background-color: #cca8e9;
-}`;
-const BussingaVolcano = BussingaBase+`body {
-  color: white;
-  background-color: #311d3f;
-}
-a { color: #e23e57; }
-button, input, select, option {
-  color: white;
-  background-color: #88304e;
-}
-button:hover {
-  background-color: #e23e57;
-}`;
 
 /* Declare */
 export const styles = {
   napture_dark: NaptureDark,
-  napture_light: NaptureLight,
-
-  bussinga_dark: BussingaDark,
-  bussinga_light: BussingaLight,
-  bussinga_midnight: BussingaMidnight,
-  bussinga_discord: BussingaDiscord,
-  bussinga_catgirl: BussingaCatgirl,
-  bussinga_blu: BussingaBlu,
-  bussinga_hacker: BussingaHacker,
-  bussinga_chill: BussingaChill,
-  bussinga_volcano: BussingaVolcano
+  bussinga_dark: BussingaDark
 };
