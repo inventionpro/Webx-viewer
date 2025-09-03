@@ -58,8 +58,9 @@ class Tab {
         _this.icon = new URL(_this.icon, target).href;
         if (_this.icon.endsWith('.css')) _this.icon = _this.browser.defFavicon;
       }
+      let tabHistoryEntry = { url: _this.url, title: _this.title, icon: _this.icon };
+      if (JSON.stringify(_this.browser.history.slice(-1)[0])!==JSON.stringify(tabHistoryEntry)) _this.browser.history.push(tabHistoryEntry);
       _this.browser.onTabLoad(_this.id);
-      _this.browser.history.push({ url: _this.url, title: _this.title, icon: _this.icon });
 
       // Extra html
       doc.querySelector('head').insertAdjacentHTML('beforeend', `<meta name="color-scheme" content="dark light"><meta name="viewport" content="width=device-width, initial-scale=1.0">`);

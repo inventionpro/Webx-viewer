@@ -266,11 +266,20 @@ input[type="color"] {
   gap: 2px;
   flex-direction: column;
 }
-#history span {
+#history .inner > span {
   cursor: pointer;
   display: flex;
   gap: 5px;
   align-items: center;
+  font-weight: 500;
+}
+#history .inner > span span {
+  font-size: 70%;
+  font-weight: 400;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #history img {
   width: 24px;

@@ -49,7 +49,7 @@ function showTabs() {
     .join('');
   document.querySelector('#history .inner').innerHTML = window.browser.history
     .toReversed()
-    .map(log=>`<span role="button" tabindex="0" onclick="window.browser.getActiveTab().goTo('${log.url}')" onkeydown="if(event.key==='Enter'||event.key===' ')this.click();"><img src="${log.icon??window.browser.defFavicon}" width="24" height="24">${log.title??log.url}</span>`)
+    .map(log=>`<span role="button" tabindex="0" onclick="window.browser.getActiveTab().goTo('${log.url}')" onkeydown="if(event.key==='Enter'||event.key===' ')this.click();"><img src="${log.icon??window.browser.defFavicon}" width="24" height="24">${log.title??log.url}<span>${log.url}</span></span>`)
     .join('');
 }
 window.showTabs = showTabs;

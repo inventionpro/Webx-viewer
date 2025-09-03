@@ -12,12 +12,12 @@
     {
       "src": "https://inventionpro.github.io/Webx-viewer/media/logo/256.png",
       "type": "image/png",
-      "sizes": "256x256"
+      "sizes": "256x92"
     },
     {
       "src": "https://inventionpro.github.io/Webx-viewer/media/logo/512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x184"
     },
     {
       "src": "https://inventionpro.github.io/Webx-viewer/media/logo/mask.png",
