@@ -1,8 +1,8 @@
 import { createLegacyLua } from './lua/legacy.js';
 import { createV2Lua } from './lua/v2.js';
 
-import { htmlparser, htmlbuilder } from './html.js';
-import { cssparser, cssbuilder } from './css.js';
+import { htmlparser, htmlbuilder } from './handle/html.js';
+import { cssparser, cssbuilder } from './handle/css.js';
 
 import { styles } from './default_css.js';
 import { errorPage, noPage } from './pages.js';
@@ -25,6 +25,8 @@ class Tab {
     this.history = [];
     this.position = 0;
     this.luaEngine = [];
+    this.luaGlobal = {};
+
     this.iframe = document.createElement('iframe');
     this.iframe.style.display = 'none';
     this.iframe.id = this.id;
@@ -38,6 +40,7 @@ class Tab {
   }
   _loadHTML(html, target) {
     if (!target) target =  location.href;
+    this.luaGlobal = {};
     const _this = this;
     this.iframe.onload = async() => {
       let htmltree = htmlparser(html);
@@ -101,7 +104,7 @@ class Tab {
           _this.browser.stdout('[Error] Could not load a css resource: '+style, 'error', _this.id);
           return;
         }
-        if (!_this.browser.bussinga||!style.includes('/* bussinga! */')) {
+        if (!_this.browser.bussinga_css||!style.includes('/* bussinga! */')) {
           if (style.includes('/* bussinga! */')) _this.browser.stdout('[Warn] Site uses bussinga css comment, but you are not using bussinga mode.', 'warn', _this.id);
           style = cssparser(style);
           style = cssbuilder(style);
@@ -113,28 +116,21 @@ class Tab {
       // Lua
       for (let i = 0; i<build.scripts.length; i++) {
         try {
-          let luatarget = this.browser._normalizeIp(target, build.scripts[i].src, this.id);
+          let luatarget = _this.browser._normalizeIp(target, build.scripts[i].src, this.id);
           build.scripts[i].code = await _this._fetch(luatarget);
         } catch(err) {
           _this.browser.stdout('[Error] Could not load a lua resource: '+build.scripts[i].src, 'error', _this.id);
         }
       }
       _this.luaEngine = [];
-      window.luaGlobal = {}; // TODO: Make it be tab independent
       build.scripts.forEach(async script => {
         let lua;
-        let options = {
-          location: _this.url,
-          query: _this.url.split('?')[1]??'',
-          bussinga: _this.browser.bussinga,
-          proxy: _this.browser.proxy
-        };
         if (script.version==='v2') {
-          lua = await createV2Lua(doc, options, (text,type)=>{_this.browser.stdout(text,type,_this.id)});
+          lua = await createV2Lua(doc, _this, (text,type)=>{_this.browser.stdout(text,type,_this.id)});
         } else if (script.version==='legacy') {
           script.code = script.code
             .replace(/(\bfetch\s*\(\{[\s\S]*?\}\))(?!(\s*:\s*await\s*\())/g, '$1:await()');
-          lua = await createLegacyLua(doc, options, (text,type)=>{_this.browser.stdout(text,type,_this.id)});
+          lua = await createLegacyLua(doc, _this, (text,type)=>{_this.browser.stdout(text,type,_this.id)});
         } else {
           stdout(`[Error] Unknwon version: ${script.version} for: ${script.src}`, 'error', _this.id);
         }
@@ -248,7 +244,8 @@ export class Browser {
    * @param {string} options.box - Box to place iframes.
    * @param {string} options.startUrl - The intial urls for tabs.
    * @param {string} options.style - Page style, on what style should pages be based on.
-   * @param {boolean} options.bussinga - Whether to imitate bussinga in legacy context.
+   * @param {boolean} options.bussinga_css - Whether to imitate bussinga arbitrary css.
+   * @param {boolean} options.bussinga_lua - Whether to imitate bussinga extended lua in legacy context.
    * @param {boolean} options.proxy - Proxy fetches in lua.
    * @param {string} options.dns - DNS url, where to fetch domains.
    * @param {function(string, string, string): void} options.stdout - Function to handle logs (text, type, tab id).
@@ -261,7 +258,8 @@ export class Browser {
     // Settings
     this.box = document.getElementById(options.box??'box');
     this.style = options.style??'napture_dark';
-    this.bussinga = options.bussinga??false;
+    this.bussinga_css = options.bussinga_css??false;
+    this.bussinga_lua = options.bussinga_lua??false;
     this.proxy = options.proxy??false;
     this.startUrl = options.startUrl??'buss://search.app';
     this.searchUrl = options.searchUrl??'buss://search.app?q=%1';

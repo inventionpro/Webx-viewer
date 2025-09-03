@@ -133,12 +133,12 @@ function HTMLElementFunctionsFor(elem, stdout) {
   return base;
 }
 
-export async function createV2Lua(doc, options, stdout) {
+export async function createV2Lua(doc, tab, stdout) {
   const factory = new wasmoon.LuaFactory();
   const lua = await factory.createEngine();
 
   let query = {};
-  options.query.split('&').map(param=>{
+  (tab.url.split('?')[1]??'').query.split('&').map(param=>{
     if (param.length<1) return;
     param = decodeURIComponent(param).split('=');
     let key = param.shift();
@@ -167,7 +167,7 @@ export async function createV2Lua(doc, options, stdout) {
       headers: o.headers??{}
     };
     if (!['GET','HEAD'].includes(opts.method) && o.body) opts.body = o.body;
-    if (options.proxy) url = `https://api.fsh.plus/file?url=${encodeURIComponent(url)}`;
+    if (tab.browser.proxy) url = `https://api.fsh.plus/file?url=${encodeURIComponent(url)}`;
 
     // Fetch
     let req = await fetch(url, opts);
@@ -198,15 +198,15 @@ export async function createV2Lua(doc, options, stdout) {
     let tags = Array.from(document.getElementsByTagName(tag));
     return all ? tags.map(t=>HTMLElementFunctionsFor(t, stdout)) : HTMLElementFunctionsFor(tags[0], stdout);
   });
-  await lua.global.set('global', window.luaGlobal);
-  let parsedUrl = new URL(options.location.includes('://')?options.location:'https://'+options.location);
+  await lua.global.set('global', tab.luaGlobal);
+  let parsedUrl = new URL(tab.url.includes('://')?tab.url:'buss://'+tab.url);
   await frozenTable(lua, 'location', {
-    href: `buss://${parsedUrl.hostname}${parsedUrl.pathname}?${options.query}`,
+    href: `buss://${parsedUrl.hostname}${parsedUrl.pathname}${parsedUrl.search}`,
     domain: parsedUrl.hostname,
     protocol: 'buss',
     path: parsedUrl.pathname,
     query,
-    rawQuery: '?'+options.query,
+    rawQuery: parsedUrl.search,
     go: (url)=>{
       document.getElementById('url').value = url.trim().replace('buss://','');
       window.view();

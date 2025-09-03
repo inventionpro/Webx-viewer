@@ -5,7 +5,7 @@
   "start_url": "/Webx-viewer/",
   "display": "standalone",
   "display_override": ["minimal-ui"],
-  "theme_color": "#eebb22",
+  "theme_color": "#eeddff",
   "background_color": "#222222",
   "description": "View WebX websites online using WXV.",
   "icons": [

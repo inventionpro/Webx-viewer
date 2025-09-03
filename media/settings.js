@@ -12,7 +12,8 @@ window.setSettings = ()=>{
     };
   }
   setntrack('style', 'value', 'napture_dark');
-  setntrack('bussinga', 'checked', false);
+  setntrack('bussinga_css', 'checked', false);
+  setntrack('bussinga_lua', 'checked', false);
   setntrack('proxy', 'checked', false);
   setntrack('startUrl', 'value', 'buss://search.app');
   setntrack('searchUrl', 'value', 'buss://search.app?q=%1');
@@ -71,7 +72,7 @@ function toggleHistory() {
 }
 
 function embedPage() {
-  let url = `https://inventionpro.github.io/Webx-viewer/embed?url=${document.getElementById('url').value}&style=${window.browser.style}&bussinga=${window.browser.bussinga}&proxy=${window.browser.proxy}&dns=${window.browser.dns}`;
-  url = url.replace('&style=napture_dark','').replace('&bussinga=false','').replace('&proxy=false','').replace('&dns=https://dns.webxplus.org/','');
+  let url = `https://inventionpro.github.io/Webx-viewer/embed?url=${document.getElementById('url').value}&style=${window.browser.style}&bussinga_css=${window.browser.bussinga_css}&bussinga_lua=${window.browser.bussinga_lua}&proxy=${window.browser.proxy}&dns=${window.browser.dns}`;
+  url = url.replace('&style=napture_dark','').replace('&bussinga_css=false','').replace('&bussinga_lua=false','').replace('&proxy=false','').replace('&dns=https://dns.webxplus.org/','');
   navigator.clipboard.writeText(url);
 }

@@ -4,69 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebX Viewer</title>
-    <meta name="description" content="View WebX websites online using WXV.">
-    <meta name="theme-color" content="#eebb22">
+    <meta name="description" content="View and use WebX websites comfortably from your browser using WXV.">
+    <meta name="theme-color" content="#eeddff">
     <link rel="icon" href="./favicon.ico" type="image/png">
     <link rel="canonical" href="https://inventionpro.github.io/Webx-viewer/">
     <meta name="robots" content="index, follow">
-    <link rel="stylesheet" href="./media/style.css">
+    <link rel="stylesheet" href="./media/css/style.css">
     <link rel="manifest" href="./media/install.json">
     <script src="https://cdn.jsdelivr.net/npm/wasmoon-async-fix@1.17.5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
   </head>
   <body>
-    <div class="nav">
-      <button class="seamless" onclick="window.current=Math.max(window.current-1,0);document.getElementById('url').value=window.urlhistory[window.current];window.view()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path d="M15 128H241" stroke-width="30" stroke-linecap="round"/><path d="M86 57L15.2893 127.711" stroke-width="30" stroke-linecap="round"/><path d="M86 198.711L15.2893 128" stroke-width="30" stroke-linecap="round"/></svg></button>
-      <button class="seamless" onclick="window.current=Math.min(window.current+1,window.urlhistory.length-1);document.getElementById('url').value=window.urlhistory[window.current];window.view()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path d="M241 122H15" stroke-width="30" stroke-linecap="round"></path><path d="M170 51L240.711 121.711" stroke-width="30" stroke-linecap="round"></path><path d="M170 192.711L240.711 122" stroke-width="30" stroke-linecap="round"></path></svg></button>
-      <button class="seamless" onclick="document.getElementById('url').value=window.urlhistory[window.current];window.view()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path d="M160.236 241.536C180.129 235.168 197.909 223.745 211.908 208.518C218.625 201.212 216.364 189.929 208.136 184.379C199.908 178.828 188.847 181.182 181.674 188.042C172.532 196.784 161.472 203.401 149.278 207.304C131.337 213.047 111.985 212.583 94.3402 205.986C76.6956 199.389 61.7858 187.043 52.0133 170.938C42.2407 154.833 38.1745 135.907 40.4701 117.209C42.7657 98.5118 51.2895 81.1318 64.6676 67.8698C78.0456 54.6078 95.4991 46.2357 114.216 44.1034C132.932 41.9711 151.821 46.2022 167.84 56.115C174.987 60.5379 181.377 65.9773 186.835 72.2175L165.486 79.9878C161.003 81.6193 160.525 87.7694 164.702 90.0742L220.104 120.646C223.052 122.273 226.758 120.924 227.971 117.783L250.76 58.7516C252.478 54.3014 248.159 49.8975 243.676 51.529L222.271 59.3196C212.946 45.8251 200.886 34.2974 186.753 25.5513C163.869 11.3902 136.884 5.34597 110.147 8.39207C83.409 11.4383 58.4747 23.3976 39.3631 42.3434C20.2516 61.2892 8.07552 86.1182 4.79612 112.829C1.51674 139.54 7.32555 166.577 21.2863 189.583C35.2471 212.59 56.5471 230.228 81.7538 239.652C106.96 249.077 134.606 249.74 160.236 241.536Z"/></svg></button>
-      <input placeholder="url" id="url" value="search.app" onkeyup="if(event.key==='Enter'){this.value=this.value.trim().replace(/^buss:\/\//m,'');window.urlhistory=window.urlhistory.slice(0,window.current+1);window.urlhistory.push(this.value);window.current=window.urlhistory.length-1;window.view();}">
-      <button onclick="toggleConsole()">Console</button>
-      <dialog id="console">
-        <button onclick="this.parentElement.close()" class="modal-close">x</button>
-        <p style="margin:2px 0px;font-size:125%;">Console:</p>
-        <div id="stdout"></div>
-        <div class="in">
-          <select id="ctx"></select>
-          <textarea id="code" rows="1"></textarea>
-          <button id="sned">Sned</button>
-        </div>
-      </dialog>
-      <button onclick="toggleSettings()">Settings</button>
-      <dialog id="settings">
-        <button onclick="this.parentElement.close()" class="modal-close">x</button>
-        <label class="notice-p">Bussinga: <input id="bussinga" type="checkbox"><div class="notice">This can be unsafe, <a href="https://github.com/inventionpro/bussinga-attack" target="_blank">check here</a>.</div></label>
-        <br>
-        <label>Proxy fetches: <input id="proxy" type="checkbox"></label>
-        <br>
-        <label>DNS: <input placeholder="dns server" value="https://dns.webxplus.org/" id="dns" style="width:200px"></label>
-        <br>
-        <button onclick="window.cache={domain:{},fetch:{}}">Remove cache</button>
-        <button onclick="embed()">Embed link</button>
-      </dialog>
-      <script>
-        function toggleConsole() {
-          let s = document.getElementById('console');
-          if (s.open) {
-            s.close();
-          } else {
-            s.showModal();
-          }
-        }
-        function toggleSettings() {
-          let s = document.getElementById('settings');
-          if (s.open) {
-            s.close();
-          } else {
-            s.showModal();
-          }
-        }
-        function embed() {
-          let url = `https://inventionpro.github.io/Webx-viewer/embed?url=${document.getElementById('url').value}&bussinga=${document.getElementById('bussinga').checked}&proxy=${document.getElementById('proxy').checked}&dns=${document.getElementById('dns').value}`;
-          url = url.replace('&bussinga=false','').replace('&proxy=false','').replace('&dns=https://dns.webxplus.org/','');
-          navigator.clipboard.writeText(url);
-        }
-      </script>
+    <dialog class="rmenu" closedby="any"></dialog>
+    <div id="tabs">
+      <div></div>
+      <button class="add" onclick="window.browser.createTab();document.getElementById('url').focus()"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 256 256"><rect x="103" width="50" height="256" rx="25"/><rect y="103" width="256" height="50" rx="25"/></svg></button>
     </div>
-    <iframe sandbox="allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-same-origin"></iframe>
-    <script src="./media/script.js" type="module"></script>
+    <div class="nav">
+      <button onclick="window.browser.tabs.find(tab=>tab.id===window.browser.activeTab).goBack()" aria-label="Backwards"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path d="M15 128H241" stroke-width="30" stroke-linecap="round"/><path d="M86 57L15.2893 127.711" stroke-width="30" stroke-linecap="round"/><path d="M86 198.711L15.2893 128" stroke-width="30" stroke-linecap="round"/></svg></button>
+      <button onclick="window.browser.tabs.find(tab=>tab.id===window.browser.activeTab).goForward()" aria-label="Forwards"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path d="M241 122H15" stroke-width="30" stroke-linecap="round"></path><path d="M170 51L240.711 121.711" stroke-width="30" stroke-linecap="round"></path><path d="M170 192.711L240.711 122" stroke-width="30" stroke-linecap="round"></path></svg></button>
+      <button onclick="window.browser.tabs.find(tab=>tab.id===window.browser.activeTab).reload()" aria-label="Reload"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path d="M160.236 241.536C180.129 235.168 197.909 223.745 211.908 208.518C218.625 201.212 216.364 189.929 208.136 184.379C199.908 178.828 188.847 181.182 181.674 188.042C172.532 196.784 161.472 203.401 149.278 207.304C131.337 213.047 111.985 212.583 94.3402 205.986C76.6956 199.389 61.7858 187.043 52.0133 170.938C42.2407 154.833 38.1745 135.907 40.4701 117.209C42.7657 98.5118 51.2895 81.1318 64.6676 67.8698C78.0456 54.6078 95.4991 46.2357 114.216 44.1034C132.932 41.9711 151.821 46.2022 167.84 56.115C174.987 60.5379 181.377 65.9773 186.835 72.2175L165.486 79.9878C161.003 81.6193 160.525 87.7694 164.702 90.0742L220.104 120.646C223.052 122.273 226.758 120.924 227.971 117.783L250.76 58.7516C252.478 54.3014 248.159 49.8975 243.676 51.529L222.271 59.3196C212.946 45.8251 200.886 34.2974 186.753 25.5513C163.869 11.3902 136.884 5.34597 110.147 8.39207C83.409 11.4383 58.4747 23.3976 39.3631 42.3434C20.2516 61.2892 8.07552 86.1182 4.79612 112.829C1.51674 139.54 7.32555 166.577 21.2863 189.583C35.2471 212.59 56.5471 230.228 81.7538 239.652C106.96 249.077 134.606 249.74 160.236 241.536Z"/></svg></button>
+      <input placeholder="url" id="url" value="buss://search.app" onkeyup="if(event.key==='Enter'){window.browser.getActiveTab().goTo(this.value);this.blur()}" spellcheck="false" autocorrect="off" autocapitalize="off">
+      <button style="display:none" onclick="" aria-label="Dev tools"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path d="M236 28C247.046 28 256 34.9956 256 43.625V212.375C256 221.004 247.046 228 236 228H20C8.95431 228 1.05562e-05 221.004 0 212.375V43.625C0 34.9956 8.95431 28 20 28H236ZM114 168.987C106.32 168.987 100.094 175.298 100.094 183.081C100.094 190.864 106.32 197.174 114 197.174H220.666C228.346 197.174 234.572 190.864 234.572 183.08C234.572 175.296 228.346 168.986 220.666 168.986L114 168.987ZM44.9639 63.1084C39.277 57.8699 30.0559 57.8698 24.3691 63.1084C18.6829 68.347 18.6829 76.8405 24.3691 82.0791L74.2168 127.998L24.3691 173.918L24.1064 174.166C18.6838 179.421 18.7715 187.733 24.3691 192.89C29.967 198.046 38.9885 198.126 44.6934 193.131L44.9629 192.89L104.963 137.617C107.832 134.974 109.252 131.504 109.227 128.04C109.274 124.656 107.941 121.259 105.226 118.628L104.964 118.38L44.9639 63.1084Z"/></svg></button>
+      <button onclick="toggleHistory()" aria-label="History"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path d="M96.0093 14.4544C76.1159 20.8223 58.3362 32.245 44.3372 47.472C37.62 54.7785 39.8811 66.0623 48.1092 71.6124C56.3377 77.1622 67.3981 74.8081 74.5711 67.9483C83.7126 59.206 94.7726 52.5896 106.967 48.6861C124.908 42.9433 144.259 43.4081 161.904 50.0053C179.549 56.6027 194.459 68.9483 204.232 85.0532C214.004 101.158 218.07 120.084 215.775 138.781C213.479 157.478 204.955 174.858 191.577 188.12C178.199 201.383 160.746 209.754 142.029 211.887C123.313 214.019 104.424 209.788 88.4049 199.875C81.2578 195.452 74.8681 190.013 69.4102 183.773L90.7589 176.002C95.2414 174.371 95.7195 168.221 91.5429 165.916L36.1411 135.344C33.1926 133.717 29.4858 135.066 28.273 138.208L5.48489 197.239C3.76694 201.689 8.08563 206.093 12.568 204.462L33.9726 196.671C43.298 210.166 55.359 221.693 69.4922 230.439C92.3758 244.6 119.36 250.644 146.098 247.598C172.836 244.552 197.77 232.593 216.882 213.647C235.993 194.701 248.169 169.872 251.449 143.161C254.728 116.451 248.919 89.4136 234.959 66.4068C220.998 43.4 199.698 25.7636 174.491 16.3389C149.285 6.91412 121.639 6.25028 96.0093 14.4544Z"/><path d="M132 69.26C138.075 69.26 143 74.185 143 80.26V141.095L178.802 158.419C184.271 161.065 186.559 167.644 183.913 173.113C181.266 178.581 174.688 180.869 169.22 178.223L127.531 158.05C126.737 157.697 125.993 157.253 125.312 156.731C125.301 156.722 125.291 156.714 125.28 156.705C125.154 156.608 125.031 156.51 124.91 156.407C124.867 156.372 124.826 156.334 124.785 156.298C124.703 156.227 124.622 156.156 124.542 156.083C124.471 156.017 124.4 155.95 124.33 155.882C124.277 155.83 124.223 155.778 124.17 155.725C124.096 155.65 124.024 155.572 123.953 155.495C123.901 155.44 123.849 155.386 123.799 155.329C123.733 155.255 123.667 155.179 123.603 155.103C123.556 155.047 123.509 154.991 123.462 154.934C123.396 154.852 123.33 154.769 123.266 154.685C123.221 154.627 123.177 154.568 123.133 154.509C123.074 154.428 123.016 154.346 122.959 154.264C122.915 154.199 122.87 154.134 122.827 154.069C122.775 153.991 122.725 153.913 122.676 153.834C122.63 153.76 122.584 153.687 122.539 153.612C122.494 153.534 122.45 153.456 122.406 153.377C122.363 153.302 122.321 153.227 122.281 153.151C122.241 153.076 122.203 153.001 122.165 152.926C122.12 152.836 122.076 152.744 122.033 152.653C122.005 152.593 121.977 152.534 121.951 152.474C121.906 152.373 121.862 152.272 121.82 152.169C121.788 152.092 121.759 152.014 121.729 151.937C121.7 151.862 121.671 151.786 121.644 151.71C121.605 151.602 121.568 151.493 121.533 151.383C121.515 151.327 121.496 151.271 121.479 151.215C121.437 151.078 121.398 150.94 121.362 150.802C121.355 150.778 121.348 150.754 121.342 150.73C121.082 149.721 120.966 148.675 121 147.62V80.26C121.001 74.1851 125.925 69.2602 132 69.26Z"/></svg></button>
+      <button onclick="toggleSettings()" aria-label="Settings"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path fill-rule="evenodd" clip-rule="evenodd" d="M128.601 218.742C178.384 218.742 218.742 178.385 218.742 128.601C218.742 78.8179 178.384 38.4604 128.601 38.4604C78.8175 38.4604 38.4601 78.8179 38.4601 128.601C38.4601 178.385 78.8175 218.742 128.601 218.742ZM128.601 167.061C149.842 167.061 167.061 149.842 167.061 128.601C167.061 107.36 149.842 90.141 128.601 90.141C107.36 90.141 90.1408 107.36 90.1408 128.601C90.1408 149.842 107.36 167.061 128.601 167.061Z"/><path d="M101.001 11.0292C101.507 4.79869 106.711 0 112.962 0H143.038C149.289 0 154.493 4.79868 154.999 11.0292L158 48H98L101.001 11.0292Z"/><path d="M101.001 244.971C101.507 251.201 106.711 256 112.962 256H143.038C149.289 256 154.493 251.201 154.999 244.971L158 208H98L101.001 244.971Z"/><path d="M244.971 101.001C251.201 101.507 256 106.711 256 112.962L256 143.038C256 149.289 251.201 154.493 244.971 154.999L208 158L208 98L244.971 101.001Z"/><path d="M11.0292 101.001C4.79869 101.507 -3.80751e-07 106.711 -6.5399e-07 112.962L-1.96869e-06 143.038C-2.24193e-06 149.289 4.79868 154.493 11.0292 154.999L48 158L48 98L11.0292 101.001Z"/><path d="M192.883 25.8341C197.645 21.7682 204.733 22.0472 209.16 26.4748L229.71 47.0245C234.137 51.4522 234.416 58.5399 230.351 63.3018L205.964 91.8637L164.321 50.2208L192.883 25.8341Z"/><path d="M26.135 192.008C22.0807 196.771 22.3646 203.849 26.7873 208.272L47.7285 229.213C52.1512 233.636 59.2294 233.92 63.9921 229.865L92.2857 205.78L50.2198 163.715L26.135 192.008Z"/><path d="M229.879 191.98C233.94 196.742 233.658 203.825 229.233 208.251L208.673 228.811C204.247 233.237 197.164 233.518 192.402 229.457L164.137 205.358L205.78 163.715L229.879 191.98Z"/><path d="M63.9921 26.1356C59.2293 22.0813 52.1512 22.3652 47.7284 26.7879L26.7874 47.7289C22.3647 52.1517 22.0808 59.2298 26.1351 63.9926L50.22 92.2862L92.2857 50.2205L63.9921 26.1356Z"/></svg></button>
+    </div>
+    <main>
+      <div id="box"></div>
+      <div id="history" inert="true">
+        <h2 style="display:inline">History</h2>
+        <button onclick="window.browser.history=[];window.showTabs()">Delete all</button>
+        <div class="inner"></div>
+      </div>
+      <div id="settings" inert="true">
+        <div class="title">
+          <img src="./media/logo/svg.svg" alt="WXV Logo">
+          <h1>WebX Viewer</h1>
+        </div>
+        <hr>
+        <b>Browsing</b>
+        <label>Page style: <select id="style">
+          <option value="napture_dark">Napture Dark</option>
+          <option value="napture_light">Napture Light</option>
+          <option value="bussinga_dark">Bussinga Dark</option>
+          <option value="bussinga_light">Bussinga Light</option>
+          <option value="bussinga_midnight">Bussinga Midnight</option>
+          <option value="bussinga_discord">Bussinga Discord</option>
+          <option value="bussinga_catgirl">Bussinga Catgirl</option>
+          <option value="bussinga_blu">Bussinga Blu</option>
+          <option value="bussinga_hacker">Bussinga Hacker</option>
+          <option value="bussinga_chill">Bussinga Chill</option>
+          <option value="bussinga_volcano">Bussinga Volcano</option>
+          <option value="yab_dark" disabled>Yab Dark</option>
+        </select></label>
+        <label>Bussinga arbitrary css: <input id="bussinga_css" type="checkbox"></label>
+        <label>Bussinga extended lua (legacy): <input id="bussinga_lua" type="checkbox"></label>
+        <div class="notice">Bussinga extended lua can be unsafe, <a href="https://github.com/inventionpro/bussinga-attack" target="_blank">check here</a>.</div>
+        <label>Proxy: <input id="proxy" type="checkbox"></label>
+        <div class="notice">This proxies requests to bypass cors.</div>
+        <hr>
+        <b>Browser</b>
+        <label>Theme: <input type="color" id="theme"></label>
+        <div class="themes">
+          <button style="--color:#1a1a1a">Dark</button>
+          <button style="--color:#a1a1a1;color:#222;">Light</button>
+          <button style="--color:#796950">Yellow</button>
+          <button style="--color:#697950">Lime</button>
+          <button style="--color:#506979">Aqua</button>
+          <button style="--color:#404860">Blue</button>
+          <button style="--color:#695079">Purple</button>
+          <button style="--color:#795069">Pink</button>
+        </div>
+        <label>Tab layout: <select id="layout"><option value="h">Horizontal</option><option value="v">Vertical</option></select></label>
+        <label>Start URL: <input placeholder="Start URL" value="buss://search.app" id="startUrl"></label>
+        <label>Search URL: <input placeholder="Search URL" value="buss://search.app?q=%1" id="searchUrl"></label>
+        <label>DNS: <input placeholder="DNS server" value="https://dns.webxplus.org/" id="dns"></label>
+        <hr>
+        <button onclick="window.browser.deleteCache()">Remove Cache</button>
+        <button onclick="embedPage()">Embed Page</button>
+      </div>
+      <script src="./media/settings.js"></script>
+    </main>
+    <script src="./media/index.js" type="module"></script>
   </body>
 </html>

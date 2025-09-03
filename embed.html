@@ -3,7 +3,7 @@
   <head>
     <title>Embed - WebX Viewer</title>
     <link rel="icon" href="./favicon.ico" type="image/png">
-    <link rel="stylesheet" href="./media/embed.css">
+    <link rel="stylesheet" href="./media/css/embed.css">
     <script src="https://cdn.jsdelivr.net/npm/wasmoon-async-fix@1.17.5"></script>
   </head>
   <body>
@@ -13,7 +13,8 @@
       location.search.replace('?','').split('&').forEach(p=>query[p.split('=')[0]]=p.split('=')[1]);
       query.url = query.url??'search.app';
       query.style = query.style?.toLowerCase()??'napture_dark';
-      query.bussinga = query.bussinga?.toLowerCase()==='true';
+      query.bussinga_css = query.bussinga_css?.toLowerCase()==='true';
+      query.bussinga_lua = query.bussinga_lua?.toLowerCase()==='true';
       query.proxy = query.proxy?.toLowerCase()==='true';
       query.dns = query.dns??'https://dns.webxplus.org/';
 

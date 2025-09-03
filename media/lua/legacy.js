@@ -1,4 +1,4 @@
-function HTMLElementFunctionsFor(elem, bussinga, stdout) {
+function HTMLElementFunctionsFor(elem, tab, stdout) {
   let tag = elem.tagName.toLowerCase();
   let base = {
     get_content: () => elem.value ?? elem.checked ?? elem.textContent,
@@ -56,7 +56,7 @@ function HTMLElementFunctionsFor(elem, bussinga, stdout) {
       });
     }
   };
-  if (bussinga) {
+  if (tab.browser.bussinga_lua) {
     base.set_contents = (text) => elem[['input','textarea','select'].includes(tag)?'value':'innerHTML'] = text;
     base.set_content = base.set_contents;
     base.get_css_name = () => elem.className ?? elem.tagName;
@@ -65,12 +65,12 @@ function HTMLElementFunctionsFor(elem, bussinga, stdout) {
   return base;
 }
 
-export async function createLegacyLua(doc, options, stdout) {
+export async function createLegacyLua(doc, tab, stdout) {
   const factory = new wasmoon.LuaFactory();
   const lua = await factory.createEngine();
 
   let query = {};
-  options.query.split('&').map(param=>{
+  (tab.url.split('?')[1]??'').split('&').map(param=>{
     if (param.length<1) return;
     param = param.split('=');
     query[param.shift()] = decodeURIComponent(param.join('='));
@@ -87,9 +87,9 @@ export async function createLegacyLua(doc, options, stdout) {
     clas = clas.trim();
     if (all) {
       return Array.from(doc.querySelector(clas)?doc.querySelectorAll(clas):doc.querySelectorAll('.'+clas))
-        .map(el=>HTMLElementFunctionsFor(el, options.bussinga, stdout));
+        .map(el=>HTMLElementFunctionsFor(el, tab, stdout));
     } else {
-      return HTMLElementFunctionsFor(doc.querySelector(clas)??doc.querySelector('.'+clas), options.bussinga, stdout);
+      return HTMLElementFunctionsFor(doc.querySelector(clas)??doc.querySelector('.'+clas), tab, stdout);
     }
   });
   await lua.global.set('fetch', async(o) => {
@@ -99,7 +99,7 @@ export async function createLegacyLua(doc, options, stdout) {
       headers: o.headers??{}
     };
     if (!['GET','HEAD'].includes(opts.method) && o.body) opts.body = o.body;
-    if (options.proxy) url = `https://api.fsh.plus/file?url=${encodeURIComponent(url)}`;
+    if (tab.browser.proxy) url = `https://api.fsh.plus/file?url=${encodeURIComponent(url)}`;
 
     // Fetch
     let req = await fetch(url, opts);
@@ -113,9 +113,9 @@ export async function createLegacyLua(doc, options, stdout) {
     return body;
   });
   // Bussinga globals
-  if (options.bussinga) {
+  if (tab.browser.bussinga_lua) {
     await lua.global.set('window', {
-      location: options.location,
+      location: tab.url,
       query: query,
       browser: "bussinga",
       true_browser: "wxv"
