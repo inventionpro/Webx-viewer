@@ -63,7 +63,12 @@ const rules = {
   background_color: 'color',
 
   padding: 'size',
+  padding_top: 'size',
+  padding_right: 'size',
+  padding_bottom: 'size',
+  padding_left: 'size',
 
+  margin: 'size',
   margin_top: 'size',
   margin_right: 'size',
   margin_bottom: 'size',
