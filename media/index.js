@@ -5,10 +5,10 @@ new Sortable(TabContainer, {
   animation: 150,
   filter: '.add',
   preventOnFilter: false,
-	onEnd: (evt)=>{
+  onEnd: (evt)=>{
     let item = window.browser.tabs.splice(evt.oldIndex, 1)[0];
     window.browser.tabs.splice(evt.newIndex, 0, item);
-	}
+  }
 });
 
 window.logs = {};
