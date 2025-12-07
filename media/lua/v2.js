@@ -139,7 +139,7 @@ export async function createV2Lua(doc, tab, stdout) {
 
   let parsedUrl = new URL(tab.url.includes('://')?tab.url:'buss://'+tab.url);
   let query = {};
-  (tab.url.split('?')[1]??'').query.split('&').map(param=>{
+  (tab.url.split('?')[1]??'').split('&').map(param=>{
     if (param.length<1) return;
     param = decodeURIComponent(param).split('=');
     let key = param.shift();
