@@ -164,12 +164,12 @@ class Tab {
     let url = new URL(this.url);
     let target = this.browser._normalizeIp(destination, url.pathname, this.id);
     try {
-      let fetch = await this._fetch(target);
-      if ((/<title>Site not found (&middot;|·) GitHub Pages<\/title>/i).test(fetch)) throw new Error('This website points to a non-existant GitHub Pages page.');
-      if ((/<title>Page not found (&middot;|·) GitHub Pages<\/title>/i).test(fetch)) fetch = noPage;
+      let res = await this._fetch(target);
+      if ((/<title>Site not found (&middot;|·) GitHub Pages<\/title>/i).test(res)) throw new Error('This website points to a non-existant GitHub Pages page.');
+      if ((/<title>Page not found (&middot;|·) GitHub Pages<\/title>/i).test(res)) res = noPage;
       // Long boi
-      fetch = fetch.replace(/<script>\(function\(\){function .\(\){var .=..contentDocument\|\|..contentWindow.document;if\(.\){var .=..createElement\('script'\);..innerHTML="window.__CF\$..\$params={r:'.+?',t:'.+?'};var .=document.createElement\('script'\);(?:..nonce='';)?..src='\/cdn-cgi\/challenge-platform\/scripts\/jsd\/main.js';document.getElementsByTagName\('head'\)\[0]\.appendChild\(.\);";..getElementsByTagName\('head'\)\[0].appendChild\(.\)}}if\(document.body\){var .=document\.createElement\('iframe'\);..height=1;..width=1;..style.position='absolute';..style.top=0;..style.left=0;..style.border='none';..style.visibility='hidden';document.body.appendChild\(.\);if\('loading'!==document.readyState\).\(\);else if\(window.addEventListener\)document.addEventListener\('DOMContentLoaded',.\);else{var .=document.onreadystatechange\|\|function\(\){};document.onreadystatechange=function\(.\){.\(.\);'loading'!==document.readyState&&\(document.onreadystatechange=.,.\(\)\)}}}}\)\(\);<\/script>/,'');
-      this._loadHTML(fetch, target);
+      res = res.replace(/<script>\(function\(\){function .\(\){var .=..contentDocument\|\|..contentWindow.document;if\(.\){var .=..createElement\('script'\);..innerHTML="window.__CF\$..\$params={r:'.+?',t:'.+?'};var .=document.createElement\('script'\);(?:..nonce='';)?..src='\/cdn-cgi\/challenge-platform\/scripts\/jsd\/main.js';document.getElementsByTagName\('head'\)\[0]\.appendChild\(.\);";..getElementsByTagName\('head'\)\[0].appendChild\(.\)}}if\(document.body\){var .=document\.createElement\('iframe'\);..height=1;..width=1;..style.position='absolute';..style.top=0;..style.left=0;..style.border='none';..style.visibility='hidden';document.body.appendChild\(.\);if\('loading'!==document.readyState\).\(\);else if\(window.addEventListener\)document.addEventListener\('DOMContentLoaded',.\);else{var .=document.onreadystatechange\|\|function\(\){};document.onreadystatechange=function\(.\){.\(.\);'loading'!==document.readyState&&\(document.onreadystatechange=.,.\(\)\)}}}}\)\(\);<\/script>/,'');
+      this._loadHTML(res, target);
     } catch(err) {
       if (err.toString().includes('TypeError: Failed to fetch')) err = 'Could not fetch page, make sure you typed the url right or try enabling proxy';
       this._loadHTML(errorPage.replace('Message', err));
@@ -182,7 +182,13 @@ class Tab {
     } else {
       let fetchtarget = target;
       if (this.browser.proxy) fetchtarget = `https://api.fsh.plus/file?url=${encodeURIComponent(target)}`;
-      let req = await fetch(fetchtarget, { redirect: 'follow' });
+      let req = await fetch(fetchtarget, {
+        headers: {
+          'user-agent': 'WXV'
+        },
+        credentials: 'omit',
+        redirect: 'follow'
+      });
       if (!req.status.toString().startsWith('2')) {
         if (req.status===404) return noPage;
         throw new Error('Non 2xx response (Not Ok): '+req.status);
@@ -252,7 +258,7 @@ export class Browser {
    * @param {boolean} options.bussinga_css - Whether to imitate bussinga arbitrary css.
    * @param {boolean} options.bussinga_lua - Whether to imitate bussinga extended lua in legacy context.
    * @param {boolean} options.proxy - Proxy fetches in lua.
-   * @param {string} options.dns - DNS url, where to fetch domains.
+   * @param {string} options.dns - DNS url, where to get domains.
    * @param {function(string, string, string): void} options.stdout - Function to handle logs (text, type, tab id).
    * @param {function(Object): void} options.onTabCreate - Function to handle tab creation (tab).
    * @param {function(string): void} options.onTabLoad - Function to handle tab load (tab id).
@@ -322,7 +328,12 @@ export class Browser {
     } else {
       let data;
       try {
-        data = await fetch(url);
+        data = await fetch(url, {
+          headers: {
+            'user-agent': 'WXV'
+          },
+          credentials: 'omit'
+        });
         data = await data.json();
       } catch(err) {
         throw new Error('Could not resolve domain')

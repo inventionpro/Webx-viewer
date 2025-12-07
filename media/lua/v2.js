@@ -193,12 +193,12 @@ export async function createV2Lua(doc, tab, stdout) {
   await frozenTable(lua, 'browser', {
     name: 'WXV',
     agent: 'wxv',
-    version: '2',
+    version: '3',
     api: {
       print: true,
       get: false,
       get_type: true,
-      fetch: false,
+      fetch: true,
       media_context: true,
       storage: true,
       _wxv_browser_theme_color: true
@@ -209,8 +209,11 @@ export async function createV2Lua(doc, tab, stdout) {
     let url = o.url;
     let opts = {
       method: o.method?.toUpperCase()??'GET',
-      headers: o.headers??{}
+      headers: o.headers??{ 'user-agent': 'WXV' },
+      credentials: 'omit',
+      redirect: 'follow'
     };
+    if (!opts.headers['user-agent']) opts.headers['user-agent'] = 'WXV';
     if (!['GET','HEAD'].includes(opts.method) && o.body) opts.body = o.body;
     if (tab.browser.proxy) url = `https://api.fsh.plus/file?url=${encodeURIComponent(url)}`;
 

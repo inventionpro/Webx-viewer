@@ -96,8 +96,11 @@ export async function createLegacyLua(doc, tab, stdout) {
     let url = o.url;
     let opts = {
       method: o.method?.toUpperCase()??'GET',
-      headers: o.headers??{}
+      headers: o.headers??{ 'user-agent': 'WXV' },
+      credentials: 'omit',
+      redirect: 'follow'
     };
+    if (!opts.headers['user-agent']) opts.headers['user-agent'] = 'WXV';
     if (!['GET','HEAD'].includes(opts.method) && o.body) opts.body = o.body;
     if (tab.browser.proxy) url = `https://api.fsh.plus/file?url=${encodeURIComponent(url)}`;
 
@@ -117,8 +120,8 @@ export async function createLegacyLua(doc, tab, stdout) {
     await lua.global.set('window', {
       location: tab.url,
       query: query,
-      browser: "bussinga",
-      true_browser: "wxv"
+      browser: 'bussinga',
+      true_browser: 'wxv'
     });
   }
 
