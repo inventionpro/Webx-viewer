@@ -62,7 +62,7 @@ function HTMLElementFunctionsFor(elem, stdout) {
     },
     set content(value) {
       if (['input','textarea','select'].includes(tag)) {
-        elem.value = value;
+        elem[(tag==='input'&&elem.getAttribute('type')==='checkbox')?'checked':'value'] = value;
       } else if (['img','audio','video'].includes(tag)) {
         elem.src = value;
       } else {
@@ -159,7 +159,7 @@ export async function createV2Lua(doc, tab, stdout) {
     get: (k)=>{
       let data = getTabData(parsedUrl.hostname);
       if (!data[k]) return undefined;
-      if (['number','bigint'].includes(typeof data[k].expires)) {
+      if (typeof data[k].expires==='number') {
         if (Date.now()>data[k].expires) {
           delete data[k];
           setTabData(parsedUrl.hostname, data);
@@ -172,7 +172,7 @@ export async function createV2Lua(doc, tab, stdout) {
       let data = getTabData(parsedUrl.hostname);
       if (!data[k]) data[k]={};
       let exp = o.expires??'never';
-      if (!Number.isNaN(Number(data[k].expires))) exp = BigInt(Date.now())+BigInt(data[k].expires*1000);
+      if (!Number.isNaN(Number(data[k].expires))) exp = Date.now()+(data[k].expires*1000);
       data[k] = { value: v, expires: exp };
       setTabData(parsedUrl.hostname, data);
     },
