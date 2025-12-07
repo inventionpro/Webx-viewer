@@ -134,10 +134,10 @@ function HTMLElementFunctionsFor(elem, stdout) {
 }
 
 function getTabData(namespace) {
-  return JSON.parse(localStorage.getItem('d'+namespace)??'{}');
+  return JSON.parse(localStorage.getItem('d-'+namespace)??'{}');
 }
 function setTabData(namespace, data) {
-  localStorage.setItem('d'+namespace, JSON.stringify(data));
+  localStorage.setItem('d-'+namespace, JSON.stringify(data));
 }
 
 export async function createV2Lua(doc, tab, stdout) {
@@ -159,7 +159,7 @@ export async function createV2Lua(doc, tab, stdout) {
     get: (k)=>{
       let data = getTabData(parsedUrl.hostname);
       if (!data[k]) return undefined;
-      if (typeof data[k].expires==='bigint') {
+      if (['number','bigint'].includes(typeof data[k].expires)) {
         if (Date.now()>data[k].expires) {
           delete data[k];
           setTabData(parsedUrl.hostname, data);
@@ -172,11 +172,8 @@ export async function createV2Lua(doc, tab, stdout) {
       let data = getTabData(parsedUrl.hostname);
       if (!data[k]) data[k]={};
       let exp = o.expires??'never';
-      if (!Number.isNaN(Number(data[k].expires))) exp = BigInt(Date.now())+BigInt(data[k].expires);
-      data[k] = {
-        value: v,
-        expires: exp
-      };
+      if (!Number.isNaN(Number(data[k].expires))) exp = BigInt(Date.now())+BigInt(data[k].expires*1000);
+      data[k] = { value: v, expires: exp };
       setTabData(parsedUrl.hostname, data);
     },
     remove: (k)=>{
