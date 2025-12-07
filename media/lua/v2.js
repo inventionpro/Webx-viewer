@@ -137,6 +137,7 @@ export async function createV2Lua(doc, tab, stdout) {
   const factory = new wasmoon.LuaFactory();
   const lua = await factory.createEngine();
 
+  let parsedUrl = new URL(tab.url.includes('://')?tab.url:'buss://'+tab.url);
   let query = {};
   (tab.url.split('?')[1]??'').query.split('&').map(param=>{
     if (param.length<1) return;
@@ -147,6 +148,41 @@ export async function createV2Lua(doc, tab, stdout) {
   });
 
   // Lua global functions
+  let tempStorage = {};
+  let StorageApi = {
+    get: (k)=>{
+      if (!tempStorage[parsedUrl.hostname]) tempStorage[parsedUrl.hostname]={};
+      if (!tempStorage[parsedUrl.hostname][k]) return undefined;
+      if (typeof tempStorage[parsedUrl.hostname][k].expires==='bigint') {
+        if (Date.now()>tempStorage[parsedUrl.hostname][k].expires) {
+          delete tempStorage[parsedUrl.hostname][k];
+          return undefined;
+        }
+      }
+      return tempStorage[parsedUrl.hostname][k].value;
+    },
+    set: (k,v,o={})=>{
+      if (!tempStorage[parsedUrl.hostname]) tempStorage[parsedUrl.hostname]={};
+      let exp = o.expires??'never';
+      if (!Number.isNaN(Number(tempStorage[parsedUrl.hostname][k].expires))) {
+        exp = BigInt(Date.now())+BigInt(tempStorage[parsedUrl.hostname][k].expires);
+      }
+      tempStorage[parsedUrl.hostname][k] = {
+        value: v,
+        expires: exp
+      };
+    },
+    remove: (k)=>{
+      if (tempStorage[parsedUrl.hostname]&&tempStorage[parsedUrl.hostname][k]) delete tempStorage[parsedUrl.hostname][k];
+    },
+    all: ()=>{
+      if (!tempStorage[parsedUrl.hostname]) tempStorage[parsedUrl.hostname]={};
+      let temp = {};
+      Object.entries(tempStorage[parsedUrl.hostname])
+        .forEach(e=>temp[e[0]]=e[1].value);
+      return temp;
+    }
+  };
   await frozenTable(lua, 'browser', {
     name: 'WXV',
     agent: 'wxv',
@@ -157,8 +193,10 @@ export async function createV2Lua(doc, tab, stdout) {
       get_type: true,
       fetch: false,
       media_context: true,
+      storage: true,
       _wxv_browser_theme_color: true
-    }
+    },
+    storage: StorageApi
   });
   await lua.global.set('fetch', async(o) => {
     let url = o.url;
@@ -199,7 +237,6 @@ export async function createV2Lua(doc, tab, stdout) {
     return all ? tags.map(t=>HTMLElementFunctionsFor(t, stdout)) : HTMLElementFunctionsFor(tags[0], stdout);
   });
   await lua.global.set('global', tab.luaGlobal);
-  let parsedUrl = new URL(tab.url.includes('://')?tab.url:'buss://'+tab.url);
   await frozenTable(lua, 'location', {
     href: `buss://${parsedUrl.hostname}${parsedUrl.pathname}${parsedUrl.search}`,
     domain: parsedUrl.hostname,
