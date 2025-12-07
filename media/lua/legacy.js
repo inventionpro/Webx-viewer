@@ -96,11 +96,16 @@ export async function createLegacyLua(doc, tab, stdout) {
     let url = o.url;
     let opts = {
       method: o.method?.toUpperCase()??'GET',
-      headers: o.headers??{ 'user-agent': 'WXV' },
+      headers: o.headers??{ 'user-agent': 'WXV', 'accept': '*/*', 'accept-language': 'en' },
       credentials: 'omit',
-      redirect: 'follow'
+      browsingTopics: false,
+      cache: 'no-cache',
+      redirects: 'follow',
+      referrer: ''
     };
     if (!opts.headers['user-agent']) opts.headers['user-agent'] = 'WXV';
+    if (!opts.headers['accept']) opts.headers['accept'] = '*/*';
+    if (!opts.headers['accept-language']) opts.headers['accept-language'] = 'en';
     if (!['GET','HEAD'].includes(opts.method) && o.body) opts.body = o.body;
     if (tab.browser.proxy) url = `https://api.fsh.plus/file?url=${encodeURIComponent(url)}`;
 

@@ -184,10 +184,15 @@ class Tab {
       if (this.browser.proxy) fetchtarget = `https://api.fsh.plus/file?url=${encodeURIComponent(target)}`;
       let req = await fetch(fetchtarget, {
         headers: {
-          'user-agent': 'WXV'
+          'user-agent': 'WXV',
+          'accept': '*/*',
+          'accept-language': 'en'
         },
         credentials: 'omit',
-        redirect: 'follow'
+        browsingTopics: false,
+        cache: 'no-cache',
+        redirects: 'follow',
+        referrer: ''
       });
       if (!req.status.toString().startsWith('2')) {
         if (req.status===404) return noPage;
@@ -330,9 +335,15 @@ export class Browser {
       try {
         data = await fetch(url, {
           headers: {
-            'user-agent': 'WXV'
+            'user-agent': 'WXV',
+            'accept': '*/*',
+            'accept-language': 'en'
           },
-          credentials: 'omit'
+          credentials: 'omit',
+          browsingTopics: false,
+          cache: 'no-cache',
+          redirects: 'follow',
+          referrer: ''
         });
         data = await data.json();
       } catch(err) {
