@@ -163,6 +163,7 @@ export async function createV2Lua(doc, tab, stdout) {
     },
     set: (k,v,o={})=>{
       if (!tempStorage[parsedUrl.hostname]) tempStorage[parsedUrl.hostname]={};
+      if (!tempStorage[parsedUrl.hostname][k]) tempStorage[parsedUrl.hostname][k]={};
       let exp = o.expires??'never';
       if (!Number.isNaN(Number(tempStorage[parsedUrl.hostname][k].expires))) {
         exp = BigInt(Date.now())+BigInt(tempStorage[parsedUrl.hostname][k].expires);
