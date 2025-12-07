@@ -20,9 +20,8 @@ function stdout(text, type='log', tab='Browser') {
 
 const UrlBar = document.getElementById('url');
 function updateUrl() {
-  if (document.activeElement !== UrlBar) {
-    UrlBar.value = window.browser.getActiveTab().url;
-  }
+  if (document.activeElement===UrlBar) return;
+  UrlBar.value = window.browser.getActiveTab().url;
 }
 
 window.rclick = (event, id)=>{

@@ -133,6 +133,13 @@ function HTMLElementFunctionsFor(elem, stdout) {
   return base;
 }
 
+function getTabData(namespace) {
+  return JSON.parse(localStorage.getItem('d'+namespace)??'{}');
+}
+function setTabData(namespace, data) {
+  localStorage.setItem('d'+namespace, JSON.stringify(data));
+}
+
 export async function createV2Lua(doc, tab, stdout) {
   const factory = new wasmoon.LuaFactory();
   const lua = await factory.createEngine();
@@ -148,39 +155,41 @@ export async function createV2Lua(doc, tab, stdout) {
   });
 
   // Lua global functions
-  let tempStorage = {};
   let StorageApi = {
     get: (k)=>{
-      if (!tempStorage[parsedUrl.hostname]) tempStorage[parsedUrl.hostname]={};
-      if (!tempStorage[parsedUrl.hostname][k]) return undefined;
-      if (typeof tempStorage[parsedUrl.hostname][k].expires==='bigint') {
-        if (Date.now()>tempStorage[parsedUrl.hostname][k].expires) {
-          delete tempStorage[parsedUrl.hostname][k];
+      let data = getTabData(parsedUrl.hostname);
+      if (!data[k]) return undefined;
+      if (typeof data[k].expires==='bigint') {
+        if (Date.now()>data[k].expires) {
+          delete data[k];
+          setTabData(parsedUrl.hostname, data);
           return undefined;
         }
       }
-      return tempStorage[parsedUrl.hostname][k].value;
+      return data[k].value;
     },
     set: (k,v,o={})=>{
-      if (!tempStorage[parsedUrl.hostname]) tempStorage[parsedUrl.hostname]={};
-      if (!tempStorage[parsedUrl.hostname][k]) tempStorage[parsedUrl.hostname][k]={};
+      let data = getTabData(parsedUrl.hostname);
+      if (!data[k]) data[k]={};
       let exp = o.expires??'never';
-      if (!Number.isNaN(Number(tempStorage[parsedUrl.hostname][k].expires))) {
-        exp = BigInt(Date.now())+BigInt(tempStorage[parsedUrl.hostname][k].expires);
-      }
-      tempStorage[parsedUrl.hostname][k] = {
+      if (!Number.isNaN(Number(data[k].expires))) exp = BigInt(Date.now())+BigInt(data[k].expires);
+      data[k] = {
         value: v,
         expires: exp
       };
+      setTabData(parsedUrl.hostname, data);
     },
     remove: (k)=>{
-      if (tempStorage[parsedUrl.hostname]&&tempStorage[parsedUrl.hostname][k]) delete tempStorage[parsedUrl.hostname][k];
+      let data = getTabData(parsedUrl.hostname);
+      if (data[k]) {
+        delete data[k];
+        setTabData(parsedUrl.hostname, data);
+      }
     },
     all: ()=>{
-      if (!tempStorage[parsedUrl.hostname]) tempStorage[parsedUrl.hostname]={};
+      let data = getTabData(parsedUrl.hostname);
       let temp = {};
-      Object.entries(tempStorage[parsedUrl.hostname])
-        .forEach(e=>temp[e[0]]=e[1].value);
+      Object.entries(data).forEach(e=>temp[e[0]]=e[1].value);
       return temp;
     }
   };
