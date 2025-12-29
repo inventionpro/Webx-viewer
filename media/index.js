@@ -63,7 +63,7 @@ const browser = new Browser({
   },
   onTabSwitch: (id)=>{
     updateUrl();
-    document.querySelector('#tabs div[active]').removeAttribute('active');
+    document.querySelector('#tabs button[active]').removeAttribute('active');
     document.getElementById('t-'+id).setAttribute('active','');
   },
   onTabClose: ()=>{ window.showTabs() }
