@@ -1,6 +1,6 @@
 body {
   --text: #ddd;
-  --text-dim: #ccc;
+  --text-dim: #bbb;
   --base: #1a1a1a;
   --up: color-mix(in oklab, var(--base) 50%, #3a3a3a 50%);
   --top: color-mix(in oklab, var(--base) 50%, #585858 50%);
@@ -15,7 +15,7 @@ body {
   overflow: hidden;
 }
 * {
-  transition-property: right, color, background-color, border-color;
+  transition-property: right, color, background-color, border-color, border-radius, margin;
   transition-duration: 500ms;
 }
 h1, h2 {
@@ -57,14 +57,15 @@ dialog {
   overflow: visible;
 }
 
+.rmenu[open] {
+  display: flex;
+}
 .rmenu {
   position: absolute;
   flex-direction: column;
+  align-items: flex-start;
   margin: 0px;
   z-index: 999;
-}
-.rmenu[open] {
-  display: flex;
 }
 .rmenu button {
   margin: 0px;
@@ -88,7 +89,7 @@ dialog {
   align-items: center;
   max-width: 175px;
   min-width: 0px;
-  text-align: left;
+  color: var(--text-dim);
   margin: 2px;
   border-radius: 0.5rem;
   overflow: hidden;
@@ -109,18 +110,19 @@ dialog {
     display: none;
   }
 }
-#tabs button:hover {
+#tabs button[active] {
+  color: var(--text);
+  margin-bottom: 0px;
+  border-radius: 0.75rem 0.75rem 0px 0px;
+  background-color: var(--up);
+}
+#tabs button:not([active]):hover {
   background-color: var(--top);
 }
 #tabs button.add {
   flex: 0;
   min-width: 26px;
   border-radius: 1rem;
-}
-#tabs button[active] {
-  margin-bottom: 0px;
-  border-radius: 0.75rem 0.75rem 0px 0px;
-  background-color: var(--up);
 }
 #tabs button img {
   width: 16px;
@@ -166,22 +168,22 @@ dialog {
 .nav {
   display: flex;
   gap: 5px;
-  padding: 5px;
+  padding: 4px;
   border-bottom: 2px var(--top) solid;
 }
 .nav input {
   flex: 1;
   min-width: 0px;
+  height: 30px;
   padding: 8px;
+  outline: none;
+  box-sizing: border-box;
 }
 .nav button {
   border-radius: 1rem;
 }
 .nav button:hover {
   background-color: var(--top);
-}
-#url {
-  outline: none;
 }
 
 main, #box {

@@ -40,7 +40,7 @@ window.onclick = window.onblur = ()=>{
 function showTabs() {
   TabContainer.style.width = window.browser.tabs.length*179 + 'px';
   TabContainer.innerHTML = window.browser.tabs
-    .map(tab=>`<button onclick="window.browser.changeTab('${tab.id}')"${window.browser.activeTab===tab.id?' active':''} oncontextmenu="event.preventDefault();window.rclick(event, '${tab.id}')" draggable="true">
+    .map(tab=>`<button id="t-${tab.id}" onclick="window.browser.changeTab('${tab.id}')"${window.browser.activeTab===tab.id?' active':''} oncontextmenu="event.preventDefault();window.rclick(event, '${tab.id}')" draggable="true">
   <img src="${tab.icon}" width="16" height="16">
   <span class="title">${tab.title}</span>
   <span class="close" role="button" tabindex="0" onclick="event.stopPropagation();window.browser.closeTab('${tab.id}')" onkeydown="if(event.key==='Enter'||event.key===' ')this.click();">x</span>
@@ -61,9 +61,10 @@ const browser = new Browser({
     updateUrl();
     window.showTabs();
   },
-  onTabSwitch: ()=>{
+  onTabSwitch: (id)=>{
     updateUrl();
-    window.showTabs();
+    document.querySelector('#tabs div[active]').removeAttribute('active');
+    document.getElementById('t-'+id).setAttribute('active','');
   },
   onTabClose: ()=>{ window.showTabs() }
 });

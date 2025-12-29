@@ -24,7 +24,7 @@ window.setSettings = ()=>{
   ThemeInput.oninput = ()=>{
     document.body.style.setProperty('--base', ThemeInput.value);
     document.body.style.setProperty('--text', (parseInt(ThemeInput.value.replace('#',''),16)>0x888888)?'#222':'#ddd');
-    document.body.style.setProperty('--text-dim', (parseInt(ThemeInput.value.replace('#',''),16)>0x888888)?'#333':'#ccc');
+    document.body.style.setProperty('--text-dim', (parseInt(ThemeInput.value.replace('#',''),16)>0x888888)?'#333':'#bbb');
     localStorage.setItem('theme', ThemeInput.value);
   };
   ThemeInput.oninput();
