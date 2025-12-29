@@ -143,23 +143,23 @@ dialog {
 }
 
 /* Vertical tabs */
-#box #tabs {
+main #tabs {
   flex-direction: column;
   height: 100%;
   border-right: 2px var(--top) solid;
   background: none;
 }
-#box #tabs div {
+main #tabs div {
   flex-direction: column;
   width: 180px !important;
   height: unset;
 }
-#box #tabs button[active] {
+main #tabs button[active] {
   margin: 2px;
   border-radius: 0.5rem;
   background-color: var(--base);
 }
-#box #tabs button.add {
+main #tabs button.add {
   width: fit-content;
   min-height: 26px;
   margin-inline: auto;

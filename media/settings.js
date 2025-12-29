@@ -29,15 +29,20 @@ window.setSettings = ()=>{
   };
   ThemeInput.oninput();
 
-  const LayoutInput = document.getElementById('layout');
-  LayoutInput.value = localStorage.getItem('layout')??'h';
-  if (LayoutInput.value === 'v') document.getElementById('box').insertAdjacentElement('afterbegin', document.getElementById('tabs'));
-  LayoutInput.onchange = (evt)=>{
-    if (evt.target.value === 'v') {
-      document.getElementById('box').insertAdjacentElement('afterbegin', document.getElementById('tabs'));
+  let layout = localStorage.getItem('layout')?.replace('h','top')?.replace('v','left')??'top';
+  let positionTabs = ()=>{
+    if (['left','right'].includes(layout)) {
+      document.querySelector('main').insertAdjacentElement(layout==='right'?'beforeend':'afterbegin', document.getElementById('tabs'));
     } else {
-      document.body.insertAdjacentElement('afterbegin', document.getElementById('tabs'))
+      document.body.insertAdjacentElement(layout==='bottom'?'beforeend':'afterbegin', document.getElementById('tabs'))
     }
+  };
+  positionTabs();
+  const LayoutInput = document.getElementById('layout');
+  LayoutInput.value = layout;
+  LayoutInput.onchange = (evt)=>{
+    layout = evt.target.value;
+    positionTabs();
     localStorage.setItem('layout', evt.target.value);
   };
 };
