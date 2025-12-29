@@ -279,6 +279,9 @@ input[type="color"] {
   position: absolute;
   inset: 0px;
 }
+#layout button[selected] {
+  background-color: var(--text-dim);
+}
 
 #history .inner {
   display: flex;

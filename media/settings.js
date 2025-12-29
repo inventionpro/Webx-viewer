@@ -32,7 +32,7 @@ window.setSettings = ()=>{
   const LayoutBox = document.getElementById('layout');
   let layout = localStorage.getItem('layout')?.replace('h','top')?.replace('v','left')??'top';
   let positionTabs = ()=>{
-    LayoutBox.querySelector('selected')?.removeAttribute('selected');
+    LayoutBox.querySelector('[selected]')?.removeAttribute('selected');
     LayoutBox.querySelector(`[data-side="${layout}"]`).setAttribute('selected','');
     let tabs = document.getElementById('tabs');
     tabs.setAttribute('data-dir', layout);
