@@ -62,7 +62,7 @@ class Tab {
       }
       let tabHistoryEntry = { url: _this.url, title: _this.title, icon: _this.icon };
       if (JSON.stringify(_this.browser.history.slice(-1)[0])!==JSON.stringify(tabHistoryEntry)) _this.browser.history.push(tabHistoryEntry);
-      _this.browser.onTabLoad(_this.id);
+      _this.browser.onTabLoad(_this);
 
       // Extra html
       doc.querySelector('head').insertAdjacentHTML('beforeend', `<meta name="color-scheme" content="dark light"><meta name="viewport" content="width=device-width, initial-scale=1.0">`);
@@ -266,7 +266,7 @@ export class Browser {
    * @param {string} options.dns - DNS url, where to get domains.
    * @param {function(string, string, string): void} options.stdout - Function to handle logs (text, type, tab id).
    * @param {function(Object): void} options.onTabCreate - Function to handle tab creation (tab).
-   * @param {function(string): void} options.onTabLoad - Function to handle tab load (tab id).
+   * @param {function(string): void} options.onTabLoad - Function to handle tab load (tab).
    * @param {function(string): void} options.onTabSwitch - Function to handle tab switching (tab id).
    * @param {function(string): void} options.onTabClose - Function to handle tab closing (tab id).
    */

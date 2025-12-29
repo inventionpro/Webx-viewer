@@ -57,16 +57,17 @@ const browser = new Browser({
   box: 'box',
   stdout,
   onTabCreate: ()=>{ window.showTabs() },
-  onTabLoad: ()=>{
+  onTabClose: ()=>{ window.showTabs() },
+  onTabLoad: (tab)=>{
     updateUrl();
-    window.showTabs();
+    document.querySelector(`#t-${tab.id} img`).src = tab.icon;
+    document.querySelector(`#t-${tab.id} .title`).innerText = icon.title;
   },
   onTabSwitch: (id)=>{
     updateUrl();
-    document.querySelector('#tabs button[active]').removeAttribute('active');
+    document.querySelector('#tabs button[active]')?.removeAttribute('active');
     document.getElementById('t-'+id).setAttribute('active','');
-  },
-  onTabClose: ()=>{ window.showTabs() }
+  }
 });
 window.browser = browser;
 window.setSettings();

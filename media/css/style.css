@@ -15,8 +15,8 @@ body {
   overflow: hidden;
 }
 * {
-  transition-property: right, color, background-color, border-color, border-radius, margin;
-  transition-duration: 500ms;
+  transition-property: color, background-color, border-color, border-radius, right, margin;
+  transition-duration: 500ms, 500ms, 500ms, 500ms, 500ms, 100ms;
 }
 h1, h2 {
   margin: 0px;
