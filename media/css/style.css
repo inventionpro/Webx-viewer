@@ -2,8 +2,8 @@ body {
   --text: #ddd;
   --text-dim: #bbb;
   --base: #1a1a1a;
-  --up: color-mix(in oklab, var(--base) 50%, #3a3a3a 50%);
-  --top: color-mix(in oklab, var(--base) 50%, #585858 50%);
+  --up: color-mix(in oklab, var(--base) 75%, #333 50%);
+  --top: color-mix(in oklab, var(--base) 75%, #555 50%);
   display: flex;
   flex-direction: column;
   width: 100dvw;
@@ -142,6 +142,13 @@ dialog {
   background-color: var(--top);
 }
 
+/* Bottom tabs */
+#tabs[data-dir="bottom"] button[active] {
+  margin-bottom: 2px;
+  margin-top: 0px;
+  border-radius: 0px 0px 0.75rem 0.75rem;
+}
+
 /* Vertical tabs */
 main #tabs {
   flex-direction: column;
@@ -261,6 +268,16 @@ input[type="color"] {
   height: 25px;
   padding: 0px !important;
   border-radius: 5px;
+}
+
+#layout {
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+#layout button {
+  position: absolute;
+  inset: 0px;
 }
 
 #history .inner {

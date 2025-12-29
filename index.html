@@ -74,12 +74,13 @@
           <button style="--color:#695079">Purple</button>
           <button style="--color:#795069">Pink</button>
         </div>
-        <label>Tab layout: <select id="layout">
-          <option value="top">Top</option>
-          <option value="left">Left</option>
-          <option value="right">Right</option>
-          <option value="bottom">Bottom</option>
-        </select></label>
+        <span>Tab layout:</span>
+        <div id="layout">
+          <button data-side="top" style="bottom:unset" selected></button>
+          <button data-side="right" style="left:unset"></button>
+          <button data-side="bottom" style="top:unset"></button>
+          <button data-side="left" style="right:unset"></button>
+        </div>
         <label>Start URL: <input placeholder="Start URL" value="buss://search.app" id="startUrl"></label>
         <label>Search URL: <input placeholder="Search URL" value="buss://search.app?q=%1" id="searchUrl"></label>
         <label>DNS: <input placeholder="DNS server" value="https://dns.webxplus.org/" id="dns"></label>

@@ -29,22 +29,28 @@ window.setSettings = ()=>{
   };
   ThemeInput.oninput();
 
+  const LayoutBox = document.getElementById('layout');
   let layout = localStorage.getItem('layout')?.replace('h','top')?.replace('v','left')??'top';
   let positionTabs = ()=>{
+    LayoutBox.querySelector('selected')?.removeAttribute('selected');
+    LayoutBox.querySelector(`[data-side="${layout}"]`).setAttribute('selected','');
+    let tabs = document.getElementById('tabs');
+    tabs.setAttribute('data-dir', layout);
     if (['left','right'].includes(layout)) {
-      document.querySelector('main').insertAdjacentElement(layout==='right'?'beforeend':'afterbegin', document.getElementById('tabs'));
+      document.querySelector('main').insertAdjacentElement(layout==='right'?'beforeend':'afterbegin', tabs);
     } else {
-      document.body.insertAdjacentElement(layout==='bottom'?'beforeend':'afterbegin', document.getElementById('tabs'))
+      document.body.insertAdjacentElement(layout==='bottom'?'beforeend':'afterbegin', tabs);
     }
   };
   positionTabs();
-  const LayoutInput = document.getElementById('layout');
-  LayoutInput.value = layout;
-  LayoutInput.onchange = (evt)=>{
-    layout = evt.target.value;
-    positionTabs();
-    localStorage.setItem('layout', evt.target.value);
-  };
+  LayoutBox.querySelectorAll('button').forEach(btn=>{
+    let side = btn.getAttribute('data-side');
+    btn.onclick = ()=>{
+      layout = side;
+      localStorage.setItem('layout', side);
+      positionTabs();
+    };
+  });
 };
 
 Array.from(document.querySelectorAll('.themes button'))
