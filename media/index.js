@@ -61,7 +61,7 @@ const browser = new Browser({
   onTabLoad: (tab)=>{
     updateUrl();
     document.querySelector(`#t-${tab.id} img`).src = tab.icon;
-    document.querySelector(`#t-${tab.id} .title`).innerText = icon.title;
+    document.querySelector(`#t-${tab.id} .title`).innerText = tab.title;
   },
   onTabSwitch: (id)=>{
     updateUrl();
