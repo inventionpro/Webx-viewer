@@ -281,6 +281,7 @@ input[type="color"] {
 }
 #layout button[selected] {
   background-color: var(--text-dim);
+  z-index: 1;
 }
 
 #history .inner {
