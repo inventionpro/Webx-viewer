@@ -45,11 +45,11 @@ class Tab {
     this.luaGlobal = {};
     const _this = this;
     this.iframe.onload = async() => {
-      let htmltree = htmlparser(html);
+      let htmltree = htmlparser(html, (text)=>_this.browser.stdout(text,'warn',_this.id));
       let build = htmlbuilder(htmltree, target);
 
       let doc = this.iframe.contentDocument;
-      doc.querySelector('html').innerHTML = build.html;
+      doc.querySelector('html').innerHTML = build.content;
 
       // Get tab data
       _this.title = doc.querySelector('title')?.innerText??_this.url;

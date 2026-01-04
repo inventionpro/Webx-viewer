@@ -1,50 +1,66 @@
-const nonTerminatingElements = ['audio','hr','img','input','link','meta','script','textarea', 'video'];
-const htmlUnallowedElements = { style: 'remove', canvas: 'div', iframe: 'div' };
-let allowedAttributes = ['class','id','href','src','name','content','version','placeholder','type','value','disabled'];
+const elements = ['a','audio','body','button','div','h1','h2','h3','h4','h5','h6','hr','head','html','img','input','li','link','meta','ol','option','p','script','select','textarea','title','ul','video'];
+const nonTerminatingElements = ['audio','hr','img','input','link','meta','script','textarea','video'];
+const nonTerminatingElementsInHTML = ['hr','img','input','link','meta'];
+const allowedAttributes = {
+  '@': ['class'], // Also id but we don't want for it to bleed into the real dom
+  'a': ['href'],
+  'audio': ['src'],
+  'button': ['disabled'],
+  'img': ['src'],
+  'input': ['placeholder','type','disabled'],
+  'link': ['href'],
+  'meta': ['name','content'],
+  'option': ['value','disabled'],
+  'script': ['src','version'],
+  'select': ['disabled'],
+  'textarea': ['placeholder','disabled'],
+  'video': ['src']
+};
 
-// Parser
-function subparse(content) {
+/* - Parser - */
+function subparse(content, stdwrn) {
   let tree = [];
   // Go through string and parse
   let plain = '';
   for (let i = 0; i<content.length; i++) {
-    let stack = [];
-    let level = 0;
-    let temp = {
-      name: '',
-      attributes: {},
-      content: []
-    };
     let char = content[i];
     if (char === '<') {
+      let node = {
+        _id: (Math.random()*16**10).toString(16),
+        node: 'element',
+        tag: '',
+        attributes: {},
+        content: []
+      };
+
+      // Text nodes
       if (plain.trim().length) {
         tree.push({
-          text: true,
+          node: 'text',
           content: plain
         });
-        plain = '';
       }
+      plain = '';
+
+      // Find tag
       while (char !== '>' && i<content.length) {
         i++;
         char = content[i];
-        stack.push(char);
-        if (char==='<') {
-          stack = [];
-        }
+        if (char!=='>') plain += char;
+        if (char==='<') plain = '';
       }
-      stack.pop();
 
-      let elem = stack.join('').trim().split(' ');
-      temp.name = elem[0].toLowerCase();
-      if (temp.name.startsWith('/')) {
-        console.warn('[HTML PARSER] Closing tag found as start tag: '+temp.name.slice(1));
+      let rawtag = plain.trim().split(' ');
+      plain = '';
+      node.tag = rawtag.shift().toLowerCase();
+      if (node.tag.startsWith('/')) {
+        stdwrn('[HTML PARSER] Closing tag found as start tag: '+node.tag.slice(1)+' at index '+i);
         continue;
       }
-      if (temp.name.match(/^[a-zA-Z][a-zA-Z0-9-]*$/m)===null) {
-        console.warn('[HTML PARSER] Invalid element name '+temp.name);
-      }
+      if (node.tag.match(/^[a-zA-Z][a-zA-Z0-9-]*$/m)===null) stdwrn('[HTML PARSER] Invalid element tag '+node.tag);
 
-      let attributes = elem.slice(1, elem.length).join(' ').match(/\b([a-zA-Z][a-zA-Z0-9\-]*)(=(".*?"|[^\s]+))?/g)??[];
+      // Attributes
+      let attributes = rawtag.join(' ').match(/\b([a-zA-Z][a-zA-Z0-9\-]*)(=(".*?"|[^\s]+))?/g)??[];
       let tempattr = {};
       attributes.forEach(attr => {
         attr = attr.split('=');
@@ -52,15 +68,18 @@ function subparse(content) {
         if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1,-1);
         tempattr[attr[0].toLowerCase()] = val;
       })
-      temp.attributes = tempattr;
+      node.attributes = tempattr;
 
-      if (nonTerminatingElements.includes(temp.name)) {
-        tree.push(temp)
+      // If non terminating psuh and continue
+      if (nonTerminatingElements.includes(node.tag)) {
+        tree.push(node);
         continue;
       }
 
-      let innerContent = '';
-      while (i < content.length) {
+      // Contents
+      let rawcontent = '';
+      let level = 0;
+      while (i<content.length) {
         i++;
         char = content[i];
 
@@ -71,31 +90,31 @@ function subparse(content) {
             char = content[i];
             closingTag += char??'';
           }
-          closingTag = closingTag.slice(1, -1).toLowerCase();
-          if (closingTag === temp.name) {
+          closingTag = closingTag.slice(1, -1).toLowerCase().trim().split(' ')[0];
+          if (closingTag === node.tag) {
             if (level === 0) break;
             level--;
-            innerContent += `</${closingTag}>`;
-          } else {
-            innerContent += `</${closingTag}>`;
           }
-        } else if (char === '<' && content.slice(i, i+temp.name.length+1)===('<'+temp.name)) {
+          rawcontent += `</${closingTag}>`;
+        } else if (char === '<' && content.slice(i, i+node.tag.length+1)===('<'+node.tag)) {
           level++;
-          innerContent += '<';
+          rawcontent += '<';
         } else {
-          innerContent += char??'';
+          rawcontent += char??'';
         }
       }
 
-      if (innerContent.trim()) {
-        if (innerContent.includes('<')) {
-          temp.content = subparse(innerContent.trim());
-        } else {
-          temp.content = innerContent;
-        }
+      rawcontent = rawcontent.trim();
+      if (rawcontent.length) {
+        node.content = rawcontent.includes('<')?
+          subparse(rawcontent):
+          [{
+            node: 'text',
+            content: rawcontent
+          }];
       }
 
-      tree.push(temp);
+      tree.push(node);
     } else {
       plain += char;
     }
@@ -103,7 +122,7 @@ function subparse(content) {
   return tree;
 }
 
-export function htmlparser(content) {
+export function htmlparser(content, stdwrn) {
   // Remove comments
   let prev;
   do {
@@ -111,18 +130,20 @@ export function htmlparser(content) {
     content = content.replaceAll(/<!--([^¬]|.)*?-->/g, '');
   } while (content !== prev);
   // Handle ***INVALID*** html doctype
-  if ((/<!DOCTYPE html>/gi).test(content)) {
-    console.warn('[HTML PARSER] Invalid doctype html');
-    content = content.replaceAll(/<!DOCTYPE html>/gi, '');
+  if ((/<!DOCTYPE[a-z ]*?>/gi).test(content)) {
+    stdwrn('[HTML PARSER] Invalid doctype html, html++ does not have <!DOCTYPE>');
+    content = content.replaceAll(/<!DOCTYPE[a-z ]*?>/gi, '');
   }
   // Parse
-  return subparse(content);
+  return subparse(content, stdwrn);
 }
 
-// Builder
-function attr(o) {
-  o = Object.keys(o).map(t=>allowedAttributes.includes(t)?`${t}="${o[t]}"`:'').join(' ');
-  return o.length<1?'':' '+o;
+/* - Builder - */
+function attributeString(o, tag) {
+  return Object.entries(o).map((attr)=>{
+    if (!(allowedAttributes['@'].includes(attr[0])||allowedAttributes[tag].includes(attr[0]))) return '';
+    return ` ${attr[0]}="${attr[1]}"`;
+  }).join('');
 }
 
 function normalizeIp(ip, path) {
@@ -137,51 +158,67 @@ function normalizeIp(ip, path) {
 }
 
 function convert(l, ip) {
-  return l.map(e=>{
+  return l.map(node=>{
+    let e = node;
+    // Node text
+    if (node.node === 'text') {
+      return {
+        content: node.content,
+        scripts: [],
+        styles: []
+      };
+    }
+    // Node element
+    let realElem = node.tag;
+    if (!elements.includes(realElem)) realElem = 'div';
     // Special cases
-    if (e.text) {
-      return [e.content, [], []];
+    if (realElem === 'script') {
+      return {
+        content: `<div id="${node._id}" style="display:none"></div>`,
+        scripts: [{src: node.attributes.src??'', version: node.attributes.version??'legacy'}],
+        styles: []
+      };
     }
-    if (htmlUnallowedElements[e.name]) {
-      let action = htmlUnallowedElements[e.name];
-      if (action === 'remove') {
-        return ['', [], []];
-      } else if (action === 'div') {
-        e.tag = e.name;
-        e.name = 'div';
-      }
+    if (realElem === 'link') {
+      return {
+        content: `<div id="${node._id}" style="display:none"></div>`,
+        scripts: [],
+        styles: [node.attributes.href]
+      };
     }
-    if (e.name === 'script') {
-      return [`<div tag="script" style="display:none"${attr(e.attributes)}></div>`, [{src: e.attributes?.src??'', version: e.attributes?.version??'legacy'}], []];
+    if (['audio','img','video'].includes(realElem)) {
+      if (node.attributes.src&&!node.attributes.src.startsWith('data:')&&!node.attributes.src.includes('://')) node.attributes.src = normalizeIp(ip, node.attributes.src);
+      return {
+        content: `<${node.tag}${attributeString(node.attributes)} controls>${node.tag==='img'?'':`</${node.tag}>`}`,
+        scripts: [],
+        styles: []
+      };
     }
-    if (e.name === 'link') {
-      return [`<div tag="link" style="display:none"${attr(e.attributes)}></div>`, [], [e.attributes?.href??'']];
-    }
-    if (['audio','img','video'].includes(e.name)) {
-      if (e.attributes.src && !e.attributes.src.startsWith('data:') && !e.attributes.src.includes('://')) e.attributes.src = normalizeIp(ip, e.attributes.src);
-      return [`<${e.name}${attr(e.attributes)} controls>${e.name==='img'?'':`</${e.name}>`}`, [], []]
-    }
-    if ((typeof e.content)==='string') {
-      return [`<${e.name}${attr(e.attributes)}>${e.content}</${e.name}>`, [], []]
+    // Content
+    if (nonTerminatingElements.includes(node.tag)||node.content.node==='text') {
+      return {
+        content: `<${node.tag} id="${node._id}"${attributeString(node.attributes)}>${node.content.content||''}${nonTerminatingElementsInHTML.includes(node.tag)?'':`</${node.tag}>`}`,
+        scripts: [],
+        styles: []
+      };
     }
     // Get inner elements
     let inner = '';
-    let scri = [];
-    let styl = [];
-    convert(e.content, ip).forEach(t => {
-      inner += t[0];
-      scri.push(t[1]);
-      styl.push(t[2]);
+    let scripts = [];
+    let styles = [];
+    convert(node.content, ip).forEach(t=>{
+      inner += t.content;
+      scripts.push(t.scripts);
+      styles.push(t.styles);
     });
-    return [`<${e.name}${e.tag?` tag="${e.tag}"`:''}${attr(e.attributes)}>${inner}</${e.name}>`, scri.flat(Infinity), styl.flat(Infinity)];
+    return {
+      content: `<${node.tag} id="${node._id}"${attributeString(node.attributes)}>${inner}</${node.tag}>`,
+      scripts: scripts.flat(Infinity),
+      styles: styles.flat(Infinity)
+    };
   });
 }
 
 export function htmlbuilder(tree, ip) {
-  let h = convert(tree, ip).flat(1);
-  return {
-    html: h[0],
-    scripts: h[1]??[],
-    styles: h[2]??[]
-  }
+  return convert(tree, ip)[0];
 }
