@@ -159,7 +159,6 @@ function normalizeIp(ip, path) {
 
 function convert(l, ip) {
   return l.map(node=>{
-    let e = node;
     // Node text
     if (node.node === 'text') {
       return {
@@ -174,14 +173,14 @@ function convert(l, ip) {
     // Special cases
     if (realElem === 'script') {
       return {
-        content: `<div id="${node._id}" style="display:none"></div>`,
+        content: `<div id="${node._id}"${attributeString(node.attributes, node.tag)} style="display:none"></div>`,
         scripts: [{src: node.attributes.src??'', version: node.attributes.version??'legacy'}],
         styles: []
       };
     }
     if (realElem === 'link') {
       return {
-        content: `<div id="${node._id}" style="display:none"></div>`,
+        content: `<div id="${node._id}"${attributeString(node.attributes, node.tag)} style="display:none"></div>`,
         scripts: [],
         styles: [node.attributes.href]
       };
@@ -189,7 +188,7 @@ function convert(l, ip) {
     if (['audio','img','video'].includes(realElem)) {
       if (node.attributes.src&&!node.attributes.src.startsWith('data:')&&!node.attributes.src.includes('://')) node.attributes.src = normalizeIp(ip, node.attributes.src);
       return {
-        content: `<${node.tag}${attributeString(node.attributes)} controls>${node.tag==='img'?'':`</${node.tag}>`}`,
+        content: `<${node.tag}${attributeString(node.attributes, node.tag)} controls>${node.tag==='img'?'':`</${node.tag}>`}`,
         scripts: [],
         styles: []
       };
@@ -197,7 +196,7 @@ function convert(l, ip) {
     // Content
     if (nonTerminatingElements.includes(node.tag)||node.content.node==='text') {
       return {
-        content: `<${node.tag} id="${node._id}"${attributeString(node.attributes)}>${node.content.content||''}${nonTerminatingElementsInHTML.includes(node.tag)?'':`</${node.tag}>`}`,
+        content: `<${node.tag} id="${node._id}"${attributeString(node.attributes, node.tag)}>${node.content.content||''}${nonTerminatingElementsInHTML.includes(node.tag)?'':`</${node.tag}>`}`,
         scripts: [],
         styles: []
       };
@@ -212,7 +211,7 @@ function convert(l, ip) {
       styles.push(t.styles);
     });
     return {
-      content: `<${node.tag} id="${node._id}"${attributeString(node.attributes)}>${inner}</${node.tag}>`,
+      content: `<${node.tag} id="${node._id}"${attributeString(node.attributes, node.tag)}>${inner}</${node.tag}>`,
       scripts: scripts.flat(Infinity),
       styles: styles.flat(Infinity)
     };
