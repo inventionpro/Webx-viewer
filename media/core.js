@@ -1,7 +1,7 @@
 import { createLegacyLua } from './lua/legacy.js';
 import { createV2Lua } from './lua/v2.js';
 
-import { htmlparser, htmlbuilder } from './handle/html.js';
+import { htmlparser, htmlbuilder, treeHelper } from './handle/html.js';
 import { cssparser, cssbuilder } from './handle/css.js';
 
 import { styles } from './default_css.js';
@@ -45,11 +45,15 @@ class Tab {
     this.luaGlobal = {};
     const _this = this;
     this.iframe.onload = async() => {
-      let htmltree = htmlparser(html, (text)=>_this.browser.stdout(text,'warn',_this.id));
-      let build = htmlbuilder(htmltree, target);
+      let virtualTree = htmlparser(html, (text)=>_this.browser.stdout(text,'warn',_this.id));
+      let build = htmlbuilder(virtualTree, target);
 
       let doc = this.iframe.contentDocument;
       doc.querySelector('html').innerHTML = build.content;
+
+      treeHelper(virtualTree);
+      _this.virtualTree = virtualTree;
+      _this.physicalTree = doc;
 
       // Get tab data
       _this.title = doc.querySelector('title')?.innerText??_this.url;
@@ -65,7 +69,7 @@ class Tab {
       _this.browser.onTabLoad(_this);
 
       // Extra html
-      doc.querySelector('head').insertAdjacentHTML('beforeend', `<meta name="color-scheme" content="dark light"><meta name="viewport" content="width=device-width, initial-scale=1.0">`);
+      doc.querySelector('head').insertAdjacentHTML('beforeend', `<meta charset="utf-8"><meta name="color-scheme" content="dark light"><meta name="viewport" content="width=device-width, initial-scale=1.0">`);
 
       // Links
       doc.onclick = function(evt) {
@@ -116,7 +120,7 @@ class Tab {
         dstyl.innerHTML = style;
         doc.head.appendChild(dstyl);
       });
-      // Lua
+      // Lua fetch
       for (let i = 0; i<build.scripts.length; i++) {
         try {
           let luatarget = _this.browser._normalizeIp(target, build.scripts[i].src, this.id);
@@ -125,15 +129,16 @@ class Tab {
           _this.browser.stdout('[Error] Could not load a lua resource: '+build.scripts[i].src, 'error', _this.id);
         }
       }
+      // Lua run
       _this.luaEngine = [];
-      build.scripts.forEach(async script => {
+      build.scripts.forEach(async(script)=> {
         let lua;
         if (script.version==='v2') {
           lua = await createV2Lua(doc, _this, (text,type)=>{_this.browser.stdout(text,type,_this.id)});
         } else if (script.version==='legacy') {
           script.code = script.code
             .replace(/(\bfetch\s*\(\{[\s\S]*?\}\))(?!(\s*:\s*await\s*\())/g, '$1:await()');
-          lua = await createLegacyLua(doc, _this, (text,type)=>{_this.browser.stdout(text,type,_this.id)});
+          lua = await createLegacyLua(_this, (text,type)=>{_this.browser.stdout(text,type,_this.id)});
         } else {
           stdout(`[Error] Unknwon version: ${script.version} for: ${script.src}`, 'error', _this.id);
         }

@@ -1,20 +1,20 @@
 function HTMLElementFunctionsFor(elem, tab, stdout) {
-  let tag = elem.tagName.toLowerCase();
+  let real = tab.physicalTree.getElementById(elem._id);
   let base = {
-    get_content: () => elem.value ?? elem.checked ?? elem.textContent,
-    get_contents: () => elem.value ?? elem.checked ?? elem.textContent,
-    get_href: () => elem.href,
-    get_source: () => elem.src,
-    get_opacity: () => elem.style.opacity,
+    get_content: () => real.value ?? real.checked ?? real.textContent,
+    get_contents: () => real.value ?? real.checked ?? real.textContent,
+    get_href: () => real.href,
+    get_source: () => real.src,
+    get_opacity: () => real.style.opacity,
 
-    set_content: (text) => elem[['input','textarea','select'].includes(tag)?'value':'innerText'] = text,
-    set_contents: (text) => elem[['input','textarea','select'].includes(tag)?'value':'innerText'] = text,
-    set_href: (text) => elem.href = text,
-    set_source: (src) => elem.src = src,
-    set_opacity: (opa) => elem.style.opacity = opa,
+    set_content: (text) => real[['input','textarea','select'].includes(elem.tag)?'value':'innerText'] = text,
+    set_contents: (text) => real[['input','textarea','select'].includes(elem.tag)?'value':'innerText'] = text,
+    set_href: (text) => real.href = text,
+    set_source: (src) => real.src = src,
+    set_opacity: (opa) => real.style.opacity = opa,
 
     on_click: (callback) => {
-      elem.addEventListener('click', () => {
+      real.addEventListener('click', () => {
         try {
           callback();
         } catch(err) {
@@ -23,33 +23,33 @@ function HTMLElementFunctionsFor(elem, tab, stdout) {
       });
     },
     on_input: (callback) => {
-      elem.addEventListener('keyup', () => {
+      real.addEventListener('keyup', () => {
         try {
-          callback(elem.value ?? elem.checked);
+          callback(real.value ?? real.checked);
         } catch(err) {
           stdout(err, 'error');
         }
       });
-      elem.addEventListener('change', () => {
+      real.addEventListener('change', () => {
         try {
-          callback(elem.value ?? elem.checked);
+          callback(real.value ?? real.checked);
         } catch(err) {
           stdout(err, 'error');
         }
       });
     },
     on_submit: (callback) => {
-      elem.addEventListener('submit', () => {
+      real.addEventListener('submit', () => {
         try {
-          callback(elem.value ?? elem.checked);
+          callback(real.value ?? real.checked);
         } catch(err) {
           stdout(err, 'error');
         }
       });
-      elem.addEventListener('keyup', (evt) => {
+      real.addEventListener('keyup', (evt) => {
         if (evt.key !== 'Enter') return;
         try {
-          callback(elem.value ?? elem.checked);
+          callback(real.value ?? real.checked);
         } catch(err) {
           stdout(err, 'error');
         }
@@ -57,15 +57,15 @@ function HTMLElementFunctionsFor(elem, tab, stdout) {
     }
   };
   if (tab.browser.bussinga_lua) {
-    base.set_contents = (text) => elem[['input','textarea','select'].includes(tag)?'value':'innerHTML'] = text;
+    base.set_contents = (text) => real[['input','textarea','select'].includes(elem.tag)?'value':'innerHTML'] = text;
     base.set_content = base.set_contents;
-    base.get_css_name = () => elem.className ?? elem.tagName;
-    base.set_value = (text) => elem.value = text;
+    base.get_css_name = () => elem.attributes.class ?? elem.tag;
+    base.set_value = (text) => real.value = text;
   }
   return base;
 }
 
-export async function createLegacyLua(doc, tab, stdout) {
+export async function createLegacyLua(tab, stdout) {
   const factory = new wasmoon.LuaFactory();
   const lua = await factory.createEngine();
 
@@ -78,18 +78,16 @@ export async function createLegacyLua(doc, tab, stdout) {
 
   // Lua global functions
   await lua.global.set('print', (text) => {
-    if (Object.isObject(text)) {
-      text = JSON.stringify(text, null, 2);
-    }
+    if (Object.isObject(text)) text = JSON.stringify(text, null, 2);
     stdout(`[Log]: ${text}`);
   });
   await lua.global.set('get', (clas, all=false) => {
     clas = clas.trim();
     if (all) {
-      return Array.from(doc.querySelector(clas)?doc.querySelectorAll(clas):doc.querySelectorAll('.'+clas))
-        .map(el=>HTMLElementFunctionsFor(el, tab, stdout));
+      return tab.search((elem)=>elem.tag===clas||elem.attributes.class.split(' ').includes(clas),true)
+        .map(elem=>HTMLElementFunctionsFor(elem, tab, stdout));
     } else {
-      return HTMLElementFunctionsFor(doc.querySelector(clas)??doc.querySelector('.'+clas), tab, stdout);
+      return HTMLElementFunctionsFor(tab.search((elem)=>elem.tag===clas||elem.attributes.class.split(' ').includes(clas)), tab, stdout);
     }
   });
   await lua.global.set('fetch', async(o) => {

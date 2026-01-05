@@ -26,7 +26,7 @@ function subparse(content, stdwrn) {
     let char = content[i];
     if (char === '<') {
       let node = {
-        _id: (Math.random()*16**10).toString(16),
+        _id: 'vt-'+(Math.random()*16**10).toString(16),
         node: 'element',
         tag: '',
         attributes: {},
@@ -141,7 +141,7 @@ export function htmlparser(content, stdwrn) {
 /* - Builder - */
 function attributeString(o, tag) {
   return Object.entries(o).map((attr)=>{
-    if (!(allowedAttributes['@'].includes(attr[0])||allowedAttributes[tag].includes(attr[0]))) return '';
+    if (!(allowedAttributes['@'].includes(attr[0])||allowedAttributes[tag]?.includes(attr[0]))) return '';
     return ` ${attr[0]}="${attr[1]}"`;
   }).join('');
 }
@@ -220,4 +220,25 @@ function convert(l, ip) {
 
 export function htmlbuilder(tree, ip) {
   return convert(tree, ip)[0];
+}
+
+/* - Tree helpers - */
+export function treeHelper(tree) {
+  tree.search = (check,multi=false)=>{
+    let stack = [];
+    let need = tree;
+    while (need.length>0) {
+      if (need[0].node==='element'&&need[0].content.length>0) need.push(need[0].content);
+      stack.push(need[0])
+      need.unshift();
+    }
+    let results = [];
+    for (let i=0; i<stack.length; i++) {
+      let match = check(stack[i]);
+      if (!match) continue;
+      if (!multi) return stack[i];
+      results.push(stack[i])
+    }
+    return results;
+  };
 }
