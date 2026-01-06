@@ -2,7 +2,7 @@ const elements = ['a','audio','body','button','div','h1','h2','h3','h4','h5','h6
 const nonTerminatingElements = ['audio','hr','img','input','link','meta','script','textarea','video'];
 const nonTerminatingElementsInHTML = ['hr','img','input','link','meta'];
 const allowedAttributes = {
-  '@': ['class'], // Also id but we don't want for it to bleed into the real dom
+  '@': ['class','id'],
   'a': ['href'],
   'audio': ['src'],
   'button': ['disabled'],
@@ -26,7 +26,7 @@ function subparse(content, stdwrn) {
     let char = content[i];
     if (char === '<') {
       let node = {
-        _id: 'vt-'+(Math.random()*16**10).toString(16),
+        _id: 'vt-'+Math.floor(Math.random()*16**12).toString(16),
         node: 'element',
         tag: '',
         attributes: {},
@@ -142,6 +142,7 @@ export function htmlparser(content, stdwrn) {
 function attributeString(o, tag) {
   return Object.entries(o).map((attr)=>{
     if (!(allowedAttributes['@'].includes(attr[0])||allowedAttributes[tag]?.includes(attr[0]))) return '';
+    if (attr[0]==='id') attr[0]='wxv-actual-id';
     return ` ${attr[0]}="${attr[1]}"`;
   }).join('');
 }

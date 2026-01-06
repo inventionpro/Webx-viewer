@@ -32,6 +32,7 @@ class Tab {
     this.iframe = document.createElement('iframe');
     this.iframe.style.display = 'none';
     this.iframe.id = this.id;
+    this.iframe.srcdoc = `<!DOCTYPE html><html><head></head><body></body></html>`;
     this.iframe.setAttribute('sandbox', 'allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-same-origin');
     browser.box.appendChild(this.iframe);
 
@@ -57,7 +58,7 @@ class Tab {
 
       // Get tab data
       _this.title = doc.querySelector('title')?.innerText??_this.url;
-      _this.icon = doc.querySelector('div[tag="link"]')?.getAttribute('href');
+      _this.icon = virtualTree.search(elem=>elem.tag==='link')?.attributes.href;
       if (!_this.icon) {
         _this.icon = _this.browser.defFavicon;
       } else {
@@ -111,7 +112,9 @@ class Tab {
           _this.browser.stdout('[Error] Could not load a css resource: '+style, 'error', _this.id);
           return;
         }
-        if (!_this.browser.bussinga_css||!style.includes('/* bussinga! */')) {
+        if (_this.browser.bussinga_css&&style.includes('/* bussinga! */')) {
+          style = style.replaceAll(/#([a-zA-Z][0-9a-zA-Z_\-]*)/, '[wxv-actual-id="$1"]')
+        } else {
           if (style.includes('/* bussinga! */')) _this.browser.stdout('[Warn] Site uses bussinga css comment, but you are not using bussinga mode.', 'warn', _this.id);
           style = cssparser(style);
           style = cssbuilder(style);
