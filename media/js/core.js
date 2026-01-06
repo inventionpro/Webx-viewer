@@ -113,7 +113,7 @@ class Tab {
           return;
         }
         if (_this.browser.bussinga_css&&style.includes('/* bussinga! */')) {
-          style = style.replaceAll(/#([a-zA-Z][0-9a-zA-Z_\-]*)/, '[wxv-actual-id="$1"]')
+          style = style.replaceAll(/#([a-zA-Z][0-9a-zA-Z_\-]*)/g, '[wxv-actual-id="$1"]')
         } else {
           if (style.includes('/* bussinga! */')) _this.browser.stdout('[Warn] Site uses bussinga css comment, but you are not using bussinga mode.', 'warn', _this.id);
           style = cssparser(style);
