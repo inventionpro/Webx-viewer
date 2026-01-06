@@ -107,7 +107,7 @@ function subparse(content, stdwrn) {
       rawcontent = rawcontent.trim();
       if (rawcontent.length) {
         node.content = rawcontent.includes('<')?
-          subparse(rawcontent):
+          subparse(rawcontent, stdwrn):
           [{
             node: 'text',
             content: rawcontent
