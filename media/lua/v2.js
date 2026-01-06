@@ -52,28 +52,36 @@ function MediaContextFor(elem, stdout) {
   };
 }
 
-function HTMLElementFunctionsFor(elem, stdout) {
-  let tag = elem.tagName.toLowerCase();
+function HTMLElementFunctionsFor(elem, tab, stdout) {
+  let real = tab.physicalTree.getElementById(elem._id);
   let base = {
     get content() {
-      if (['input','textarea','select'].includes(tag)) return elem.value ?? elem.checked;
-      if (['img','audio','video'].includes(tag)) return elem.src;
-      return elem.textContent;
+      if (['input','textarea','select'].includes(elem.tag)) return real.value ?? real.checked;
+      if (['img','audio','video'].includes(elem.tag)) return elem.attributes.src;
+      return tab.virtualTree.getTextFrom(elem);
     },
     set content(value) {
-      if (['input','textarea','select'].includes(tag)) {
-        elem[(tag==='input'&&elem.getAttribute('type')==='checkbox')?'checked':'value'] = value;
-      } else if (['img','audio','video'].includes(tag)) {
-        elem.src = value;
+      if (['input','textarea','select'].includes(elem.tag)) {
+        real[(elem.tag==='input'&&elem.attributes.type==='checkbox')?'checked':'value'] = value;
+      } else if (['img','audio','video'].includes(elem.tag)) {
+        real.src = value;
+        elem.attributes.src = value;
       } else {
-        elem.innerText = value;
+        real.innerText = value;
+        elem.content = [{
+          node: 'text',
+          content: value
+        }];
       }
     },
 
-    remove: ()=>{ elem.remove() },
+    remove: ()=>{
+      real.remove();
+      tab.virtualTree.removeElem(elem._id);
+    },
 
     on_click: (callback) => {
-      elem.addEventListener('click', () => {
+      real.addEventListener('click', () => {
         try {
           callback();
         } catch(err) {
@@ -82,16 +90,16 @@ function HTMLElementFunctionsFor(elem, stdout) {
       })
     },
     on_input: (callback) => {
-      elem.addEventListener('input', () => {
+      real.addEventListener('input', () => {
         try {
-          callback(elem.value);
+          callback(real.value);
         } catch(err) {
           stdout(err, 'error');
         }
       })
     },
     on_keypress: (callback) => {
-      elem.addEventListener('keydown', (evt) => {
+      real.addEventListener('keydown', (evt) => {
         try {
           callback(evt.key);
         } catch(err) {
@@ -100,7 +108,7 @@ function HTMLElementFunctionsFor(elem, stdout) {
       })
     },
     on_load: (callback) => {
-      elem.addEventListener((['video','audio'].includes(tag)?'canplay':'load'), () => {
+      real.addEventListener((['video','audio'].includes(elem.tag)?'canplay':'load'), () => {
         try {
           callback();
         } catch(err) {
@@ -109,17 +117,17 @@ function HTMLElementFunctionsFor(elem, stdout) {
       })
     },
     on_submit: (callback) => {
-      elem.addEventListener('submit', () => {
+      real.addEventListener('submit', () => {
         try {
-          callback(elem.value ?? elem.checked);
+          callback(real.checked??real.value);
         } catch(err) {
           stdout(err, 'error');
         }
       });
-      elem.addEventListener('keyup', (evt) => {
+      real.addEventListener('keyup', (evt) => {
         if (evt.key !== 'Enter') return;
         try {
-          callback(elem.value ?? elem.checked);
+          callback(real.checked??real.value);
         } catch(err) {
           stdout(err, 'error');
         }
@@ -127,9 +135,7 @@ function HTMLElementFunctionsFor(elem, stdout) {
     }
   };
   // Media Context
-  if (['audio','video'].includes(tag)) {
-    base.media_context = MediaContextFor(elem, stdout);
-  }
+  if (['audio','video'].includes(elem.tag)) base.media_context = MediaContextFor(real, stdout);
   return base;
 }
 
@@ -241,15 +247,15 @@ export async function createV2Lua(doc, tab, stdout) {
     return null;
   });
   await lua.global.set('get_id', (id) => {
-    return HTMLElementFunctionsFor(doc.getElementById(id), stdout);
+    return HTMLElementFunctionsFor(tab.virtualTree.search(elem=>elem.attributes.id===id), tab, stdout);
   });
   await lua.global.set('get_class', (clas, all=false) => {
-    let tags = Array.from(document.getElementsByClassName(clas));
-    return all ? tags.map(t=>HTMLElementFunctionsFor(t, stdout)) : HTMLElementFunctionsFor(tags[0], stdout);
+    let tags = tab.virtualTree.search(elem=>elem.attributes.class?.split(' ')?.includes(clas));
+    return all ? tags.map(t=>HTMLElementFunctionsFor(t, tab, stdout)) : HTMLElementFunctionsFor(tags[0], tab, stdout);
   });
   await lua.global.set('get_tag', (tag, all=false) => {
-    let tags = Array.from(document.getElementsByTagName(tag));
-    return all ? tags.map(t=>HTMLElementFunctionsFor(t, stdout)) : HTMLElementFunctionsFor(tags[0], stdout);
+    let tags = tab.virtualTree.search(elem=>elem.tag===tag);
+    return all ? tags.map(t=>HTMLElementFunctionsFor(t, tab, stdout)) : HTMLElementFunctionsFor(tags[0], tab, stdout);
   });
   await lua.global.set('global', tab.luaGlobal);
   await frozenTable(lua, 'location', {

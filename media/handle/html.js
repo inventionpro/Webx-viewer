@@ -226,7 +226,7 @@ export function htmlbuilder(tree, ip) {
 export function treeHelper(tree) {
   tree.search = (check,multi=false)=>{
     let stack = [];
-    let need = tree;
+    let need = structuredClone(tree);
     while (need.length>0) {
       if (need[0].node==='element'&&need[0].content.length>0) need.push(need[0].content);
       stack.push(need[0])
@@ -240,5 +240,21 @@ export function treeHelper(tree) {
       results.push(stack[i])
     }
     return results;
+  };
+  tree.getTextFrom = (node)=>{
+    let getinner = (node)=>(node.node==='text')?node.content:node.content.map(el=>getinner(el));
+    return getinner(node).flat(Infinity).join(' ');
+  };
+  tree.removeElem = (id, node=tree)=>{
+    if (node.node==='text'||node.content.length<1) return false;
+    for (let i=0; i<node.content.length; i++) {
+      let child = node.content[i];
+      if (child._id === id) {
+        node.content.splice(i,1);
+        return true;
+      }
+      if (tree.removeElem(id,child)) return true;
+    }
+    return false;
   };
 }
