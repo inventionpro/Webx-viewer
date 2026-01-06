@@ -74,6 +74,7 @@ function HTMLElementFunctionsFor(elem, tab, stdout) {
         }];
       }
     },
+    tag: elem.tag,
 
     remove: ()=>{
       real.remove();
