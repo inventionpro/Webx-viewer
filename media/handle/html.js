@@ -225,21 +225,17 @@ export function htmlbuilder(tree, ip) {
 /* - Tree helpers - */
 export function treeHelper(tree) {
   tree.search = (check,multi=false)=>{
-    let stack = [];
-    let need = tree;
-    while (need.length>0) {
-      if (need[0].node==='element'&&need[0].content.length>0) need=need.concat(need[0].content);
-      stack.push(need[0]);
-      need.shift();
-    }
+    let queue = tree;
     let results = [];
-    for (let i=0; i<stack.length; i++) {
-      let match = check(stack[i]);
-      if (!match) continue;
-      if (!multi) return stack[i];
-      results.push(stack[i])
+    for (let i=0; i<queue.length; i++) {
+      let node = queue[i];
+      if (check(node)) {
+        if (!multi) return node;
+        results.push(node);
+      }
+      if (node.node==='element'&&node.content.length>0) queue.splice(i+1, 0, ...node.content);
     }
-    return results;
+    return multi?results:null;
   };
   tree.getTextFrom = (node)=>{
     let getinner = (node)=>(node.node==='text')?node.content:node.content.map(el=>getinner(el));
