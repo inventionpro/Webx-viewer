@@ -189,7 +189,7 @@ function convert(l, ip) {
     if (['audio','img','video'].includes(realElem)) {
       if (node.attributes.src&&!node.attributes.src.startsWith('data:')&&!node.attributes.src.includes('://')) node.attributes.src = normalizeIp(ip, node.attributes.src);
       return {
-        content: `<${node.tag}${attributeString(node.attributes, node.tag)} controls>${node.tag==='img'?'':`</${node.tag}>`}`,
+        content: `<${node.tag} id="${node._id}"${attributeString(node.attributes, node.tag)} controls>${node.tag==='img'?'':`</${node.tag}>`}`,
         scripts: [],
         styles: []
       };
