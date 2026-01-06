@@ -229,11 +229,12 @@ export function treeHelper(tree) {
     let results = [];
     for (let i=0; i<queue.length; i++) {
       let node = queue[i];
+      if (node.node!=='element') continue;
       if (check(node)) {
         if (!multi) return node;
         results.push(node);
       }
-      if (node.node==='element'&&node.content.length>0) queue.splice(i+1, 0, ...node.content);
+      if (node.content.length>0) queue.splice(i+1, 0, ...node.content);
     }
     return multi?results:null;
   };

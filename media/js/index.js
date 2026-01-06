@@ -1,4 +1,4 @@
-import { Browser } from './core.js'
+import { Browser } from './core.js';
 
 const TabContainer = document.querySelector('#tabs div');
 new Sortable(TabContainer, {

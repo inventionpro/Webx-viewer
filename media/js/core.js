@@ -1,8 +1,8 @@
-import { createLegacyLua } from './lua/legacy.js';
-import { createV2Lua } from './lua/v2.js';
+import { createLegacyLua } from '../lua/legacy.js';
+import { createV2Lua } from '../lua/v2.js';
 
-import { htmlparser, htmlbuilder, treeHelper } from './handle/html.js';
-import { cssparser, cssbuilder } from './handle/css.js';
+import { htmlparser, htmlbuilder, treeHelper } from '../handle/html.js';
+import { cssparser, cssbuilder } from '../handle/css.js';
 
 import { styles } from './default_css.js';
 import { errorPage, noPage } from './pages.js';
