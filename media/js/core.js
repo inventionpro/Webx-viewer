@@ -173,8 +173,8 @@ class Tab {
     let target = this.browser._normalizeIp(destination, url.pathname, this.id);
     try {
       let res = await this._fetch(target);
-      if ((/<title>Site not found (&middot;|·) GitHub Pages<\/title>/i).test(res)) throw new Error('This website points to a non-existant GitHub Pages page.');
-      if ((/<title>Page not found (&middot;|·) GitHub Pages<\/title>/i).test(res)) res = noPage;
+      if ((/<title>Site not found\s?(&middot;|·)\s?GitHub Pages<\/title>/i).test(res)) throw new Error('This website points to a non-existant GitHub Pages page.');
+      if ((/<title>Page not found\s?(&middot;|·)\s?GitHub Pages<\/title>/i).test(res)) res = noPage;
       // Long boi
       res = res.replace(/<script>\(function\(\){function .\(\){var .=..contentDocument\|\|..contentWindow.document;if\(.\){var .=..createElement\('script'\);..innerHTML="window.__CF\$..\$params={r:'.+?',t:'.+?'};var .=document.createElement\('script'\);(?:..nonce='';)?..src='\/cdn-cgi\/challenge-platform\/scripts\/jsd\/main.js';document.getElementsByTagName\('head'\)\[0]\.appendChild\(.\);";..getElementsByTagName\('head'\)\[0].appendChild\(.\)}}if\(document.body\){var .=document\.createElement\('iframe'\);..height=1;..width=1;..style.position='absolute';..style.top=0;..style.left=0;..style.border='none';..style.visibility='hidden';document.body.appendChild\(.\);if\('loading'!==document.readyState\).\(\);else if\(window.addEventListener\)document.addEventListener\('DOMContentLoaded',.\);else{var .=document.onreadystatechange\|\|function\(\){};document.onreadystatechange=function\(.\){.\(.\);'loading'!==document.readyState&&\(document.onreadystatechange=.,.\(\)\)}}}}\)\(\);<\/script>/,'');
       this._loadHTML(res, target);

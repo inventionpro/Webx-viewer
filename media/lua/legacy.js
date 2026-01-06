@@ -1,4 +1,5 @@
 function HTMLElementFunctionsFor(elem, tab, stdout) {
+  if (!elem) return null;
   let real = tab.physicalTree.getElementById(elem._id);
   let base = {
     get_content: () => real.value ?? real.checked ?? real.textContent,
