@@ -226,11 +226,11 @@ export function htmlbuilder(tree, ip) {
 export function treeHelper(tree) {
   tree.search = (check,multi=false)=>{
     let stack = [];
-    let need = structuredClone(tree);
+    let need = tree;
     while (need.length>0) {
-      if (need[0].node==='element'&&need[0].content.length>0) need.push(need[0].content);
-      stack.push(need[0])
-      need.unshift();
+      if (need[0].node==='element'&&need[0].content.length>0) need=need.concat(need[0].content);
+      stack.push(need[0]);
+      need.shift();
     }
     let results = [];
     for (let i=0; i<stack.length; i++) {
