@@ -84,10 +84,10 @@ export async function createLegacyLua(tab, stdout) {
   await lua.global.set('get', (clas, all=false) => {
     clas = clas.trim();
     if (all) {
-      return tab.virtualTree.search((elem)=>elem.tag===clas||elem.attributes.class.split(' ').includes(clas),true)
+      return tab.virtualTree.search((elem)=>elem.tag===clas||(elem.attributes.class??'').split(' ').includes(clas),true)
         .map(elem=>HTMLElementFunctionsFor(elem, tab, stdout));
     } else {
-      return HTMLElementFunctionsFor(tab.virtualTree.search((elem)=>elem.tag===clas||elem.attributes.class.split(' ').includes(clas)), tab, stdout);
+      return HTMLElementFunctionsFor(tab.virtualTree.search((elem)=>elem.tag===clas||(elem.attributes.class??'').split(' ').includes(clas)), tab, stdout);
     }
   });
   await lua.global.set('fetch', async(o) => {
