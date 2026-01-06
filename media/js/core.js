@@ -173,12 +173,12 @@ class Tab {
     let target = this.browser._normalizeIp(destination, url.pathname, this.id);
     try {
       let res = await this._fetch(target);
-      if ((/<title>Site not found\s?(&middot;|·)\s?GitHub Pages<\/title>/i).test(res)) throw new Error('This website points to a non-existant GitHub Pages page.');
-      if ((/<title>Page not found\s?(&middot;|·)\s?GitHub Pages<\/title>/i).test(res)) res = noPage;
-      // Long boi
-      res = res.replace(/<script>\(function\(\){function .\(\){var .=..contentDocument\|\|..contentWindow.document;if\(.\){var .=..createElement\('script'\);..innerHTML="window.__CF\$..\$params={r:'.+?',t:'.+?'};var .=document.createElement\('script'\);(?:..nonce='';)?..src='\/cdn-cgi\/challenge-platform\/scripts\/jsd\/main.js';document.getElementsByTagName\('head'\)\[0]\.appendChild\(.\);";..getElementsByTagName\('head'\)\[0].appendChild\(.\)}}if\(document.body\){var .=document\.createElement\('iframe'\);..height=1;..width=1;..style.position='absolute';..style.top=0;..style.left=0;..style.border='none';..style.visibility='hidden';document.body.appendChild\(.\);if\('loading'!==document.readyState\).\(\);else if\(window.addEventListener\)document.addEventListener\('DOMContentLoaded',.\);else{var .=document.onreadystatechange\|\|function\(\){};document.onreadystatechange=function\(.\){.\(.\);'loading'!==document.readyState&&\(document.onreadystatechange=.,.\(\)\)}}}}\)\(\);<\/script>/,'');
       this._loadHTML(res, target);
     } catch(err) {
+      if (err.toString().includes('This page does not exist 404.')) {
+        this._loadHTML(noPage, target);
+        return;
+      }
       if (err.toString().includes('TypeError: Failed to fetch')) err = 'Could not fetch page, make sure you typed the url right or try enabling proxy';
       this._loadHTML(errorPage.replace('Message', err));
     }
@@ -203,11 +203,15 @@ class Tab {
         referrer: ''
       });
       if (!req.status.toString().startsWith('2')) {
-        if (req.status===404) return noPage;
+        if (req.status===404) throw new Error('This page does not exist 404.');
         throw new Error('Non 2xx response (Not Ok): '+req.status);
       }
       req = await req.text();
-      if (req==='404: Not Found') return noPage;
+      if (req==='404: Not Found') throw new Error('This page does not exist 404.');
+      if ((/<title>Site not found\s?(&middot;|·)\s?GitHub Pages<\/title>/i).test(req)) throw new Error('This website points to a non-existant GitHub Pages page.');
+      if ((/<title>Page not found\s?(&middot;|·)\s?GitHub Pages<\/title>/i).test(req)) throw new Error('This page does not exist 404.');
+      // Cleanup - Long boi
+      req = req.replace(/<script>\(function\(\){function .\(\){var .=..contentDocument\|\|..contentWindow.document;if\(.\){var .=..createElement\('script'\);..innerHTML="window.__CF\$..\$params=.+?;var .=document.createElement\('script'\);(?:..nonce='';)?.*?if\(document.body\){var .=document\.createElement\('iframe'\);.*?;document.body.appendChild\(.\);if\('loading'!==document.readyState\).\(\);else if\(window.addEventListener\)document.addEventListener\('DOMContentLoaded',.\);else{var .=document.onreadystatechange\|\|function\(\){};document.onreadystatechange=function\(.\){.\(.\);'loading'!==document.readyState&&\(document.onreadystatechange=.,.\(\)\)}}}}\)\(\);<\/script>/,'');
       this.browser.cache.set('fetch-'+target, req);
       return req;
     }
