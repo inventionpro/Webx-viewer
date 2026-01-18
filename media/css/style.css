@@ -57,6 +57,28 @@ dialog {
   overflow: visible;
 }
 
+.tippy-box {
+  background-color: var(--up);
+}
+.tippy-arrow {
+  color: var(--up);
+}
+.tippy-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.tippy-content button {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+}
+.tippy-content hr {
+  width: 100%;
+  border: 1px var(--top) solid;
+  margin: 5px 0px;
+}
+
 .rmenu[open] {
   display: flex;
 }
