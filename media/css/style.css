@@ -42,6 +42,10 @@ button:has(svg) {
   align-items: center;
   justify-content: center;
 }
+button[disabled] {
+  cursor: not-allowed;
+  filter: brightness(0.75);
+}
 svg {
   fill: currentColor;
   stroke: currentColor;
@@ -335,6 +339,13 @@ input[type="color"] {
   width: 24px;
   height: 24px;
   object-fit: contain;
+}
+
+#devtools .row {
+  background-color: var(--top);
+}
+#devtools .row button[selected] {
+  border-bottom: 2px var(--base) solid;
 }
 
 /* Mobile */

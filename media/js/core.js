@@ -5,11 +5,11 @@ import { htmlparser, htmlbuilder, treeHelper } from '../handle/html.js';
 import { cssparser, cssbuilder } from '../handle/css.js';
 
 import { styles } from './default_css.js';
-import { errorPage, noPage } from './pages.js';
+import { PageError, Page404, PageBlank, PageSettings, PageHistory } from './pages.js';
 
 // Utility
 Object.prototype.isObject = (obj)=>{
-  return (typeof obj === 'object' && !Array.isArray(obj) && obj !== null)
+  return (typeof obj === 'object' && !Array.isArray(obj) && obj !== null);
 }
 
 const fullURL = /^(data|https?):/;
@@ -158,6 +158,17 @@ class Tab {
     this.iframe.contentDocument.location.reload();
   }
   async _load() {
+    // Special pages
+    if (this.url.startsWith('about:')) {
+      let url = new URL(this.url);
+      if (!['blank','settings','history'].includes(url.pathname)) {
+        this._loadHTML(Page404);
+      } else {
+        this._loadHTML({ blank: PageBlank, settings: PageSettings, history: PageHistory }[url.pathname], target);
+      }
+      return;
+    }
+    // Domain -> url
     let destination;
     if ((/^https?:\/\//).test(this.url)) {
       destination = new URL(this.url).host;
@@ -165,24 +176,27 @@ class Tab {
     } else {
       try {
         destination = await this.browser._fetchDomain(this.url);
-        if (!destination) throw new Error('Non');
+        if (!destination) throw new Error('Could not resolve website, does it exist?');
+        if (destination==='__WXV_RED_SELF') throw new Error('This record redirects to itself, no redirect loop.');
       } catch(err) {
-        this._loadHTML(errorPage.replace('Message', 'Could not resolve website, does it exist?'));
+        this._loadHTML(PageError.replace('Message', err.message));
         return;
       }
     }
+    // Plus path
     let url = new URL(this.url);
     let target = this.browser._normalizeIp(destination, url.pathname, this.id);
+    // Get page
     try {
       let res = await this._fetch(target);
       this._loadHTML(res, target);
     } catch(err) {
       if (err.toString().includes('This page does not exist 404.')) {
-        this._loadHTML(noPage, target);
+        this._loadHTML(Page404, target);
         return;
       }
       if (err.toString().includes('TypeError: Failed to fetch')) err = 'Could not fetch page, make sure you typed the url right or try enabling proxy';
-      this._loadHTML(errorPage.replace('Message', err));
+      this._loadHTML(PageError.replace('Message', err));
     }
   }
   async _fetch(target) {
@@ -355,7 +369,7 @@ export class Browser {
         });
         data = await data.json();
       } catch(err) {
-        throw new Error('Could not resolve domain')
+        throw new Error('Could not resolve domain');
       }
 
       if (!Array.isArray(data)) {
@@ -370,7 +384,10 @@ export class Browser {
       this.cache.set('domain-'+topdomain, record); // Partial fill
       data.filter(rec=>rec.type==='RED').forEach(async(rec)=>{
         if (!rec.name.includes(topdomain)) rec.name = rec.name+'.'+topdomain;
-        if (rec.name===rec.value) return; // No loops
+        if (rec.name===rec.value) { // No loops
+          record[rec.name] = '__WXV_RED_SELF';
+          return;
+        }
         let where;
         try {
           where = await _fetchDomain(rec.value);

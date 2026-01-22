@@ -45,6 +45,15 @@
     </div>
     <main>
       <div id="box"></div>
+      <div id="devtools">
+        <div class="row">
+          <button disabled>Elements</button>
+          <button selected>Console</button>
+          <button disabled>Network</button>
+          <button disabled>Storage</button>
+        </div>
+        <div class="con"></div>
+      </div>
       <div id="history" inert="true">
         <h2 style="display:inline">History</h2>
         <button onclick="window.browser.history=[];window.showTabs()">Delete all</button>
