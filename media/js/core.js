@@ -11,6 +11,8 @@ import { errorPage, noPage } from './pages.js';
 Object.prototype.isObject = (obj)=>{
   return (typeof obj === 'object' && !Array.isArray(obj) && obj !== null)
 }
+
+const fullURL = /^(data|https?):/;
 const ipv4 = /^(?:(?:(?:25[0-5]|2[0-4]\d|1?\d{1,2}|0x(?:0{0,7}[0-9A-Fa-f]{1,2})|0[0-3]?[0-7]{0,2})\.(?:25[0-5]|2[0-4]\d|1?\d{1,2}|0x(?:0{0,7}[0-9A-Fa-f]{1,2})|0[0-3]?[0-7]{0,2})\.(?:25[0-5]|2[0-4]\d|1?\d{1,2}|0x(?:0{0,7}[0-9A-Fa-f]{1,2})|0[0-3]?[0-7]{0,2})\.(?:25[0-5]|2[0-4]\d|1?\d{1,2}|0x(?:0{0,7}[0-9A-Fa-f]{1,2})|0[0-3]?[0-7]{0,2}))|(?:429496729[0-5]|42949672[0-8]\d|4294967[01]\d{2}|429496[0-6]\d{3}|42949[0-5]\d{4}|4294[0-8]\d{5}|429[0-3]\d{6}|42[0-8]\d{7}|4[01]\d{8}|[1-3]?\d{1,9}))$/;
 const ipv6 = /^(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|:)|fe80:(?::[0-9A-Fa-f]{0,4}){0,4}%[0-9A-Za-z]{1,}|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(?!$)|$)){4}|(?:[0-9A-Fa-f]{1,4}:){1,4}:(?:(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(?!$)|$)){4})$/;
 
@@ -220,20 +222,15 @@ class Tab {
     // Valid url with protocol
     try {
       const url = new URL(val);
-      return ['buss:', 'http:', 'https:'].includes(url.protocol);
+      return ['buss:','http:','https:','data:'].includes(url.protocol);
     } catch (e) { /* Ignore :3 */ }
     // Looks like a domain (with dot, no spaces)
-    if ((/^[^\s]+\.[^\s]+$/).test(val) && !val.includes(' ') && !(/^(buss|https?):\/\//).test(val)) {
-      return true;
-    }
-    return false;
+    return ((/^[^\s]+\.[^\s]+$/).test(val) && !val.includes(' ') && !(/^(buss|data|https?):/).test(val));
   }
   goTo(url) {
     this._check();
-    if (!this._isUrl(url)) {
-      url = this.browser.searchUrl.replaceAll('%1', encodeURIComponent(url));
-    }
-    if (!(/^https?:\/\//).test(url)) url = this.browser._normalizeBuss(url);
+    if (!this._isUrl(url)) url = this.browser.searchUrl.replaceAll('%1', encodeURIComponent(url));
+    if (!fullURL.test(url)) url = this.browser._normalizeBuss(url);
     this.url = url;
     this.history = this.history.slice(0, this.position+1);
     this.history.push(url);
@@ -307,8 +304,7 @@ export class Browser {
   }
   _normalizeIp(target, path, tab='browser') {
     // If the path is a full url just go directly
-    if (path.match(/^https?:\/\//) !== null) return path;
-    if (path.startsWith('data:')) return path;
+    if (fullURL.test(path)) return path;
     // Very legacy github host support, github.io is fine tho
     if (['github.com','raw.githubusercontent.com'].includes(new URL(target).hostname)) {
       this.stdout('[Warn] This website is using the outdated github dns target.', 'warn', tab);
