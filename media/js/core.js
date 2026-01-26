@@ -17,6 +17,8 @@ const baseProtocols = ['about:','data:','http:','https:'];
 const ipv4 = /^(?:(?:(?:25[0-5]|2[0-4]\d|1?\d{1,2}|0x(?:0{0,7}[0-9A-Fa-f]{1,2})|0[0-3]?[0-7]{0,2})\.(?:25[0-5]|2[0-4]\d|1?\d{1,2}|0x(?:0{0,7}[0-9A-Fa-f]{1,2})|0[0-3]?[0-7]{0,2})\.(?:25[0-5]|2[0-4]\d|1?\d{1,2}|0x(?:0{0,7}[0-9A-Fa-f]{1,2})|0[0-3]?[0-7]{0,2})\.(?:25[0-5]|2[0-4]\d|1?\d{1,2}|0x(?:0{0,7}[0-9A-Fa-f]{1,2})|0[0-3]?[0-7]{0,2}))|(?:429496729[0-5]|42949672[0-8]\d|4294967[01]\d{2}|429496[0-6]\d{3}|42949[0-5]\d{4}|4294[0-8]\d{5}|429[0-3]\d{6}|42[0-8]\d{7}|4[01]\d{8}|[1-3]?\d{1,9}))$/;
 const ipv6 = /^(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|:)|fe80:(?::[0-9A-Fa-f]{0,4}){0,4}%[0-9A-Za-z]{1,}|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(?!$)|$)){4}|(?:[0-9A-Fa-f]{1,4}:){1,4}:(?:(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(?!$)|$)){4})$/;
 
+const AboutPages = { blank: PageBlank, settings: PageSettings, history: PageHistory };
+
 // Classes
 class Tab {
   constructor(browser, startUrl) {
@@ -45,7 +47,7 @@ class Tab {
     if (this.closed) throw new Error('This tab has been closed');
   }
   _loadHTML(html, target) {
-    if (!target) target =  location.href;
+    if (!target) target = location.href;
     this.luaGlobal = {};
     const _this = this;
     this.iframe.onload = async() => {
@@ -159,14 +161,10 @@ class Tab {
     this.iframe.contentDocument.location.reload();
   }
   async _load() {
-    // Special pages
+    // About pages
     if (this.url.startsWith('about:')) {
       let url = new URL(this.url);
-      if (!['blank','settings','history'].includes(url.pathname)) {
-        this._loadHTML(Page404);
-      } else {
-        this._loadHTML({ blank: PageBlank, settings: PageSettings, history: PageHistory }[url.pathname], target);
-      }
+      this._loadHTML(AboutPages[url.pathname]??Page404);
       return;
     }
     // Domain -> url
@@ -402,7 +400,7 @@ export class Browser {
     }
   }
   getActiveTab() {
-    return  this.tabs.find(tab=>tab.id===this.activeTab);
+    return this.tabs.find(tab=>tab.id===this.activeTab);
   }
   createTab() {
     let tab = new Tab(this, this.startUrl);
