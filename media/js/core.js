@@ -18,6 +18,7 @@ const ipv4 = /^(?:(?:(?:25[0-5]|2[0-4]\d|1?\d{1,2}|0x(?:0{0,7}[0-9A-Fa-f]{1,2})|
 const ipv6 = /^(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|:)|fe80:(?::[0-9A-Fa-f]{0,4}){0,4}%[0-9A-Za-z]{1,}|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(?!$)|$)){4}|(?:[0-9A-Fa-f]{1,4}:){1,4}:(?:(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(?!$)|$)){4})$/;
 
 const AboutPages = { blank: PageBlank, settings: PageSettings, history: PageHistory };
+const srcdoc = `<!DOCTYPE html><html><head></head><body></body></html>`;
 
 // Classes
 class Tab {
@@ -37,8 +38,9 @@ class Tab {
     this.iframe = document.createElement('iframe');
     this.iframe.style.display = 'none';
     this.iframe.id = this.id;
-    this.iframe.srcdoc = `<!DOCTYPE html><html><head></head><body></body></html>`;
-    this.iframe.setAttribute('sandbox', 'allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-same-origin');
+    this.iframe.srcdoc = srcdoc;
+    this.iframe.setAttribute('sandbox', 'allow-downloads allow-forms allow-modals allow-scripts allow-same-origin');
+    this.iframe.setAttribute('allow', 'autoplay; cross-origin-isolated; encrypted-media; fullscreen; gamepad; local-fonts; midi; picture-in-picture; screen-wake-lock; storage-access');
     browser.box.appendChild(this.iframe);
 
     this.goTo(startUrl);
@@ -46,11 +48,20 @@ class Tab {
   _check() {
     if (this.closed) throw new Error('This tab has been closed');
   }
-  _loadHTML(html, target) {
-    if (!target) target = location.href;
+  _loadHTML(html, target, elevated=false) {
     this.luaGlobal = {};
     const _this = this;
     this.iframe.onload = async() => {
+      // Elevated pages (internal)
+      if (elevated) {
+        if (_this.iframe.srcdoc!==srcdoc) return;
+        this.iframe.srcdoc = html;
+        _this.title = this.iframe.contentDocument.querySelector('title')?.innerText??_this.url;
+        _this.icon = _this.browser.defFavicon;
+        _this.browser.onTabLoad(_this);
+        return;
+      }
+      // HTML++ Parse
       let virtualTree = htmlparser(html, (text)=>_this.browser.stdout(text,'warn',_this.id));
       let build = htmlbuilder(virtualTree, target);
 
@@ -158,13 +169,13 @@ class Tab {
         }
       });
     };
-    this.iframe.contentDocument.location.reload();
+    this.iframe.srcdoc = srcdoc;
   }
   async _load() {
     // About pages
     if (this.url.startsWith('about:')) {
       let url = new URL(this.url);
-      this._loadHTML(AboutPages[url.pathname]??Page404);
+      this._loadHTML(AboutPages[url.pathname]??Page404, location.href, true);
       return;
     }
     // Domain -> url
@@ -178,7 +189,7 @@ class Tab {
         if (!destination) throw new Error('Could not resolve website, does it exist?');
         if (destination==='__WXV_RED_SELF') throw new Error('This record redirects to itself, no redirect loop.');
       } catch(err) {
-        this._loadHTML(PageError.replace('Message', err.message));
+        this._loadHTML(PageError.replace('Message', err.message), location.href);
         return;
       }
     }
@@ -195,7 +206,7 @@ class Tab {
         return;
       }
       if (err.toString().includes('TypeError: Failed to fetch')) err = 'Could not fetch page, make sure you typed the url right or try enabling proxy';
-      this._loadHTML(PageError.replace('Message', err));
+      this._loadHTML(PageError.replace('Message', err), location.href);
     }
   }
   async _fetch(target) {
@@ -315,6 +326,20 @@ export class Browser {
     this.activeTab = null;
     this.history = [];
     this.cache = new Map();
+
+    // Styles
+    const _this = this;
+    setInterval(() => {
+      let style = window.getComputedStyle(document.body);
+      _this.tabs.forEach(tab=>{
+        let styleSet = (prop)=>{tab.iframe.contentDocument.body.style.setProperty(prop,style.getPropertyValue(prop))};
+        styleSet('--text');
+        styleSet('--text-dim');
+        styleSet('--base');
+        styleSet('--up');
+        styleSet('--top');
+      });      
+    }, 500);
   }
   _normalizeIp(target, path, tab='browser') {
     // If the path is a full url just go directly

@@ -26,13 +26,21 @@ export const Page404 = `<html>
 // About
 export const PageBlank = `<html><head></head><body></body></html>`;
 
-export const PageSettings = `<html>
+export const PageSettings = `<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>Settings</title>
-    ${styling}
   </head>
   <body>
-    <h1>Settings</h1>
+    <div>
+      <h1>Settings</h1>
+      <hr>
+      <button>Style</button>
+      <button>Pages</button>
+      <button>DNS</button>
+      <button disabled>Shortcuts</button>
+    </div>
+    <div></div>
   </body>
 </html>`;
 
