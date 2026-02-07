@@ -39,7 +39,7 @@ class Tab {
     this.iframe.style.display = 'none';
     this.iframe.id = this.id;
     this.iframe.srcdoc = srcdoc;
-    this.iframe.setAttribute('sandbox', 'allow-downloads allow-forms allow-modals allow-scripts allow-same-origin');
+    this.iframe.setAttribute('sandbox', 'allow-downloads allow-modals allow-popups allow-scripts allow-same-origin');
     this.iframe.setAttribute('allow', 'autoplay; cross-origin-isolated; encrypted-media; fullscreen; gamepad; local-fonts; midi; picture-in-picture; screen-wake-lock; storage-access');
     browser.box.appendChild(this.iframe);
 
@@ -172,6 +172,7 @@ class Tab {
     this.iframe.srcdoc = srcdoc;
   }
   async _load() {
+    this.iframe.onload = ()=>{};
     // About pages
     if (this.url.startsWith('about:')) {
       let url = new URL(this.url);
@@ -336,9 +337,9 @@ export class Browser {
       styleSet('--text');
       styleSet('--text-dim');
       styleSet('--base');
-      tab.iframe.contentDocument.body.style.setProperty('--up','color-mix(in oklab, var(--base) 75%, #333 50%);');
-      tab.iframe.contentDocument.body.style.setProperty('--top','color-mix(in oklab, var(--base) 75%, #555 50%);');
-    });      
+      tab.iframe.contentDocument.body.style.setProperty('--up','color-mix(in oklab, var(--base) 75%, #333 50%)');
+      tab.iframe.contentDocument.body.style.setProperty('--top','color-mix(in oklab, var(--base) 75%, #555 50%)');
+    });
   }
   _normalizeIp(target, path, tab='browser') {
     // If the path is a full url just go directly

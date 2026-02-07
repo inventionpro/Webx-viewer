@@ -7,6 +7,21 @@ window.setSettings = ()=>{
   window.browser.bussinga_css = localStorage.getItem('bussinga_css')==='true';
   window.browser.bussinga_lua = localStorage.getItem('bussinga_lua')==='true';
   window.browser.proxy = localStorage.getItem('proxy')==='true';
+
+  let theme = localStorage.getItem('theme')??'#1a1a1a';
+  document.body.style.setProperty('--base', theme);
+  document.body.style.setProperty('--text', (parseInt(theme.replace('#',''),16)>0x888888)?'#222':'#ddd');
+  document.body.style.setProperty('--text-dim', (parseInt(theme.replace('#',''),16)>0x888888)?'#333':'#bbb');
+  browser._style();
+
+  let layout = window.top.localStorage.getItem('layout')?.replace('h','top')?.replace('v','left')??'top';
+  let tabs = document.getElementById('tabs');
+  tabs.setAttribute('data-dir', layout);
+  if (['left','right'].includes(layout)) {
+    document.querySelector('main').insertAdjacentElement(layout==='right'?'beforeend':'afterbegin', tabs);
+  } else {
+    document.body.insertAdjacentElement(layout==='bottom'?'beforeend':'afterbegin', tabs);
+  }
 };
 
 // Open

@@ -159,6 +159,7 @@ dialog {
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
+  text-align: start;
 }
 #tabs button .close {
   padding: 0px 5px;

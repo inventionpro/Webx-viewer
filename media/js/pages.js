@@ -56,7 +56,7 @@ export const PageSettings = `<!DOCTYPE html>
         background-color: var(--up);
       }
       input {
-        cursor: text;
+        cursor: unset;
       }
       input, select {
         padding: 2px;
@@ -222,7 +222,7 @@ export const PageSettings = `<!DOCTYPE html>
               window.top.browser._style();
             };
             ThemeInput.oninput();
-  
+
             Array.from(document.querySelectorAll('.themes button')).forEach(btn=>{
               btn.onclick = ()=>{
                 ThemeInput.value = getComputedStyle(btn).getPropertyValue('--color').trim();
@@ -243,7 +243,6 @@ export const PageSettings = `<!DOCTYPE html>
                 window.top.document.body.insertAdjacentElement(layout==='bottom'?'beforeend':'afterbegin', tabs);
               }
             };
-            positionTabs();
             LayoutBox.querySelectorAll('button').forEach(btn=>{
               let side = btn.getAttribute('data-side');
               btn.onclick = ()=>{
