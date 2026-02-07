@@ -30,8 +30,8 @@
       <button id="nav-other" aria-label="Other"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path fill-rule="evenodd" clip-rule="evenodd" d="M128 158C111.431 158 98 144.569 98 128C98 111.431 111.431 98 128 98C144.569 98 158 111.431 158 128C158 144.569 144.569 158 128 158ZM128 60C111.432 60 98.0001 46.5685 98.0001 30C98.0001 13.4315 111.432 -5.87112e-07 128 -1.31135e-06C144.569 -2.03558e-06 158 13.4315 158 30C158 46.5685 144.569 60 128 60ZM98 226C98 242.569 111.431 256 128 256C144.569 256 158 242.569 158 226C158 209.431 144.569 196 128 196C111.431 196 98 209.431 98 226Z"/></svg></button>
       <script>
         function embedPage() {
-          let url = `https://inventionpro.github.io/Webx-viewer/embed?url=${document.getElementById('url').value}&bussinga_css=${window.browser.bussinga_css}&bussinga_lua=${window.browser.bussinga_lua}&proxy=${window.browser.proxy}&dns=${window.browser.dns}`;
-          url = url.replace('&bussinga_css=false','').replace('&bussinga_lua=false','').replace('&proxy=false','').replace('&dns=https://dns.webxplus.org/','');
+          let url = `https://inventionpro.github.io/Webx-viewer/embed?url=${document.getElementById('url').value}&bussinga_css=${window.browser.bussinga_css}&lua=${window.browser.lua}&bussinga_lua=${window.browser.bussinga_lua}&proxy=${window.browser.proxy}&dns=${window.browser.dns}`;
+          url = url.replace('&bussinga_css=false','').replace('&lua=true','').replace('&bussinga_lua=false','').replace('&proxy=false','').replace('&dns=https://dns.webxplus.org/','');
           navigator.clipboard.writeText(url);
         }
         tippy('#nav-other', {

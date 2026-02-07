@@ -140,17 +140,21 @@ class Tab {
         doc.head.appendChild(dstyl);
       });
       // Lua fetch
-      for (let i = 0; i<build.scripts.length; i++) {
-        try {
-          let luatarget = _this.browser._normalizeIp(target, build.scripts[i].src, this.id);
-          build.scripts[i].code = await _this._fetch(luatarget);
-        } catch(err) {
-          _this.browser.stdout('[Error] Could not load a lua resource: '+build.scripts[i].src, 'error', _this.id);
+      if (_this.browser.lua) {
+        for (let i = 0; i<build.scripts.length; i++) {
+          try {
+            let luatarget = _this.browser._normalizeIp(target, build.scripts[i].src, this.id);
+            build.scripts[i].code = await _this._fetch(luatarget);
+          } catch(err) {
+            _this.browser.stdout('[Error] Could not load a lua resource: '+build.scripts[i].src, 'error', _this.id);
+          }
         }
+      } else {
+        build.scripts = [];
       }
       // Lua run
       _this.luaEngine = [];
-      build.scripts.forEach(async(script)=> {
+      build.scripts.forEach(async(script)=>{
         let lua;
         if (script.version==='v2') {
           lua = await createV2Lua(doc, _this, (text,type)=>{_this.browser.stdout(text,type,_this.id)});
@@ -296,6 +300,7 @@ export class Browser {
    * @param {string} options.startUrl - The intial urls for tabs.
    * @param {string} options.style - Page style, on what style should pages be based on.
    * @param {boolean} options.bussinga_css - Whether to imitate bussinga arbitrary css.
+   * @param {boolean} options.lua - Allow running lua?
    * @param {boolean} options.bussinga_lua - Whether to imitate bussinga extended lua in legacy context.
    * @param {boolean} options.proxy - Proxy fetches in lua.
    * @param {string} options.dns - DNS url, where to get domains.
@@ -310,6 +315,7 @@ export class Browser {
     this.box = document.getElementById(options.box??'box');
     this.style = options.style??'napture_dark';
     this.bussinga_css = options.bussinga_css??false;
+    this.lua = options.lua??true;
     this.bussinga_lua = options.bussinga_lua??false;
     this.proxy = options.proxy??false;
     this.startUrl = options.startUrl??'buss://search.app';

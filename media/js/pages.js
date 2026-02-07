@@ -147,7 +147,7 @@ export const PageSettings = `<!DOCTYPE html>
     <div id="page"></div>
     <script>
       const subpage = {
-        browser: \`<b>Theme:</b>
+        browser: \`<b>Theme</b>
 <div class="themes">
   <button style="--color:#000000">True dark</button>
   <button style="--color:#1a1a1a">Dark</button>
@@ -162,19 +162,20 @@ export const PageSettings = `<!DOCTYPE html>
 </div>
 <label>Base: <input type="color" id="theme"></label>
 <details><summary>Advanced theme (soon...)</summary></details>
-<b>Tab layout:</b>
+<b>Tab layout</b>
 <div id="layout">
   <button data-side="top" style="bottom:unset"></button>
   <button data-side="right" style="left:unset"></button>
   <button data-side="bottom" style="top:unset"></button>
   <button data-side="left" style="right:unset"></button>
 </div>
-<b>Other:</b>
+<b>Other</b>
 <label>Start URL: <input placeholder="Start URL" value="buss://search.app" id="startUrl"></label>
 <label>Search URL: <input placeholder="Search URL" value="buss://search.app?q=%1" id="searchUrl"></label>
 <label>DNS: <input placeholder="DNS server" value="https://dns.webxplus.org/" id="dns"></label>
 <button onclick="window.top.browser.deleteCache()">Remove Cache</button>\`,
-        site: \`<label>Page style: <select id="style">
+        site: \`<b>Style</b>
+<label>Page style: <select id="style">
   <option value="napture_dark">Napture Dark</option>
   <option value="napture_light">Napture Light</option>
   <option value="bussinga_dark">Bussinga Dark</option>
@@ -188,8 +189,11 @@ export const PageSettings = `<!DOCTYPE html>
   <option value="bussinga_volcano">Bussinga Volcano</option>
 </select></label>
 <label>Bussinga arbitrary css: <input id="bussinga_css" type="checkbox"></label>
+<b>Lua</b>
+<label>Lua: <input id="lua" type="checkbox"></label>
 <label>Bussinga extended lua (legacy): <input id="bussinga_lua" type="checkbox"></label>
 <div class="notice">Bussinga extended lua can be unsafe, <a href="https://github.com/inventionpro/bussinga-attack" target="_blank">check here</a>.</div>
+<b>Other</b>
 <label>Proxy: <input id="proxy" type="checkbox"></label>
 <div class="notice">This proxies requests to bypass cors.</div>\`
       };
@@ -258,6 +262,7 @@ export const PageSettings = `<!DOCTYPE html>
           case 'site':
             setntrack('style', 'value', 'napture_dark');
             setntrack('bussinga_css', 'checked', false);
+            setntrack('lua', 'checked', true);
             setntrack('bussinga_lua', 'checked', false);
             setntrack('proxy', 'checked', false);
             break;

@@ -12,8 +12,9 @@
       let query = {};
       location.search.replace('?','').split('&').forEach(p=>query[p.split('=')[0]]=p.split('=')[1]);
       query.url = query.url??'search.app';
-      query.style = query.style?.toLowerCase()??'napture_dark';
+      query.style = localStorage.getItem('style')??'napture_dark';
       query.bussinga_css = query.bussinga_css?.toLowerCase()==='true';
+      query.lua = query.lua?.toLowerCase()!=='false';
       query.bussinga_lua = query.bussinga_lua?.toLowerCase()==='true';
       query.proxy = query.proxy?.toLowerCase()==='true';
       query.dns = query.dns??'https://dns.webxplus.org/';
@@ -24,6 +25,7 @@
         startUrl: query.url,
         style: query.style,
         bussinga_css: query.bussinga_css,
+        lua: query.lua,
         bussinga_lua: query.bussinga_lua,
         proxy: query.proxy,
         dns: query.dns
