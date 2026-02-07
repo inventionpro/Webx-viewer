@@ -56,7 +56,7 @@ export const PageSettings = `<!DOCTYPE html>
         background-color: var(--up);
       }
       input {
-        cursor: unset;
+        cursor: auto;
       }
       input, select {
         padding: 2px;
@@ -164,7 +164,7 @@ export const PageSettings = `<!DOCTYPE html>
 <details><summary>Advanced theme (soon...)</summary></details>
 <b>Tab layout:</b>
 <div id="layout">
-  <button data-side="top" style="bottom:unset" selected></button>
+  <button data-side="top" style="bottom:unset"></button>
   <button data-side="right" style="left:unset"></button>
   <button data-side="bottom" style="top:unset"></button>
   <button data-side="left" style="right:unset"></button>
@@ -231,7 +231,10 @@ export const PageSettings = `<!DOCTYPE html>
             });
 
             const LayoutBox = document.getElementById('layout');
-            let layout = window.top.localStorage.getItem('layout')?.replace('h','top')?.replace('v','left')??'top';
+            let layout = window.top.localStorage.getItem('layout')??'top';
+            if (layout==='h') layout = 'top';
+            if (layout==='v') layout = 'left';
+            LayoutBox.querySelector(\`[data-side="\${layout}"]\`).setAttribute('selected','');
             let positionTabs = ()=>{
               LayoutBox.querySelector('[selected]')?.removeAttribute('selected');
               LayoutBox.querySelector(\`[data-side="\${layout}"]\`).setAttribute('selected','');

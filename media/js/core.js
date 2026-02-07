@@ -168,11 +168,11 @@ class Tab {
           _this.browser.stdout(err.message, 'error', _this.id);
         }
       });
+      _this.browser._style();
     };
     this.iframe.srcdoc = srcdoc;
   }
   async _load() {
-    this.iframe.onload = ()=>{};
     // About pages
     if (this.url.startsWith('about:')) {
       let url = new URL(this.url);

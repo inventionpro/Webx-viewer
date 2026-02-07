@@ -30,7 +30,7 @@ window.rclick = (event, id)=>{
   menu.style.left = event.clientX+'px';
   menu.style.top = event.clientY+'px';
   menu.innerHTML = `<button onclick="browser.tabs.find(tab=>tab.id==='${id}').reload()">Reload</button>
-<button onclick="browser.createTab().goTo(browser.tabs.find(tab=>tab.id==='${id}').url)">Duplicate</button>
+<button onclick="let t=browser.createTab();setTimeout(()=>{t.goTo(browser.tabs.find(tab=>tab.id==='${id}').url)})">Duplicate</button>
 <button onclick="window.browser.closeTab('${id}')">Close</button>`;
 };
 window.onclick = window.onblur = ()=>{

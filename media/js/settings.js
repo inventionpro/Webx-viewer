@@ -14,7 +14,9 @@ window.setSettings = ()=>{
   document.body.style.setProperty('--text-dim', (parseInt(theme.replace('#',''),16)>0x888888)?'#333':'#bbb');
   browser._style();
 
-  let layout = window.top.localStorage.getItem('layout')?.replace('h','top')?.replace('v','left')??'top';
+  let layout = localStorage.getItem('layout')??'top';
+  if (layout==='h') layout = 'top';
+  if (layout==='v') layout = 'left';
   let tabs = document.getElementById('tabs');
   tabs.setAttribute('data-dir', layout);
   if (['left','right'].includes(layout)) {
