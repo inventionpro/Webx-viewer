@@ -233,7 +233,7 @@ iframe {
   box-sizing: border-box;
 }
 
-#settings, #history {
+#history {
   position: absolute;
   top: 0px;
   right: -30dvw;
@@ -245,71 +245,11 @@ iframe {
   box-sizing: border-box;
   transition-property: right, color, background-color, border-color;
 }
-#settings b {
-  display: block;
-  font-size: 125%;
-}
-#settings label {
-  display: block;
-  width: fit-content;
-  padding: 2px 0px;
-}
-#settings input, #settings select {
-  color: var(--text-dim);
-  padding: 2px;
-}
-#settings button, #history button {
+#history button {
   color: var(--text-dim);
   border-radius: 0.5rem;
   background-color: var(--base);
 }
-#settings .notice {
-  color: var(--text-dim);
-  font-size: 75%;
-}
-
-.title {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-}
-.title img {
-  height: 30px;
-}
-
-.themes {
-  display: flex;
-  gap: 5px;
-  justify-content: space-between;
-  align-items: center;
-}
-#settings .themes button {
-  flex: 1;
-  color: #ddd;
-  background-color: var(--color);
-  aspect-ratio: 16 / 9;
-}
-
-input[type="color"] {
-  height: 25px;
-  padding: 0px !important;
-  border-radius: 5px;
-}
-
-#layout {
-  position: relative;
-  width: 50px;
-  height: 50px;
-}
-#layout button {
-  position: absolute;
-  inset: 0px;
-}
-#layout button[selected] {
-  background-color: var(--text-dim);
-  z-index: 1;
-}
-
 #history .inner {
   display: flex;
   gap: 2px;

@@ -327,19 +327,18 @@ export class Browser {
     this.history = [];
     this.cache = new Map();
 
-    // Styles
-    const _this = this;
-    setInterval(() => {
-      let style = window.getComputedStyle(document.body);
-      _this.tabs.forEach(tab=>{
-        let styleSet = (prop)=>{tab.iframe.contentDocument.body.style.setProperty(prop,style.getPropertyValue(prop))};
-        styleSet('--text');
-        styleSet('--text-dim');
-        styleSet('--base');
-        styleSet('--up');
-        styleSet('--top');
-      });      
-    }, 500);
+    this._style();
+  }
+  _style() {
+    let style = window.getComputedStyle(document.body);
+    this.tabs.forEach(tab=>{
+      let styleSet = (prop)=>{tab.iframe.contentDocument.body.style.setProperty(prop,style.getPropertyValue(prop))};
+      styleSet('--text');
+      styleSet('--text-dim');
+      styleSet('--base');
+      tab.iframe.contentDocument.body.style.setProperty('--up','color-mix(in oklab, var(--base) 75%, #333 50%);');
+      tab.iframe.contentDocument.body.style.setProperty('--top','color-mix(in oklab, var(--base) 75%, #555 50%);');
+    });      
   }
   _normalizeIp(target, path, tab='browser') {
     // If the path is a full url just go directly
