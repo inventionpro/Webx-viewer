@@ -51,7 +51,7 @@ export const PageSettings = `<!DOCTYPE html>
       button, input, select {
         cursor: pointer;
         color: var(--text);
-        border: 1px var(--text-dim) solid;
+        border: 1px var(--top) solid;
         border-radius: 0.5rem;
         background-color: var(--up);
       }
@@ -82,6 +82,7 @@ export const PageSettings = `<!DOCTYPE html>
         gap: 5px;
         align-items: center;
         font-size: 120%;
+        border: none;
       }
       nav button[disabled] {
         cursor: not-allowed;

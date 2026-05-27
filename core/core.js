@@ -1,8 +1,8 @@
-import { createLegacyLua } from '../lua/legacy.js';
-import { createV2Lua } from '../lua/v2.js';
+import { createLegacyLua } from './lua/legacy.js';
+import { createV2Lua } from './lua/v2.js';
 
-import { htmlparser, htmlbuilder, treeHelper } from '../handle/html.js';
-import { cssparser, cssbuilder } from '../handle/css.js';
+import { htmlparser, htmlbuilder, treeHelper } from './handle/html.js';
+import { cssparser, cssbuilder } from './handle/css.js';
 
 import { styles } from './default_css.js';
 import { PageError, Page404, PageBlank, PageSettings, PageHistory } from './pages.js';
@@ -306,7 +306,7 @@ export class Browser {
    * @param {string} options.dns - DNS url, where to get domains.
    * @param {function(string, string, string): void} options.stdout - Function to handle logs (text, type, tab id).
    * @param {function(Object): void} options.onTabCreate - Function to handle tab creation (tab).
-   * @param {function(string): void} options.onTabLoad - Function to handle tab load (tab).
+   * @param {function(Object): void} options.onTabLoad - Function to handle tab load (tab).
    * @param {function(string): void} options.onTabSwitch - Function to handle tab switching (tab id).
    * @param {function(string): void} options.onTabClose - Function to handle tab closing (tab id).
    */
@@ -331,6 +331,7 @@ export class Browser {
     this.defFavicon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAP1BMVEVHcEzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMcdVmAAAAFHRSTlMA+AftYxEo5DW6GtxHjXXIp5mDz2/sM+oAAAK5SURBVFjDrVfZgoMwCDSH5j7r/3/rWqJWzbm7zWMrExgGCNNUPjOnQSiC1hURJQLl8/SLM2vj3rafg4gzehRjse5mfII4u4yYR7VWj4o9iNmqm+NsO7dglG0GwsX5JROGar5IuXBNjWAnqOBVc0yPz4inC779tVBPDmiKK+6b3VdieOETzM2Oj0wxDOnPOGmN4LB74WXLfnMhahttQTxYuxrC7O85BxxHMwgZUpz+8Q825cTnlGObwjB3miiqSOeVJ40CAroRxVlVfCInIiGwC/Qs6upFOifcoge0XRsnFCQRANqe6VUtAFUQnoRsqqOy4to8KOSy0UBDHHEAosDlIHYXbM/+kbJ0K+QNWJhdF2AVOQ2gPPdOhEZ9AJI3Ik6OHJu+fUkMGIrHjEVQVBPdY+Bk/VMIiUbC62XUIXHCIuUnjERQbFEmCV0MAIRiFwUSxKT69xekPB35V1OXQ1fr4kA/mXocsltLws80oOnjabErfYp+m9nRC2/oO6BZSizBAACIUErQxQqGEGJXIBTPO7VIzqLX9qXbDGICeP/KthGIYYBprZdzfHzif1/+wSWXKxCQSPhjiEXxYsp5KvdxIqpMEUhjLnUspTx6Jo4NolUSEq2+Fzaclv0mpLBXZWnc67CR9ULtng3FVCqWcwx2qgT0xArlKkeqZKM/NZQCCXHAHpoiVKXPYpBqBMAcRUV4sdaGWl2KwfwJANp6GiwZjQsbALCX0fbsOtj37Y/pCnyTp5x5n8V4G+/u2bi4G3TgGK9Z65S2LWP7eOJcms8Qk9fXU3pkkUyPrbl3b5ZpPuUIdnTY7A9NYvFoRT0emsdTNxsi0pQHh59rj22n8aNBWi8ySbSe6yTkzWF59e0vCwfLF47FXyKpLBztlYf7U1PVlae9dKH6BvDNte//i+cXVt8vLN+/W/9/AFuoonzbORQ+AAAAAElFTkSuQmCC';
     this.tabs = [];
     this.activeTab = null;
+    this.extensions = [];
     this.history = [];
     this.cache = new Map();
 
@@ -460,6 +461,22 @@ export class Browser {
     this.tabs.find(tab=>tab.id===id).close();
     if (this.activeTab===id) this.changeTab(this.tabs[Math.min(last, this.tabs.length-1)].id);
     this.onTabClose(id);
+  }
+  _registerExtension(data) {
+    data.title = (data.title??'').trim();
+    data.icon = (data.icon??'').trim();
+    data.version = (data.version??'').trim();
+    data.author = (data.author??'').trim();
+    data.desc = (data.desc??'').trim();
+    if (data.title.length<1||data.title.length>50) throw new Error('Invalid title');
+    if (data.version.length<1||data.version.length>20) throw new Error('Invalid version');
+    if (data.author.length<1||data.author.length>20) throw new Error('Invalid author');
+    if (data.desc.length>250) throw new Error('Invalid desc');
+    data.id = Math.floor(Math.random()*16**12).toString(16);
+    this.extensions.push(data);
+  }
+  _unregisterExtension(id) {
+    this.extensions.splice(this.extensions.findIndex(ext=>ext.id===id), 1);
   }
   deleteCache() {
     this.cache = new Map();
