@@ -481,7 +481,7 @@ export class Browser {
     data.version = (data.version??'').trim();
     data.author = (data.author??'').trim();
     data.desc = (data.desc??'').trim();
-    if (data.title.length<1||data.title.length>50) throw new Error('Invalid title');
+    if (data.name.length<1||data.name.length>50) throw new Error('Invalid title');
     if (data.version.length<1||data.version.length>20) throw new Error('Invalid version');
     if (data.author.length<1||data.author.length>20) throw new Error('Invalid author');
     if (data.desc.length>250) throw new Error('Invalid desc');
