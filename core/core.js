@@ -59,7 +59,7 @@ class Tab {
         _this.title = this.iframe.contentDocument.querySelector('title')?.innerText??_this.url;
         _this.icon = _this.browser.defFavicon;
         _this.extensions.forEach(ext=>{
-          if (ext.hooks.tabLoad) ext.hooks.tabLoad(_this);
+          if (ext.hooks.tabLoad) ext.hooks.tabLoad.code(_this);
         });
         _this.browser.onTabLoad(_this);
         return;
@@ -443,7 +443,7 @@ export class Browser {
     this.onTabCreate(tab);
     this.changeTab(tab.id);
     this.extensions.forEach(ext=>{
-      if (ext.hooks.tabCreate) ext.hooks.tabCreate(tab);
+      if (ext.hooks.tabCreate) ext.hooks.tabCreate.code(tab);
     });
     return tab;
   }
@@ -451,8 +451,9 @@ export class Browser {
     this.activeTab = id;
     Array.from(this.box.querySelectorAll('iframe')).forEach(iframe=>iframe.style.display='none');
     this.box.querySelector(`iframe[id="${id}"]`).style.display = '';
+    let tab = this.tabs.find(tab=>tab.id===id);
     this.extensions.forEach(ext=>{
-      if (ext.hooks.tabFocus) ext.hooks.tabFocus(tab);
+      if (ext.hooks.tabFocus) ext.hooks.tabFocus.code(tab);
     });
     this.onTabFocus(id);
   }
@@ -471,7 +472,7 @@ export class Browser {
     tab.close();
     if (this.activeTab===id) this.changeTab(this.tabs[Math.min(last, this.tabs.length-1)].id);
     this.extensions.forEach(ext=>{
-      if (ext.hooks.tabClose) ext.hooks.tabClose(tab);
+      if (ext.hooks.tabClose) ext.hooks.tabClose.code(tab);
     });
     this.onTabClose(id);
   }
