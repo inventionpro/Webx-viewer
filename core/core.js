@@ -58,6 +58,9 @@ class Tab {
         this.iframe.srcdoc = html;
         _this.title = this.iframe.contentDocument.querySelector('title')?.innerText??_this.url;
         _this.icon = _this.browser.defFavicon;
+        _this.extensions.forEach(ext=>{
+          if (ext.hooks.tabLoad) ext.hooks.tabLoad(_this);
+        });
         _this.browser.onTabLoad(_this);
         return;
       }
@@ -307,7 +310,7 @@ export class Browser {
    * @param {function(string, string, string): void} options.stdout - Function to handle logs (text, type, tab id).
    * @param {function(Object): void} options.onTabCreate - Function to handle tab creation (tab).
    * @param {function(Object): void} options.onTabLoad - Function to handle tab load (tab).
-   * @param {function(string): void} options.onTabSwitch - Function to handle tab switching (tab id).
+   * @param {function(string): void} options.onTabFocus - Function to handle tab switching (tab id).
    * @param {function(string): void} options.onTabClose - Function to handle tab closing (tab id).
    */
   constructor(options={}) {
@@ -324,7 +327,7 @@ export class Browser {
     this.stdout = options.stdout??(()=>{});
     this.onTabCreate = options.onTabCreate??(()=>{});
     this.onTabLoad = options.onTabLoad??(()=>{});
-    this.onTabSwitch = options.onTabSwitch??(()=>{});
+    this.onTabFocus = options.onTabFocus??(()=>{});
     this.onTabClose = options.onTabClose??(()=>{});
 
     // Data
@@ -439,13 +442,19 @@ export class Browser {
     this.tabs.push(tab);
     this.onTabCreate(tab);
     this.changeTab(tab.id);
+    this.extensions.forEach(ext=>{
+      if (ext.hooks.tabCreate) ext.hooks.tabCreate(tab);
+    });
     return tab;
   }
   changeTab(id) {
     this.activeTab = id;
     Array.from(this.box.querySelectorAll('iframe')).forEach(iframe=>iframe.style.display='none');
     this.box.querySelector(`iframe[id="${id}"]`).style.display = '';
-    this.onTabSwitch(id);
+    this.extensions.forEach(ext=>{
+      if (ext.hooks.tabFocus) ext.hooks.tabFocus(tab);
+    });
+    this.onTabFocus(id);
   }
   closeTab(id) {
     if (this.tabs.length===1) {
@@ -458,11 +467,15 @@ export class Browser {
     }
     let last;
     if (this.activeTab===id) last = this.tabs.findIndex(tab=>tab.id===id);
-    this.tabs.find(tab=>tab.id===id).close();
+    let tab = this.tabs.find(tab=>tab.id===id);
+    tab.close();
     if (this.activeTab===id) this.changeTab(this.tabs[Math.min(last, this.tabs.length-1)].id);
+    this.extensions.forEach(ext=>{
+      if (ext.hooks.tabClose) ext.hooks.tabClose(tab);
+    });
     this.onTabClose(id);
   }
-  _registerExtension(data) {
+  registerExtension(data) {
     data.title = (data.title??'').trim();
     data.icon = (data.icon??'').trim();
     data.version = (data.version??'').trim();
@@ -472,10 +485,30 @@ export class Browser {
     if (data.version.length<1||data.version.length>20) throw new Error('Invalid version');
     if (data.author.length<1||data.author.length>20) throw new Error('Invalid author');
     if (data.desc.length>250) throw new Error('Invalid desc');
+    data.hooks = data.hooks;
+    const hookToInput = {
+      netRequest: 'request',
+      netResponse: 'response',
+      tabCreate: 'tab',
+      tabLoad: 'tab',
+      tabFocus: 'tab',
+      tabClose: 'tab'
+    };
+    Object.keys(data.hooks).forEach(hook=>{
+      if (!['netRequest','netResponse','tabCreate','tabLoad','tabFocus','tabClose'].includes(hook)) {
+        console.warn(hook+' is not a recognized extension hook');
+        delete data.hooks[hook];
+      } else if (data.hooks[hook].type!=='JS') {
+        console.warn(data.hooks[hook].type+' is not a recognized extension hook type in '+hook);
+        delete data.hooks[hook];
+      } else {
+        data.hooks[hook].code = new Function(hookToInput[hook], data.hooks[hook].code);
+      }
+    });
     data.id = Math.floor(Math.random()*16**12).toString(16);
     this.extensions.push(data);
   }
-  _unregisterExtension(id) {
+  unregisterExtension(id) {
     this.extensions.splice(this.extensions.findIndex(ext=>ext.id===id), 1);
   }
   deleteCache() {

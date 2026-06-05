@@ -63,7 +63,7 @@ const browser = new Browser({
     document.querySelector(`#t-${tab.id} img`).src = tab.icon;
     document.querySelector(`#t-${tab.id} .title`).innerText = tab.title;
   },
-  onTabSwitch: (id)=>{
+  onTabFocus: (id)=>{
     updateUrl();
     document.querySelector('#tabs button[active]')?.removeAttribute('active');
     document.getElementById('t-'+id).setAttribute('active','');
