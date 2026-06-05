@@ -476,7 +476,7 @@ export class Browser {
     this.onTabClose(id);
   }
   registerExtension(data) {
-    data.title = (data.title??'').trim();
+    data.name = (data.name??'').trim();
     data.icon = (data.icon??'').trim();
     data.version = (data.version??'').trim();
     data.author = (data.author??'').trim();
