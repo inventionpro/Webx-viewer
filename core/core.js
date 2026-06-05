@@ -58,7 +58,7 @@ class Tab {
         this.iframe.srcdoc = html;
         _this.title = this.iframe.contentDocument.querySelector('title')?.innerText??_this.url;
         _this.icon = _this.browser.defFavicon;
-        _this.extensions.forEach(ext=>{
+        _this.browser.extensions.forEach(ext=>{
           if (ext.hooks.tabLoad) ext.hooks.tabLoad.code(_this);
         });
         _this.browser.onTabLoad(_this);
@@ -440,11 +440,11 @@ export class Browser {
   createTab() {
     let tab = new Tab(this, this.startUrl);
     this.tabs.push(tab);
-    this.onTabCreate(tab);
-    this.changeTab(tab.id);
     this.extensions.forEach(ext=>{
       if (ext.hooks.tabCreate) ext.hooks.tabCreate.code(tab);
     });
+    this.onTabCreate(tab);
+    this.changeTab(tab.id);
     return tab;
   }
   changeTab(id) {
