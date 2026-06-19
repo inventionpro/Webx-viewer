@@ -286,6 +286,7 @@ iframe {
 #devtools {
   display: flex;
   flex-direction: column;
+  width: 20dvw;
 }
 #devtools .row {
   background-color: var(--top);
