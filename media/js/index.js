@@ -16,6 +16,7 @@ function stdout(text, type='log', tab='Browser') {
   if (!window.logs[tab]) window.logs[tab] = [];
   console[type](text+' from '+tab);
   window.logs[tab].push([text, type]);
+  window.stdoutDevtools(text, type, tab);
 }
 
 const UrlBar = document.getElementById('url');
@@ -67,6 +68,7 @@ const browser = new Browser({
     updateUrl();
     document.querySelector('#tabs button[active]')?.removeAttribute('active');
     document.getElementById('t-'+id).setAttribute('active','');
+    window.tabfocusDevtools(id);
   }
 });
 window.browser = browser;
